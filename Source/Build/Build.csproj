@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <AssemblyName>Dolittle.Interaction.WebAssembly.Build</AssemblyName>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+        <DefaultItemExcludes>wasm\**\*</DefaultItemExcludes>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />
+        <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Dolittle.Interaction.WebAssembly.Build.props" PackagePath="build\" />
+        <Content Include="Dolittle.Interaction.WebAssembly.Build.targets" PackagePath="build\" />
+        <Content Include="index.html" PackagePath="artifacts\" />
+        <Content Remove="wasm\**\*"/>
+    </ItemGroup>
+
+
+    <Target Name="PublishBuildCLI" BeforeTargets="GenerateNuspec">
+        <DownloadFile DestinationFolder="." 
+                      DestinationFileName="mono-wasm.zip" 
+                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
+                      
+        <Unzip SourceFiles="./mono-wasm.zip" 
+               DestinationFolder="wasm" 
+               OverwriteReadonlyFiles="true" 
+               Condition="$(OS) == 'Windows_NT'"/>
+
+        <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
+    </Target>
+
+    <Target Name="PackTaskDependencies" AfterTargets="PublishBuildCLI">
+
+        <ItemGroup>
+            <_PackageFiles Include="wasm\**\*">
+                <PackagePath>tools\mono\%(RecursiveDir)</PackagePath>
+                <Visible>false</Visible>
+                <BuildAction>Content</BuildAction>
+            </_PackageFiles>
+        </ItemGroup>
+    </Target>
+
+</Project>

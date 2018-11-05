@@ -1,0 +1,10 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="TaskFolder;TaskAssembly">
+    <PropertyGroup>
+        <WasmPath>$(MSBuildThisFileDirectory)../tools/mono</WasmPath>
+        <WasmBCLPath>$(WasmPath)/wasm-bcl/wasm</WasmBCLPath>
+        <WasmFrameworkPath>$(WasmPath)/framework</WasmFrameworkPath>
+        <WasmPackager Condition="$(OS) == 'Windows_NT'">&quot;$(WasmPath)/packager.exe&quot;</WasmPackager>
+        <WasmPackager Condition="$(OS) != 'Windows_NT'">mono &quot;$(WasmPath)/packager.exe&quot;</WasmPackager>
+        <WasmOutput>./publish</WasmOutput>
+    </PropertyGroup>
+</Project>
