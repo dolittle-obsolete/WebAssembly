@@ -42,10 +42,26 @@ root of the repository directly in Visual Studio Code and start building. There 
 option and then select the build task you want to run. It is folder sensitive and will look for the nearest `.csproj` file based on the file you have open.
 If it doesn't find it, it will pick the `.sln` file instead.
 
+## Pre-requisites
+
+If you're packaging the solution on Windows, you'll need to have [7-Zip](http://www.7-zip.org/) installed.
+
 ## Usage
 
 To use this, you'll need to have a .NET Standard 2.0 class library project and reference the NuGet package called `Dolittle.Interaction.WebAssembly.Build`. This will build and output the necessary WebAssembly files to get you started.
 It also outputs an `index.html` file.
+
+### Output
+
+The default output points to `./publish`, this can be changed by adding a variable to a `<PropertyGroup>` in your `.csproj` file for your project.
+
+```xml
+<PropertyGroup>
+    <WasmOutput>../Web/wwwroot/wasm</WasmOutput>
+</PropertyGroup>
+```
+
+This will then output all artifacts needed to run your application.
 
 ## Mono Wasm
 
