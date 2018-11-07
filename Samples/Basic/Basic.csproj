@@ -4,7 +4,20 @@
     <PropertyGroup>
         <OutputType>library</OutputType>
         <TargetFramework>netstandard2.0</TargetFramework>
+        
+        <!-- Optimize build time -->
+        <DefaultItemExcludes>node_modules\**\*;jspm_packages\**\*;bower_components\**\*;wwwroot\**\*;bin\**\*;obj\**\*</DefaultItemExcludes>
     </PropertyGroup>
+
+    <!-- Optimize build time -->
+    <ItemGroup>
+      <Content Remove="node_modules\**\*" />
+      <Content Remove="jspm_packages\**\*" />
+      <Content Remove="bower_components\**\*" />
+      <Content Remove="bin\**\*" />
+      <Content Remove="obj\**\*" />
+      <Content Remove="wwwroot\**\*" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Dolittle.SDK" Version="2.0.0-alpha2*"/>
