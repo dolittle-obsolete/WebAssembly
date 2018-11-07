@@ -421,6 +421,11 @@ class Driver {
             var destination = Path.Combine (out_prefix, "mono.js");
             var monoJs = File.ReadAllText(source);
             monoJs = monoJs.Replace("this.mono_wasm_runtime_is_ready=true;debugger","this.mono_wasm_runtime_is_ready=true;");
+            monoJs = monoJs.Replace(
+"  			this.mono_wasm_runtime_is_ready = true;\n"+
+"  			debugger;\n",
+"  			this.mono_wasm_runtime_is_ready = true;\n");
+
             File.WriteAllText(destination, monoJs);
 
             /*
