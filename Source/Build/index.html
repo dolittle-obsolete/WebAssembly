@@ -1,10 +1,21 @@
 <!doctype html>
 <html lang="en-us">
-  <head>
-  </head>
-  <body>
+
+<head>
+</head>
+
+<body>
+    <script>
+        var App = {
+            init: function () {
+                BINDING.call_static_method("[Basic] Basic.Program:Main", []);
+            }
+        }
+    </script>
+
     <script type="text/javascript" src="mono-config.js"></script>
-	<script type="text/javascript" src="runtime.js"></script>
+    <script type="text/javascript" src="runtime.js"></script>
     <script async type="text/javascript" src="mono.js"></script>
-  </body>
+</body>
+
 </html>
