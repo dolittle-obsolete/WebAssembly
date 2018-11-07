@@ -20,29 +20,19 @@
         <Content Include="Dolittle.Interaction.WebAssembly.Build.props" PackagePath="build\" />
         <Content Include="Dolittle.Interaction.WebAssembly.Build.targets" PackagePath="build\" />
         <Content Include="index.html" PackagePath="artifacts\" />
-        <Content Remove="wasm\**\*"/>
-    </ItemGroup>
-
-
-    <Target Name="PublishBuildCLI" BeforeTargets="GenerateNuspec">
+        <Content Include="wasm\**\*" Exclude="wasm\**\*.nupkg" PackagePath="tools\mono\" />
+        <Compile Remove="wasm\**\*"/>
+    </ItemGroup>   
+    
+    <Target Name="PreparePackageBinaries" BeforeTargets="GenerateNuspec">
         <DownloadFile DestinationFolder="." 
                       DestinationFileName="mono-wasm.zip" 
-                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
+                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/1384/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
                       
         <Exec Command="7z e mono-wasm.zip -owasm -y" Condition="$(OS) == 'Windows_NT'"/>
 
         <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
+
+        <Exec Command="dotnet publish -o $(ProjectDir)\wasm -c $(Configuration)" WorkingDirectory="..\Packager"/>
     </Target>
-
-    <Target Name="PackTaskDependencies" AfterTargets="PublishBuildCLI">
-
-        <ItemGroup>
-            <_PackageFiles Include="wasm\**\*">
-                <PackagePath>tools\mono\%(RecursiveDir)</PackagePath>
-                <Visible>false</Visible>
-                <BuildAction>Content</BuildAction>
-            </_PackageFiles>
-        </ItemGroup>
-    </Target>
-
 </Project>
