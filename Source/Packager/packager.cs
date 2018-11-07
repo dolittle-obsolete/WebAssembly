@@ -417,9 +417,16 @@ class Driver {
 			File.Delete (Path.Combine (out_prefix, "mono.js"));
 			File.Delete (Path.Combine (out_prefix, "mono.wasm"));
 
+            var source = Path.Combine (runtime_dir, "mono.js");
+            var destination = Path.Combine (out_prefix, "mono.js");
+            var monoJs = File.ReadAllText(source);
+            monoJs = monoJs.Replace("this.mono_wasm_runtime_is_ready=true;debugger","this.mono_wasm_runtime_is_ready=true;");
+            File.WriteAllText(destination, monoJs);
+
+            /*
 			File.Copy (
 					   Path.Combine (runtime_dir, "mono.js"),
-					   Path.Combine (out_prefix, "mono.js"));
+					   Path.Combine (out_prefix, "mono.js"));*/
 			File.Copy (
 					   Path.Combine (runtime_dir, "mono.wasm"),
 					   Path.Combine (out_prefix, "mono.wasm"));
