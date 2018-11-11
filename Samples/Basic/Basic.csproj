@@ -7,6 +7,7 @@
         
         <!-- Optimize build time -->
         <DefaultItemExcludes>node_modules\**\*;jspm_packages\**\*;bower_components\**\*;wwwroot\**\*;bin\**\*;obj\**\*</DefaultItemExcludes>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <!-- Optimize build time -->
@@ -21,6 +22,7 @@
 
     <ItemGroup>
         <PackageReference Include="Dolittle.SDK" Version="2.0.0-alpha2*"/>
+        <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="2.0.0-alpha2*"/>
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.0.0-alpha2*" />
     </ItemGroup>
 </Project>
