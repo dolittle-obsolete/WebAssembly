@@ -1,0 +1,20 @@
+{
+    "application": "cb47d2dd-b169-4cb6-a304-f395e82b1cde",
+    "boundedContext": "82534517-5cbb-46be-8472-146c82c6889a",
+    "boundedContextName": "Basic",
+    "core": {
+        "language": "csharp",
+        "entryPoint": ""
+    },
+    "interaction": [],
+    "resources": {
+        "readModels": {
+            "production": "MongoDB",
+            "development": "MongoDB"
+        },
+        "eventStore": {
+            "production": "IndexedDB",
+            "development": "IndexedDB"
+        }
+    }
+}

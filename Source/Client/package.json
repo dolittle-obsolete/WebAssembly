@@ -1,0 +1,19 @@
+{
+  "name": "@dolittle/webassembly.client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "transpile": "rm -rf dist && PACKAGE_DISTRIBUTION=true npx babel . --ignore wallaby.js,webpack.config.js,node_modules,**/for_* -d dist",
+    "prepublish": "yarn run transpile"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "@dolittle/build": "^1.0.0"
+  }
+}

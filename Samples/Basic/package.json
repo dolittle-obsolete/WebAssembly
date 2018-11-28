@@ -4,11 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "http-server -c-1 publish"
+    "start": "node run.js & http-server -c-1 wwwroot"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@dolittle/build": "^1.0.0",
+    "@dolittle/build.aurelia": "^1.0.0",
     "http-server": "^0.11.1"
+  },
+  "dependencies": {
+    "minimongo": "^5.0.1"
   }
 }

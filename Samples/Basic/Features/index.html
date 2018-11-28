@@ -1,0 +1,55 @@
+<template>
+    <section class="index">
+
+        <button click.delegate="perform()">Execute Command</button>
+        <button click.delegate="getData()">Get Data Inserted in MongoDb</button>
+        <button click.delegate="populate()">Get Data from C# Query that will call JavaScript</button>
+
+        <h1>Read Model</h1>
+
+        <label>Species</label>
+        <input type="value" value.bind="doc.Species">
+        <label>Name</label>
+        <input type="value" value.bind="doc.Name">
+
+        <h1>Animals</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Species</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr repeat.for="animal of animals">
+                    <td>${animal.species}</td>
+                    <td>${animal.name}</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+        <h1>Command Results</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>CorrelationId</th>
+                    <th>Successful</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr repeat.for="result of results">
+                    <td>${result.Command.CorrelationId}</td>
+                    <td>${result.Success}</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+    </section>
+
+</template>

@@ -1,28 +1,56 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../../Build/MSBuild/default.props"/>
-    
+    <Import Project="../../Build/MSBuild/default.props" />
+
     <PropertyGroup>
         <OutputType>library</OutputType>
         <TargetFramework>netstandard2.0</TargetFramework>
-        
+
         <!-- Optimize build time -->
         <DefaultItemExcludes>node_modules\**\*;jspm_packages\**\*;bower_components\**\*;wwwroot\**\*;bin\**\*;obj\**\*</DefaultItemExcludes>
-        <DocumentationFile></DocumentationFile>
+        <DocumentationFile/>
+
+        <!-- The relative path from this .csproj file to the bounded-context.json configuration file -->
+        <DolittleBoundedContextConfigPath>./bounded-context.json</DolittleBoundedContextConfigPath>
+
+        <!-- Whether or not to use modules or not when genreating bounded context topology structure -->
+        <DolittleUseModules>False</DolittleUseModules>
+
+        <!--  A | separated Key/Value pair map of namespace segments to strip -->
+        <DolittleNamespaceSegmentsToStrip/>
+
+        <!-- Whether or not the build tool should generate proxies -->
+        <DolittleGenerateProxies>False</DolittleGenerateProxies>
+
+        <!-- The relative path to put proxies if generated-->
+        <DolittleProxiesBasePath></DolittleProxiesBasePath>
+
     </PropertyGroup>
+
+
 
     <!-- Optimize build time -->
     <ItemGroup>
-      <Content Remove="node_modules\**\*" />
-      <Content Remove="jspm_packages\**\*" />
-      <Content Remove="bower_components\**\*" />
-      <Content Remove="bin\**\*" />
-      <Content Remove="obj\**\*" />
-      <Content Remove="wwwroot\**\*" />
+        <Content Remove="node_modules\**\*" />
+        <Content Remove="jspm_packages\**\*" />
+        <Content Remove="bower_components\**\*" />
+        <Content Remove="bin\**\*" />
+        <Content Remove="obj\**\*" />
+        <Content Remove="wwwroot\**\*" />
     </ItemGroup>
+
+
 
     <ItemGroup>
         <PackageReference Include="Dolittle.SDK" Version="2.0.0-alpha2*"/>
+        <!--<PackageReference Include="Dolittle.Build" Version="2.0.0-alpha2*"/>-->
+        <PackageReference Include="Dolittle.Configuration" Version="2.0.0-alpha2*"/>
+        <PackageReference Include="Dolittle.Runtime.Queries.Coordination" Version="2.0.0-alpha2*"/>
         <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="2.0.0-alpha2*"/>
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.0.0-alpha2*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="bounded-context.json"/>
+        <EmbeddedResource Include=".dolittle/**/*"/>
     </ItemGroup>
 </Project>
