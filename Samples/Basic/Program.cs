@@ -196,7 +196,6 @@ namespace Basic
                 .WithAssemblies(assemblies)
                 .SynchronousScheduling()
                 .UseLogAppender(new CustomLogAppender())
-                //.SkipBootprocedures()
                 .Start();
 
             var container = bootResult.Container;
