@@ -18,193 +18,146 @@ Can I Use - IndexedDb - Check
 
 Issues to register
 
-- Documentation for the Configuration System
+- Time / SystemClock - events - how do we do this - synchronize with the server somehow at install time... ??  
 
-- Configuration System should be able to do Key/Value - Dictionary type of ConfigurationObjects directly.
 
-- Assembly filtering is to eager to filter away - it looks at actual usage of types. All Dolittle packages should just be included, as well as project references
 
-- Provide assemblies needed to be discovered from the list generated in JavaScript
+- Specs for Booting system
 
-- Resource system - can use Boot container - e.g. for instances of IRepresentAResourceType
+- Specs for Configuration System
 
-- Tenant needs to be set
+- Specs for startup of dependency inversion - its a bit of a mess there
 
-- Tenant Map needs to be using Configuration System
+- Specs for BootContainer
 
-- Server.json needs to be using Configuration System
 
-- Event-horizons.json needs to be using Configuration System
 
-- Tenants file should be just a key / value of tenant and configuration, not a "tenants" property
-
-- Use of IImplementationsOf<> instead of ITypeFinder in ResourceConfiguration
 
 - Fix XML comments throughout Resource system
+
+- Use of IImplementationsOf<> instead of ITypeFinder in ResourceConfiguration
 
 - Clean up specs in ResourceTypes.Configuration -> Given statements with "all_dependencies" aren't constants, but should have actual dependencies
 
 - Clean up any coupling between specs in ResourceTypes.Configuration due to reuse of constants and given statements
 
-- Allow dependencies for resource type representations using the boot container - ResourceConfiguration
+- ConfigureResourceTypes on ResourceConfiguration seems wrong along with the IsConfigured
 
-- Change from File.* to IFileSystem throughout
+- Remove : ResourceConfigurationAlreadyConfigured - if duplicate of same type of resource, throw exception instead
 
-- Resource system - exception strategies - let the exceptions have their own messages
+- Look at formalizing a boot stage just for resources
 
-- Loading events - know when runtime is loading
 
-- Remember ApplicationBindings - return actual instances
 
-- Remember ResourceConfiguration - disabled only once configuration
+- Tenant needs to be set
+
+- Tenant Map needs to be using Configuration System
+
+- Tenant-map.json - loader needs some attention
+
+- Tenants file should be just a key / value of tenant and configuration, not a "tenants" property
+
+
 
 - BootProcedure for Events.Processing - it has a massive number of dependencies - this feels wrong
 
-- Time / SystemClock - events - how do we do this - synchronize with the server somehow at install time... ??  
 
-- ConfigureResourceTypes on ResourceConfiguration seems wrong along with the IsConfigured
 
-- ResourceConfiguration needs to be a singleton - it is now instantiated twice - [Singleton] not respected somehow - or wrong ordering
-
-- Merging of bindings BindingCollection - who wins?  existing or overwrite with new binding
-
-- Specs for startup of dependency inversion - its a bit of a mess there
-
-- Change from Information to Trace on a lot of logging messages
-
-- Specs for BootContainer
-
-- Serializer should honor default values for constructor parameters
 
 - Don't lock ourselves to JSON in the File/Manifest provider - they assume .json for filename right now
 
-- Consider removing Container support from the JSON Serializer - it is kinda fundamentally wrong that it can do this
+
+
+- Default values for constructor parameters for configuration objects
+
+
+
+- Inconsistency in how we do configuration objects; Tenants (tenants.json) has a Tenants property - it should not have this
+
+- Configuration system should enforce recursive immutability on any child properties
+
+- Immutability checks should check property type if it is immutable - a List<> for instance is mutable and should not be allowed
+
+
+
+- Serializer should find the best constructor it can fulfill when there are multiple constructor - this would allow for default values - we should put this into the Reflection assembly - it should be used by everything that needs this
+
+- Serializer should honor default values for constructor parameters
 
 - Improve error messages from Json Serializer when not matching parameters for constructor with properties. 
   Validate by checking if JSON property is a C# property or a constructor parameter. If not we should probably not resolve it
 
-- Default values for constructor parameters for configuration objects
 
-- Configuration system should enforce recursive immutability on any child properties
-
-- Immutability checks should check property type if it is immutable - a List<> for instance is mutable and should be allowed
 
 - Build tool - namespace Artifact -> Artifacts
 
-- APPLICATION AND BOUNDEDCONTEXT IS WRONG EVEN AFTER STARTUP!!!!!!!!!!
 
-- Remove : ResourceConfigurationAlreadyConfigured - if duplicate of same type of resource, throw exception instead
+- Assembly filtering is to eager to filter away - it looks at actual usage of types. All Dolittle packages should just be included, as well as project references
 
-- WE NEED A CONFIGURATION SYSTEM WITH SECTIONS - Automatically hooked up to the .dolittle folder and loaded from individual files
+- Provide assemblies needed to be discovered from the list generated in JavaScript
+
+- Look at if we need per environment configuration of resources
+
+- Build tools conflict some how - only one can be active at any given time
+
+
+- SDK should take a dependency to Configuration.Files
+
+- SDK should take a dependency to DependencyInversion.Files
+
+
+- Documentation for the Configuration System
+
+- Documentation for the Booting System
 
 */
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Dolittle.Artifacts;
-using Dolittle.Bootstrapping;
-using Dolittle.Collections;
-using Dolittle.Logging;
-using Dolittle.PropertyBags;
-using Dolittle.Runtime.Commands.Coordination;
-using Dolittle.Serialization.Json;
-using Dolittle.Runtime.Commands;
-using Dolittle.Execution;
-using Dolittle.Domain;
-using Dolittle.Runtime.Events.Store;
-using Dolittle.ResourceTypes.Configuration;
-using Dolittle.Tenancy;
-using Dolittle.ResourceTypes;
-using Dolittle.Runtime.Tenancy;
-using Dolittle.Queries;
-using Dolittle.Queries.Coordination;
-
 using Basic.MyFeature;
 using Dolittle.Applications.Configuration;
+using Dolittle.Artifacts;
+using Dolittle.Booting;
+using Dolittle.Collections;
+using Dolittle.Domain;
+using Dolittle.Execution;
+using Dolittle.Logging;
+using Dolittle.PropertyBags;
+using Dolittle.Queries;
+using Dolittle.Queries.Coordination;
+using Dolittle.ResourceTypes;
+using Dolittle.ResourceTypes.Configuration;
+using Dolittle.Runtime.Commands;
+using Dolittle.Runtime.Commands.Coordination;
+using Dolittle.Runtime.Events.Store;
+using Dolittle.Runtime.Tenancy;
+using Dolittle.Serialization.Json;
+using Dolittle.Tenancy;
 
 namespace Basic
 {
-
-    public class MyBootProcedure : ICanPerformBootProcedure
-    {
-        readonly IResourceConfiguration _resourceConfiguration;
-        readonly ICanProvideResourceConfigurationsByTenant _resourceConfigurations;
-        private readonly ILogger _logger;
-
-        public MyBootProcedure(
-            IResourceConfiguration resourceConfiguration,
-            ICanProvideResourceConfigurationsByTenant resourceConfigurations,
-            ILogger logger)
-        {
-            _resourceConfiguration = resourceConfiguration;
-            _resourceConfigurations = resourceConfigurations;
-            _logger = logger;
-        }
-
-        public bool CanPerform() => _resourceConfiguration.IsConfigured;
-
-        public void Perform()
-        {
-            // Missing configuration - manually setting it up           
-            _resourceConfiguration.ConfigureResourceTypes(new Dictionary<ResourceType,ResourceTypeImplementation>{
-                { "eventStore", "IndexedDb" }
-            });
-            _resourceConfigurations.AddConfigurationFor(TenantId.Development,"eventStore",new EventStoreConfiguration());
-        }
-    }
-
     class Program
     {
-        public static ISerializer _serializer;
-        static ICommandCoordinator _commandCoordinator;
-        static IQueryCoordinator _queryCoordinator;
-
-        static IExecutionContextManager _executionContextManager;
-        
-        public static string HandleCommand(object command)
-        {
-            _executionContextManager.CurrentFor(TenantId.Development);
-
-            var request = new CommandRequest(
-                CorrelationId.New(),
-                (ArtifactId)Guid.Parse("0889884d-ae6b-46a1-adc0-7bdcb11c19d3"),
-                1,
-                new Dictionary<string,object>()
-            );
-
-            var result = _commandCoordinator.Handle(request);
-            var jsonResult = _serializer.ToJson(result);
-            return jsonResult;
-        }
-
-        public static string GetAnimals()
-        {
-            _executionContextManager.CurrentFor(TenantId.Development);
-
-            var query = new MyQuery();
-            var result = _queryCoordinator.Execute(query, new PagingInfo());
-            return _serializer.ToJson(result);
-        }
 
         static void Main(string[] args)
-        {           
+        {
             var before = DateTime.Now;
 
-             var bootResult = Bootloader.Configure()
+            var bootResult = Bootloader.Configure(_ => _
                 .WithEntryAssembly(typeof(Program).Assembly)
                 .WithAssemblies(assemblies)
                 .SynchronousScheduling()
                 .UseLogAppender(new CustomLogAppender())
-                .Start();
+            ).Start();
 
             var container = bootResult.Container;
-
             var logger = container.Get<ILogger>();
             logger.Information("We're running");
 
             var after = DateTime.Now;
             var delta = after.Subtract(before);
+            logger.Information($"Took {delta} - to start");
 
             _serializer = container.Get<ISerializer>();
             _commandCoordinator = container.Get<ICommandCoordinator>();
@@ -224,10 +177,10 @@ namespace Basic
                 Dolittle.ResourceTypes.ResourceType r = new Dolittle.ResourceTypes.ResourceType();
                 var a = Artifact.New();
 
-                var propertyBag = new PropertyBag(new NullFreeDictionary<string, object> {});
+                var propertyBag = new PropertyBag(new NullFreeDictionary<string, object> { });
                 var sc = new Dolittle.Time.SystemClock();
 
-                var ls = new Dolittle.Globalization.LocalizationScope(System.Globalization.CultureInfo.InvariantCulture,System.Globalization.CultureInfo.InvariantCulture);
+                var ls = new Dolittle.Globalization.LocalizationScope(System.Globalization.CultureInfo.InvariantCulture, System.Globalization.CultureInfo.InvariantCulture);
 
                 var cr = new Dolittle.Runtime.Commands.CommandResult();
 
@@ -237,7 +190,7 @@ namespace Basic
 
                 var ad = new Dolittle.Artifacts.Configuration.ArtifactDefinition();
 
-                var cc = new Dolittle.ResourceTypes.Configuration.InvalidResourceTypeFound("");
+                var cc = new Dolittle.ResourceTypes.Configuration.MissingResourceConfigurationForTenant(TenantId.Unknown);
 
                 var ac = new Dolittle.Applications.Configuration.Area();
 
@@ -251,10 +204,47 @@ namespace Basic
 
                 var rr = new Dolittle.Rules.RuleContext();
 
-                var bc = new Dolittle.Configuration.Bindings(null,null,null);
+                var bc = new Dolittle.Configuration.NameAttribute("");
+
+                var fex = new Dolittle.Configuration.Files.MultipleParsersForConfigurationFile("");
 
                 var cs = new Dolittle.Concepts.Serialization.Json.ConceptConverter();
+
+                var dd = new Dolittle.DependencyInversion.Booting.MissingContainerProvider();
+
+                var rt = new Dolittle.ResourceTypes.ResourceType();
             }
+        }
+
+        public static ISerializer _serializer;
+        static ICommandCoordinator _commandCoordinator;
+        static IQueryCoordinator _queryCoordinator;
+
+        static IExecutionContextManager _executionContextManager;
+
+        public static string HandleCommand(object command)
+        {
+            _executionContextManager.CurrentFor(TenantId.Development);
+
+            var request = new CommandRequest(
+                CorrelationId.New(),
+                (ArtifactId) Guid.Parse("0889884d-ae6b-46a1-adc0-7bdcb11c19d3"),
+                1,
+                new Dictionary<string, object>()
+            );
+
+            var result = _commandCoordinator.Handle(request);
+            var jsonResult = _serializer.ToJson(result);
+            return jsonResult;
+        }
+
+        public static string GetAnimals()
+        {
+            _executionContextManager.CurrentFor(TenantId.Development);
+
+            var query = new MyQuery();
+            var result = _queryCoordinator.Execute(query, new PagingInfo());
+            return _serializer.ToJson(result);
         }
 
         static AssemblyName CreateAssemblyNameFor(string name, string version)
@@ -264,11 +254,11 @@ namespace Basic
             return assemblyName;
         }
 
-        static IEnumerable<AssemblyName> assemblies = new[] {
+        static IEnumerable<AssemblyName> assemblies = new []
+        {
             CreateAssemblyNameFor("Basic", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Artifacts", "2.0.0"),
             //CreateAssemblyNameFor("Dolittle.Dynamic", "2.0.0"),
-            CreateAssemblyNameFor("Dolittle.ResourceTypes", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Globalization", "2.0.0"),
             //CreateAssemblyNameFor("Dolittle.Immutability", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.PropertyBags", "2.0.0"),
@@ -276,18 +266,19 @@ namespace Basic
             CreateAssemblyNameFor("Dolittle.Time", "2.0.0"),
 
             CreateAssemblyNameFor("Dolittle.Applications", "2.0.0"),
-            
+
             CreateAssemblyNameFor("Dolittle.Assemblies", "2.0.0"),
-            CreateAssemblyNameFor("Dolittle.Bootstrapping", "2.0.0"),
+            CreateAssemblyNameFor("Dolittle.Booting", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Collections", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Configuration", "2.0.0"),
+            CreateAssemblyNameFor("Dolittle.Configuration.Files", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Concepts", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Concepts.Serialization.Json", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.DependencyInversion", "2.0.0"),
-            CreateAssemblyNameFor("Dolittle.DependencyInversion.Bootstrap", "2.0.0"),
+            CreateAssemblyNameFor("Dolittle.DependencyInversion.Booting", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.DependencyInversion.Conventions", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.DependencyInversion.Autofac", "2.0.0"),
-            
+
             CreateAssemblyNameFor("Dolittle.Execution", "2.0.0"),
 
             CreateAssemblyNameFor("Dolittle.SDK.Applications.Configuration", "2.0.0"),
@@ -297,13 +288,14 @@ namespace Basic
             CreateAssemblyNameFor("Dolittle.SDK.Artifacts.Configuration", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.SDK.Commands.Handling", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.SDK.Domain", "2.0.0"),
-            
+
             CreateAssemblyNameFor("Dolittle.Lifecycle", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Logging", "2.0.0"),
-            
+
             CreateAssemblyNameFor("Dolittle.Reflection", "2.0.0"),
+            CreateAssemblyNameFor("Dolittle.ResourceTypes", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.ResourceTypes.Configuration", "2.0.0"),
-            
+
             CreateAssemblyNameFor("Dolittle.Runtime.Applications.Configuration", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Runtime.Commands", "2.0.0"),
             CreateAssemblyNameFor("Dolittle.Runtime.Commands.Coordination", "2.0.0"),

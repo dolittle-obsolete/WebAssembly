@@ -21,7 +21,7 @@ namespace Basic
         };
         
         public ResourceType Type => "eventStore";
-        public ResourceTypeImplementation ImplementationName => "IndexedDb";
+        public ResourceTypeImplementation ImplementationName => "IndexedDB";
         public Type ConfigurationObjectType => typeof(EventStoreConfiguration);
         public IDictionary<Type, Type> Bindings => _bindings;
     }    
