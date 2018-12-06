@@ -77,10 +77,16 @@ namespace Basic
         {
         }
 
-        public Commits Fetch(EventSourceId eventSourceId)
+        public Commits Fetch(EventSourceKey eventSourceKey)
         {
             return new Commits(new CommittedEventStream[0]);
         }
+
+        public Commits FetchFrom(EventSourceKey eventSourceKey, CommitVersion commitVersion)
+        {
+            return new Commits(new CommittedEventStream[0]);
+        }
+
 
         public Commits FetchAllCommitsAfter(CommitSequenceNumber commit)
         {
@@ -97,17 +103,13 @@ namespace Basic
             return new SingleEventTypeEventStream(new CommittedEventEnvelope[0]);
         }
 
-        public Commits FetchFrom(EventSourceId eventSourceId, CommitVersion commitVersion)
-        {
-            return new Commits(new CommittedEventStream[0]);
-        }
 
-        public EventSourceVersion GetCurrentVersionFor(EventSourceId eventSource)
+        public EventSourceVersion GetCurrentVersionFor(EventSourceKey eventSourceKey)
         {
             return new EventSourceVersion(0,0);
         }
 
-        public EventSourceVersion GetNextVersionFor(EventSourceId eventSource)
+        public EventSourceVersion GetNextVersionFor(EventSourceKey eventSourceKey)
         {
             return new EventSourceVersion(0,0);
         }
