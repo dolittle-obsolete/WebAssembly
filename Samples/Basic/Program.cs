@@ -39,6 +39,8 @@ Issues to register
 - Specs for SDK Build tool is a mess - clean it up
 
 
+- Resource configurations - drop the IConfigurationFor<> - we can do this with bindings - singleton per tenant
+
 
 - ASP.NET AppExtensions - Something fishy about the whole setup of BootProcedures and also "ContainerReady"..  Fix!!
 
@@ -58,6 +60,9 @@ Issues to register
 - Look at formalizing a boot stage just for resources
 
 
+- Configuration error messages when elements aren't fulfilled - constructor thing
+
+- Configuration schema ? - Validate against
 
 
 - Tenant needs to be set
@@ -67,6 +72,8 @@ Issues to register
 - Tenant-map.json - loader needs some attention
 
 - Tenants file should be just a key / value of tenant and configuration, not a "tenants" property
+
+- When no tenant-map is configured - the default should just apply the Developer tenant
 
 
 
