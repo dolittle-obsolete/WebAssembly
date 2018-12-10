@@ -29,7 +29,7 @@
                       DestinationFileName="mono-wasm.zip" 
                       SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/1384/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
                       
-        <Exec Command="7z e mono-wasm.zip -owasm -y" Condition="$(OS) == 'Windows_NT'"/>
+        <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
 
         <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
 
