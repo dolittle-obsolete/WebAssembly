@@ -96,7 +96,7 @@ namespace Dolittle.WebAssembly.Packager
 
             filesToCopy.AddRange(importedFiles.Distinct());
 
-            filesToCopy.Add(Path.Combine(paths.Sdk, "debug", "mono.js"));
+            //filesToCopy.Add(Path.Combine(paths.Sdk, "debug", "mono.js"));
             filesToCopy.Add(Path.Combine(paths.Sdk, "debug", "mono.wasm"));
             filesToCopy.Add(Path.Combine(paths.Sdk, "debug", "mono.wasm.map"));
             filesToCopy.Add(Path.Combine(paths.Sdk, "debug", "mono.wast"));
@@ -122,6 +122,17 @@ namespace Dolittle.WebAssembly.Packager
             File.WriteAllText(monoConfigPath,
                 $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: 0, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
             );
+
+            var monoJsSource = Path.Combine(paths.Sdk, "debug", "mono.js");
+            var monoJsDestination = Path.Combine(outputPath, "mono.js");
+            var monoJs = File.ReadAllText(monoJsSource);
+            monoJs = monoJs.Replace("this.mono_wasm_runtime_is_ready=true;debugger","this.mono_wasm_runtime_is_ready=true;");
+            monoJs = monoJs.Replace(
+"  			this.mono_wasm_runtime_is_ready = true;\n"+
+"  			debugger;\n",
+"  			this.mono_wasm_runtime_is_ready = true;\n");
+
+            File.WriteAllText(monoJsDestination, monoJs);
         }
 
         static void Import(AssemblyPaths paths, string file, HashSet<string> files)
