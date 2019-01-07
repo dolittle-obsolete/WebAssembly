@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Dolittle.WebAssembly.Packager
+namespace Dolittle.Interaction.WebAssembly.Packager
 {
     /// <summary>
     /// Represents something that knows about all the assembly paths
@@ -11,15 +11,14 @@ namespace Dolittle.WebAssembly.Packager
         /// <summary>
         /// Initialize a new instance of <see cref="AssemblyPaths"/>
         /// </summary>
-        /// <param name="sdkPath">Base path for the WASM SDK</param>
-        /// <param name="root">The root path generating from - typically your bin/release or bin/debug</param>
-        public AssemblyPaths(string sdkPath, string root)
+        /// <param name="configuration">The current configuration</param>
+        public AssemblyPaths(Configuration configuration)
         {
-            Sdk = sdkPath;
+            Sdk = configuration.SdkRoot;
             Bcl = Path.Combine(Sdk, "wasm-bcl", "wasm");
             Framework = Path.Combine(Sdk, "framework");
             Facades = Path.Combine(Bcl, "Facades");
-            Root = root;
+            Root = Path.GetDirectoryName(configuration.EntryAssemblyPath);
             SearchPaths = new string[] {
                 Sdk,
                 Bcl,
@@ -74,6 +73,5 @@ namespace Dolittle.WebAssembly.Packager
         /// Gets all the search paths used
         /// </summary>
         public IEnumerable<string> SearchPaths { get; }
-
     }
 }

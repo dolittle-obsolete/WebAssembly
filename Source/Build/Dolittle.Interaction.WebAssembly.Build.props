@@ -5,7 +5,5 @@
         <WasmFrameworkPath>$(WasmPath)/framework</WasmFrameworkPath>
         <WasmPackager>dotnet &quot;$(WasmPath)/Dolittle.Interaction.WebAssembly.Packager.dll&quot;</WasmPackager>
         <WasmOutput>./publish</WasmOutput>
-
-        <ArtifactsEmbedder>dotnet &quot;$(WasmPath)/Dolittle.Interaction.WebAssembly.ArtifactsEmbedder.dll&quot;</ArtifactsEmbedder>
     </PropertyGroup>
 </Project>
