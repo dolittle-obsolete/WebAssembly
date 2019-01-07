@@ -117,7 +117,7 @@ namespace Dolittle.WebAssembly.Packager
             }
 
             var assembliesFilePath = Path.Combine(outputPath, "assemblies.json");
-            var fileList = string.Join(",\n\t\t", assemblies.Select(_ => $"'{_}'").ToArray());
+            var fileList = string.Join(",\n\t\t", assemblies.Select(_ => $"\"{_}\"").ToArray());
             File.WriteAllText(assembliesFilePath, $"[\n\t\t{fileList}\n]");
 
             var monoConfigPath = Path.Combine(outputPath, "mono-config.js");
