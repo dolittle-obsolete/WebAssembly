@@ -1,10 +1,9 @@
 {
-  "modules": [],
-  "features": [
-    {
-      "feature": "f045d942-8fcc-4d0e-bdb5-06acc9955a10",
-      "name": "MyFeature",
-      "subFeatures": []
+    "modules": {},
+    "features": {
+        "f045d942-8fcc-4d0e-bdb5-06acc9955a10": {
+            "name": "MyFeature",
+            "subFeatures": {}
+        }
     }
-  ]
 }
