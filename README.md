@@ -1,5 +1,14 @@
 # Dolittle WebAssembly Interaction Layer
 
+## TEMPORARY
+
+When releasing package from locally:
+
+```shell
+$ export APPVEYOR_BUILD_NUMBER=<build number>
+```
+
+
 ## Cloning
 
 This repository has sub modules, clone it with:
