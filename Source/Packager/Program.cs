@@ -116,9 +116,11 @@ namespace Dolittle.WebAssembly.Packager
                 File.Copy(file, destination, true);
             }
 
-            var monoConfigPath = Path.Combine(outputPath, "mono-config.js");
-
+            var assembliesFilePath = Path.Combine(outputPath, "assemblies.json");
             var fileList = string.Join(",\n\t\t", assemblies.Select(_ => $"'{_}'").ToArray());
+            File.WriteAllText(assembliesFilePath, $"[\n\t\t{fileList}\n]");
+
+            var monoConfigPath = Path.Combine(outputPath, "mono-config.js");
             File.WriteAllText(monoConfigPath,
                 $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: 0, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
             );
