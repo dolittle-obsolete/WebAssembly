@@ -26,11 +26,12 @@ namespace Dolittle.Interaction.WebAssembly
         {
             var name = $"{assembly.GetName().Name}.assemblies.json";
             var manifestResourceNames = assembly.GetManifestResourceNames();
-            System.Console.WriteLine($"{name} - {manifestResourceNames.Length}");
+            System.Console.WriteLine($"Looking for {name} - there are {manifestResourceNames.Length} resources");
             manifestResourceNames.ForEach(System.Console.WriteLine);
 
-            if( !manifestResourceNames.Any(_ => _ == name) ) 
+            if( !manifestResourceNames.Any(_ => _.Trim() == name) ) 
             {
+                System.Console.WriteLine("No assemblies found");
                 Libraries = new Library[0];
                 return;
             }
@@ -39,10 +40,10 @@ namespace Dolittle.Interaction.WebAssembly
             using( var reader = new StreamReader(resource) ) 
             {
                 var json = reader.ReadToEnd();
+
                 var assemblies = JsonConvert.DeserializeObject<string[]>(json);
                 Libraries = assemblies
-                    .Where(_ => Path.GetExtension(_).ToLowerInvariant() == ".dll")
-                    .Select(_ => new Library("Package", Path.GetFileNameWithoutExtension(_), "1.0.0", string.Empty, new Dependency[0], false)).Distinct().ToArray();
+                    .Select(_ => new Library("Package", _, "1.0.0", string.Empty, new Dependency[0], false)).Distinct().ToArray();
             }
         }
 
