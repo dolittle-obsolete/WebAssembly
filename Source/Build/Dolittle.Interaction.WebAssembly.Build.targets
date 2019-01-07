@@ -20,7 +20,8 @@
     </ItemGroup>
 
   <Target Name="ArtifactsAfterBuild" AfterTargets="AfterBuild">
-    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmOutput) --copy=always --out=$(WasmOutput) --debug --debugrt"/>
+    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmOutput)"/>
+    <Exec Command="$(ArtifactsEmbedder) $(TargetPath) $(DolittleBoundedContextConfigPath) $(WasmOutput)"/>
     <Copy SourceFiles="$(MSBuildThisFileDirectory)/../artifacts/index.html" DestinationFolder="$(WasmOutput)"/>
   </Target>   
 </Project>  
