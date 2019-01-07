@@ -1,9 +1,11 @@
 {
     "interaction": {
+        "enabled": false,
         "port": 50054,
         "unixSocket": "/var/run/dolittle.interaction.server.sock"
     },
     "management": {
+        "enabled": false,
         "port": 50055,
         "unixSocket": "/var/run/dolittle.management.server.sock"
     }
