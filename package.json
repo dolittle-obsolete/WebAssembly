@@ -2,7 +2,8 @@
     "private": true,
     "workspaces": [
         "Samples/Basic",
-        "Source/Client"
+        "Source/Client",
+        "Source/Client.Aurelia"
     ],
     "scripts": {
         "build": "gulp build"
