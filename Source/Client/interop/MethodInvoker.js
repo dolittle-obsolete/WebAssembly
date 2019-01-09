@@ -1,14 +1,15 @@
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-const invokeMethod = '[Dolittle.Interaction.WebAssembly] Dolittle.Interaction.WebAssembly.Interop:InvokeMethod';
+const invokeMethod = '[Dolittle.Interaction.WebAssembly.Interop] Dolittle.Interaction.WebAssembly.Interop.MethodInvoker:Invoke';
 let invokeMethodBinding = null;
 
 /**
  * Represents interop object for a .net CLR type
  */
-export class Interop {
+export class MethodInvoker {
     
     #type;
 

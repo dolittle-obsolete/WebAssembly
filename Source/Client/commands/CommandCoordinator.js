@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Command, CommandRequest } from '@dolittle/commands';
-import { Interop } from '../Interop';
+import { MethodInvoker } from '../interop/MethodInvoker';
 
 
 /**
@@ -16,7 +16,7 @@ export class CommandCoordinator {
      * Initializes a new instance of {CommandCoordinator}
      */
     constructor() {
-        this.#interop = new Interop("Dolittle.Interaction.WebAssembly.Commands.CommandCoordinator");
+        this.#interop = new MethodInvoker("Dolittle.Interaction.WebAssembly.Commands.CommandCoordinator");
     }
  
     /**
