@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../../Build/MSBuild/default.props" />
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Dolittle.Interaction.WebAssembly</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../**/*.csproj" Exclude="../AggregatedPackage/SDK.csproj;../Build/Build.csproj;../Packager/Packager.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Dolittle.SDK" Version="2.*" />
+    </ItemGroup>
+</Project>
+
