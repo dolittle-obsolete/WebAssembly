@@ -1,6 +1,6 @@
 {
-  "name": "@dolittle/webassembly.client",
-  "version": "1.0.9",
+  "name": "@dolittle/webassembly",
+  "version": "1.0.0",
   "description": "",
   "publishConfig": {
     "access": "public"
