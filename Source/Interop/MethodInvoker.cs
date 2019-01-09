@@ -9,18 +9,17 @@ using Dolittle.DependencyInversion;
 using Dolittle.Serialization.Json;
 using Dolittle.Types;
 
-namespace Dolittle.Interaction.WebAssembly
+namespace Dolittle.Interaction.WebAssembly.Interop
 {
     /// <summary>
-    /// 
+    /// Represents a system that is capable of invoking methods on types
     /// </summary>
-    public class Interop
+    public class MethodInvoker
     {
         static IContainer _container;
         static ISerializer _serializer;
         static ITypeFinder _typeFinder;
         
-
         internal static void Initialize(IContainer container)
         {
             _container = container;
@@ -29,16 +28,20 @@ namespace Dolittle.Interaction.WebAssembly
         }
 
         /// <summary>
-        /// 
+        /// Invoke a method
         /// </summary>
-        /// <param name="typeName"></param>
-        /// <param name="methodName"></param>
-        /// <param name="argumentsAsJson"></param>
-        /// <returns></returns>
-        public static string InvokeMethod(string typeName, string methodName, string argumentsAsJson)
+        /// <param name="typeName">Full typename of type to invoke on - not the assembly qualified name, but the namespace+type</param>
+        /// <param name="methodName">Name of the method to invoke</param>
+        /// <param name="argumentsAsJson">Serialized arguments - expecting a serialized array of arguments that are each serialized as JSON</param>
+        /// <returns>JSON serialized representation of the result</returns>
+        /// <remarks>
+        /// The invoker will do a best effort on type discovery and also on deserialization of any arguments. It does this by deserializing to the
+        /// parameter type of the matching parameter by index of the argument list coming in.
+        /// 
+        /// Note: There is some overhead in doing the serialization, it is therefor not recommended call this from tight inner lops
+        /// </remarks>
+        public static string Invoke(string typeName, string methodName, string argumentsAsJson)
         {
-            Console.WriteLine($"CallMethodOnType : {typeName}, {methodName}, {argumentsAsJson}");
-
             var type = _typeFinder.FindTypeByFullName(typeName);
             var instance = _container.Get(type);
             var method = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);

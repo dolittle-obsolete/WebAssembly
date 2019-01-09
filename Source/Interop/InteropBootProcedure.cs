@@ -6,10 +6,11 @@ using Dolittle.Booting;
 using Dolittle.DependencyInversion;
 using Dolittle.Logging;
 
-namespace Dolittle.Interaction.WebAssembly
+namespace Dolittle.Interaction.WebAssembly.Interop
 {
     /// <summary>
-    /// 
+    /// Represents the <see cref="ICanPerformBootProcedure">boot procedure</see> that will 
+    /// initialize the interop system
     /// </summary>
     public class InteropBootProcedure : ICanPerformBootProcedure
     {
@@ -34,7 +35,7 @@ namespace Dolittle.Interaction.WebAssembly
         public void Perform()
         {
             _logger.Trace("Initializing WebAssembly Client Interop");
-            Interop.Initialize(_container);
+            MethodInvoker.Initialize(_container);
         }
     }
 }

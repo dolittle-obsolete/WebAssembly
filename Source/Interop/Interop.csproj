@@ -3,7 +3,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <AssemblyName>Dolittle.Interaction.WebAssembly</AssemblyName>
+        <AssemblyName>Dolittle.Interaction.WebAssembly.Interop</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
