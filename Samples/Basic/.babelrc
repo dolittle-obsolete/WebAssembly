@@ -1,5 +1,3 @@
 {
-    "presets": [
-      "./node_modules/@dolittle/build/.babelrc.js"
-    ]
-  }
+    "extends": "../../node_modules/@dolittle/build/.babelrc"
+}
