@@ -71,7 +71,6 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         {
             var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());
             var json = $"[{fileList}]";
-            Console.WriteLine($"==> Embedding json : {json}");
             var assembliesResource = new EmbeddedResource(
                 $"{assemblyDefinition.Name.Name}.assemblies.json",
                 ManifestResourceAttributes.Public,
