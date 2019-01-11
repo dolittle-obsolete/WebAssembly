@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../../Build/MSBuild/default.props" />
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Dolittle.Interaction.WebAssembly.Core</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Dolittle.SDK" Version="2.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Dolittle.Interaction.WebAssembly.Core.props" PackagePath="build\" />
+        <Content Include="Dolittle.Interaction.WebAssembly.Core.targets" PackagePath="build\" />
+        <Content Include="wasm\**\*" Exclude="wasm\**\*.nupkg" PackagePath="tools\mono\" />
+        <Compile Remove="wasm\**\*"/>
+    </ItemGroup>   
+
+    <Target Name="PreparePackageBinaries" BeforeTargets="GenerateNuspec">
+        <!--<DownloadFile DestinationFolder="." 
+                      DestinationFileName="mono-wasm.zip" 
+                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/1384/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>-->
+
+        <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
+        <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
+
+<!--
+        <Copy SourceFiles="wasm/wasm-bcl/wasm/System.Net.Http.dll" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/wasm-bcl/wasm/System.Net.Http.pdb" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/wasm-bcl/wasm/Facades/System.Runtime.dll" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/framework/WebAssembly.Bindings.dll" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/framework/WebAssembly.Bindings.pdb" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/framework/WebAssembly.Net.Http.dll" DestinationFolder="Binaries"/>
+        <Copy SourceFiles="wasm/framework/WebAssembly.Net.Http.pdb" DestinationFolder="Binaries"/>
+-->
+    </Target>
+</Project>
+

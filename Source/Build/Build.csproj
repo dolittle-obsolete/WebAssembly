@@ -9,30 +9,21 @@
         <DefaultItemExcludes>wasm\**\*</DefaultItemExcludes>
     </PropertyGroup>
 
-
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />        
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
         <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
         <Content Include="Dolittle.Interaction.WebAssembly.Build.props" PackagePath="build\" />
         <Content Include="Dolittle.Interaction.WebAssembly.Build.targets" PackagePath="build\" />
-        <Content Include="index.html" PackagePath="artifacts\" />
-        <Content Include="wasm\**\*" Exclude="wasm\**\*.nupkg" PackagePath="tools\mono\" />
-        <Compile Remove="wasm\**\*"/>
+        <Content Include="tools\**\*" Exclude="tools\**\*.nupkg" PackagePath="tools\" />
+        <Compile Remove="tools\**\*"/>
     </ItemGroup>   
     
     <Target Name="PreparePackageBinaries" BeforeTargets="GenerateNuspec">
-        <DownloadFile DestinationFolder="." 
-                      DestinationFileName="mono-wasm.zip" 
-                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/1384/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
-                      
-        <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
-
-        <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
-
-        <Exec Command="dotnet publish -o $(ProjectDir)\wasm -c $(Configuration)" WorkingDirectory="..\Packager"/>
+        <Exec Command="dotnet publish -o $(ProjectDir)\tools -c $(Configuration)" WorkingDirectory="..\Packager"/>
     </Target>
 </Project>

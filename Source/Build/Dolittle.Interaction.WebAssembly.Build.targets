@@ -1,26 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-    <ItemGroup>
-        <Reference Include="System.Net.Http">
-            <HintPath>$(WasmBCLPath)/System.Net.Http.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="System.Runtime">
-            <HintPath>$(WasmBCLPath)/Facades/System.Runtime.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="WebAssembly.Bindings">
-            <HintPath>$(WasmFrameworkPath)/WebAssembly.Bindings.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="WebAssembly.Net.Http">
-            <HintPath>$(WasmFrameworkPath)/WebAssembly.Net.Http.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-    </ItemGroup>
-
   <Target Name="ArtifactsAfterBuild" AfterTargets="AfterBuild">
-    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmOutput) $(DolittleBoundedContextConfigPath)"/>
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)/../artifacts/index.html" DestinationFolder="$(WasmOutput)"/>
+    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmPath) $(WasmOutput) $(DolittleBoundedContextConfigPath)"/>
   </Target>   
 </Project>  

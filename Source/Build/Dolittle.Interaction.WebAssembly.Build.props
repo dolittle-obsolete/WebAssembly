@@ -1,9 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="TaskFolder;TaskAssembly">
     <PropertyGroup>
-        <WasmPath>$(MSBuildThisFileDirectory)../tools/mono</WasmPath>
-        <WasmBCLPath>$(WasmPath)/wasm-bcl/wasm</WasmBCLPath>
-        <WasmFrameworkPath>$(WasmPath)/framework</WasmFrameworkPath>
-        <WasmPackager>dotnet &quot;$(WasmPath)/Dolittle.Interaction.WebAssembly.Packager.dll&quot;</WasmPackager>
+        <WasmPackager>dotnet &quot;$(MSBuildThisFileDirectory)../tools/Dolittle.Interaction.WebAssembly.Packager.dll&quot;</WasmPackager>
         <WasmOutput>./publish</WasmOutput>
     </PropertyGroup>
 </Project>

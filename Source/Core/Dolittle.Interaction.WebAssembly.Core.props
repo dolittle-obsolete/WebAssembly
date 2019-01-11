@@ -1,0 +1,8 @@
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="TaskFolder;TaskAssembly">
+    <PropertyGroup>
+        <WasmPath>$(MSBuildThisFileDirectory)../tools/mono</WasmPath>
+        <WasmBCLPath>$(WasmPath)/wasm-bcl/wasm</WasmBCLPath>
+        <WasmFrameworkPath>$(WasmPath)/framework</WasmFrameworkPath>
+    </PropertyGroup>
+</Project>
