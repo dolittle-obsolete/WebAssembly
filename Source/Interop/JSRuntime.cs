@@ -46,7 +46,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
                 var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
                 var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
-                jsRuntime.Invoke("beginInvoke", taskId.ToString(), identifier); //, serializedArguments);
+                jsRuntime.Invoke("beginInvoke", taskId.ToString(), identifier, serializedArguments);
                 return taskCompletionSource.Task;
             }
             catch
