@@ -33,44 +33,47 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             _serializer = serializer;
         }
 
+
         /// <inheritdoc/>
         public Task<T> Invoke<T>(string identifier, params object[] arguments)
         {
-            var taskId = Guid.NewGuid();
+            var invocationId = Guid.NewGuid();
             var taskCompletionSource = new TaskCompletionSource<T>();
             var taskCompletionSourceWrapper = new TaskCompletionSourceWrapper(typeof(T), taskCompletionSource);
-            _pendingTasks[taskId] = taskCompletionSourceWrapper;
+            _pendingTasks[invocationId] = taskCompletionSourceWrapper;
 
             try
             {
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
                 var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
                 var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
-                jsRuntime.Invoke("beginInvoke", taskId.ToString(), identifier, serializedArguments);
+                jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);
                 return taskCompletionSource.Task;
             }
             catch
             {
-                _pendingTasks.TryRemove(taskId, out _);
+                _pendingTasks.TryRemove(invocationId, out _);
                 throw;
             }
         }
 
 
         /// <inheritdoc/>
-        public void EndInvoke(Guid taskId, bool success, string resultOrException)
+        public void Succeeded(Guid invocationId, string resultAsJson)
         {
             TaskCompletionSourceWrapper taskCompletionSourceWrapper;
-            if(!_pendingTasks.TryRemove(taskId, out taskCompletionSourceWrapper) ) throw new InvalidPendingTask(taskId);
+            if(!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper) ) throw new InvalidPendingTask(invocationId);
 
-            if( success )
-            {
-                var result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultOrException);
-                taskCompletionSourceWrapper.SetResult(result);
-            } else
-            {
-                taskCompletionSourceWrapper.SetException(new JSException(resultOrException));
-            }
+            var result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
+            taskCompletionSourceWrapper.SetResult(result);
+        }
+
+        /// <inheritdoc/>
+        public void Failed(Guid invocationId, string exception)
+        {
+            TaskCompletionSourceWrapper taskCompletionSourceWrapper;
+            if(!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper) ) throw new InvalidPendingTask(invocationId);
+            taskCompletionSourceWrapper.SetException(new JSException(exception));
         }
     }
 }
