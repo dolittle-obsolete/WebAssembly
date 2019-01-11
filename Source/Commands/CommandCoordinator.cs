@@ -58,7 +58,7 @@ namespace Dolittle.Interaction.WebAssembly.Commands
 
             var commandRequestKeyValues = _serializer.GetKeyValuesFromJson(json);
             var correlationId = Guid.Parse(commandRequestKeyValues["correlationId"].ToString());
-            _executionContextManager.CurrentFor(TenantId.Unknown, correlationId);
+            _executionContextManager.CurrentFor(TenantId.Development, correlationId);
 
             var content = _serializer.GetKeyValuesFromJson(commandRequestKeyValues["content"].ToString());
 
