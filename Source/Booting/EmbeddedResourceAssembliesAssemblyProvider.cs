@@ -26,12 +26,9 @@ namespace Dolittle.Interaction.WebAssembly.Booting
         {
             var name = $"{assembly.GetName().Name}.assemblies.json";
             var manifestResourceNames = assembly.GetManifestResourceNames();
-            System.Console.WriteLine($"Looking for {name} - there are {manifestResourceNames.Length} resources");
-            manifestResourceNames.ForEach(System.Console.WriteLine);
 
             if( !manifestResourceNames.Any(_ => _.Trim() == name) ) 
             {
-                System.Console.WriteLine("No assemblies found");
                 Libraries = new Library[0];
                 return;
             }

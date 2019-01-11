@@ -42,19 +42,11 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// </remarks>
         public static string Invoke(string typeName, string methodName, string argumentsAsJson)
         {
-            Console.WriteLine($"Calling '{methodName}' on '{typeName}' with '{argumentsAsJson}'");
-
             try
             {
-
                 var type = _typeFinder.FindTypeByFullName(typeName);
-                Console.WriteLine($"Type found : {type.AssemblyQualifiedName}");
-
                 var instance = _container.Get(type);
-
                 var method = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
-                
-                Console.WriteLine($"Method found : {method}");
 
                 var arguments = _serializer.FromJson<string[]>(argumentsAsJson);
                 var deserializedArguments = new List<object>();
@@ -67,9 +59,6 @@ namespace Dolittle.Interaction.WebAssembly.Interop
                     argument = argument.Replace("\\\"", "\"");
 
                     var parameter = parameters[parameterIndex];
-
-                    Console.WriteLine($"Parameter '{parameter.Name}' with Type '{parameter.ParameterType.Name}' - value '{argument}'");
-
                     if (parameter.ParameterType == typeof(string))
                     {
                         deserializedArguments.Add(argument);
@@ -95,9 +84,8 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception : "+ex);
-                return string.Empty;
-
+                Console.WriteLine($"Error trying to invoke '{methodName}' on '{typeName}' with '{argumentsAsJson}' \nexception {ex}");
+                throw ex;
             }
         }
     }
