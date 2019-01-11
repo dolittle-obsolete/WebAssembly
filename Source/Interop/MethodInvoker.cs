@@ -19,7 +19,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         static IContainer _container;
         static ISerializer _serializer;
         static ITypeFinder _typeFinder;
-        
+
         internal static void Initialize(IContainer container)
         {
             _container = container;
@@ -42,29 +42,63 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// </remarks>
         public static string Invoke(string typeName, string methodName, string argumentsAsJson)
         {
-            var type = _typeFinder.FindTypeByFullName(typeName);
-            var instance = _container.Get(type);
-            var method = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+            Console.WriteLine($"Calling '{methodName}' on '{typeName}' with '{argumentsAsJson}'");
 
-            var arguments = _serializer.FromJson<string[]>(argumentsAsJson);
-            var deserializedArguments = new List<object>();
-            var parameters = method.GetParameters();
-            for (var parameterIndex = 0; parameterIndex < parameters.Length; parameterIndex++)
+            try
             {
-                if (parameters[parameterIndex].ParameterType == typeof(string))
-                {
-                    deserializedArguments.Add(arguments[parameterIndex]);
-                }
-                else
-                {
-                    var deserializedArgument = _serializer.FromJson(parameters[parameterIndex].ParameterType, arguments[parameterIndex]);
-                    deserializedArguments.Add(deserializedArgument);
-                }
-            }
 
-            var result = method.Invoke(instance, deserializedArguments.ToArray());
-            var resultAsJson = _serializer.ToJson(result, SerializationOptions.CamelCase);
-            return resultAsJson;
+                var type = _typeFinder.FindTypeByFullName(typeName);
+                Console.WriteLine($"Type found : {type.AssemblyQualifiedName}");
+
+                var instance = _container.Get(type);
+
+                var method = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+                
+                Console.WriteLine($"Method found : {method}");
+
+                var arguments = _serializer.FromJson<string[]>(argumentsAsJson);
+                var deserializedArguments = new List<object>();
+                var parameters = method.GetParameters();
+                for (var parameterIndex = 0; parameterIndex < parameters.Length; parameterIndex++)
+                {
+                    var argument = arguments[parameterIndex];
+                    if( argument.IndexOf("\"") == 0 ) argument = argument.Substring(1);
+                    if( argument.IndexOf("\"") == argument.Length-1) argument = argument.Substring(0,argument.Length-1);
+                    argument = argument.Replace("\\\"", "\"");
+
+                    var parameter = parameters[parameterIndex];
+
+                    Console.WriteLine($"Parameter '{parameter.Name}' with Type '{parameter.ParameterType.Name}' - value '{argument}'");
+
+                    if (parameter.ParameterType == typeof(string))
+                    {
+                        deserializedArguments.Add(argument);
+                    }
+                    else if (parameter.ParameterType == typeof(Guid))
+                    {
+                        deserializedArguments.Add(Guid.Parse(argument));
+                    }
+                    else if( parameter.ParameterType == typeof(bool))
+                    {
+                        deserializedArguments.Add(bool.Parse(arguments[parameterIndex]));
+                    }
+                    else
+                    {
+                        var deserializedArgument = _serializer.FromJson(parameter.ParameterType, argument, SerializationOptions.CamelCase);
+                        deserializedArguments.Add(deserializedArgument);
+                    }
+                }
+
+                var result = method.Invoke(instance, deserializedArguments.ToArray());
+                var resultAsJson = _serializer.ToJson(result, SerializationOptions.CamelCase);
+                return resultAsJson;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : "+ex);
+                return string.Empty;
+
+            }
         }
     }
 }

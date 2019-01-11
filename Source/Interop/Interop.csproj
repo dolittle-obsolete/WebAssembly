@@ -8,5 +8,6 @@
 
     <ItemGroup>
         <PackageReference Include="Dolittle.SDK" Version="2.*" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
     </ItemGroup>
 </Project>
