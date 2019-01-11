@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../../Build/MSBuild/default.props" />
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Dolittle.ReadModels.MongoDB.WebAssembly</AssemblyName>
+        <WasmBuild>False</WasmBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MongoDB.Driver" Version="2.4.4" />
+        <PackageReference Include="Dolittle.Concepts" Version="2.*" />
+        <PackageReference Include="Dolittle.Runtime.ReadModels" Version="2.*" />
+        <PackageReference Include="Dolittle.ResourceTypes.Configuration" Version="2.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Interop\Interop.csproj" />
+    </ItemGroup>
+
+</Project>
