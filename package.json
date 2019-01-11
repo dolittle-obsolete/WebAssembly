@@ -3,7 +3,8 @@
     "workspaces": [
         "Samples/Basic",
         "Source/Client",
-        "Source/Client.Aurelia"
+        "Source/Client.Aurelia",
+        "Source/Client.WebPack"
     ],
     "scripts": {
         "build": "gulp build"
