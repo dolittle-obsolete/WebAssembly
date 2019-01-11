@@ -1,19 +1,24 @@
 {
-  "name": "basic",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node run.js & http-server -c-1 wwwroot"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@dolittle/build": "^1.0.0",
-    "@dolittle/build.aurelia": "^1.0.0",
-    "http-server": "^0.11.1"
-  },
-  "dependencies": {
-    "minimongo": "^5.0.1"
-  }
+    "name": "basic",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node run.js & http-server -c-1 wwwroot"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@dolittle/build.aurelia": "^3.2.1",
+        "http-server": "^0.11.1"
+    },
+    "dependencies": {
+        "@dolittle/booting": "^1.0.9",
+        "@dolittle/webassembly": "^1.0.0",
+        "@dolittle/webassembly.aurelia": "^1.0.0",
+        "@dolittle/webassembly.webpack": "^1.0.0",
+        
+        "minimongo": "^5.0.1"
+    }
 }
+
