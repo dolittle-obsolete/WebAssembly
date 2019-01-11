@@ -1,9 +1,7 @@
 {
     "445f8ea8-1a6f-40d7-b2fc-796dba92dc44": {
         "readModels": {
-            "host": "mongodb://localhost:27017",
-            "database": "read_model_database_for_Basic",
-            "useSSL": false
+            "database": "read_model_database_for_Basic"
         },
         "eventStore": {
         }

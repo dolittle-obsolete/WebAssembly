@@ -9,8 +9,8 @@
     "interaction": [],
     "resources": {
         "readModels": {
-            "production": "MongoDB",
-            "development": "MongoDB"
+            "production": "MiniMongo",
+            "development": "MiniMongo"
         },
         "eventStore": {
             "production": "IndexedDB",
