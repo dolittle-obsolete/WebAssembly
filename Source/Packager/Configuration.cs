@@ -20,10 +20,10 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         /// <param name="arguments">Command line arguments</param>
         public Configuration(string[] arguments)
         {
-            SdkRoot = Path.GetDirectoryName(typeof(Program).Assembly.Location);
             EntryAssemblyPath = arguments[0];
-            OutputPath = arguments[1];
-            BoundedContextFilePath = arguments[2];
+            SdkRoot = arguments[1];
+            OutputPath = arguments[2];
+            BoundedContextFilePath = arguments[3];
 
             ManagedOutputPath = Path.Combine(OutputPath, "managed");
 
