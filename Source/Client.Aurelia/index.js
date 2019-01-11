@@ -6,7 +6,7 @@ import { CommandCoordinator } from '@dolittle/commands';
 import { CommandCoordinator as WASMCommandCoordinator } from '@dolittle/webassembly/commands';
 import { QueryCoordinator } from '@dolittle/queries';
 import { QueryCoordinator as WASMQueryCoordinator } from '@dolittle/webassembly/queries';
-
+import { JSRuntime } from '@dolittle/webassembly/interop';
 
 export function configure(aurelia, config) {
     aurelia.container.registerInstance(CommandCoordinator, new WASMCommandCoordinator());
