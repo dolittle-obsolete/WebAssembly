@@ -25,7 +25,6 @@ const pendingTasks = {};
 
 function addInvocation(resolve, reject) {
     let invocationId = Guid.create();
-    console.log(`Adding invocation with id '${invocationId}'`)
 
     pendingTasks[invocationId] = {
         resolve: resolve,
@@ -36,19 +35,16 @@ function addInvocation(resolve, reject) {
 
 function throwIfInvalidPendingTask(invocationId) {
     if (!pendingTasks.hasOwnProperty(invocationId)) {
-        console.log(`No invocation with id '${invocationId}'`);
         InvalidPendingTask.throw(invocationId);
     }
 }
 window._dotNetRuntime = {};
 window._dotNetRuntime.succeeded = (invocationId, resultAsJson) => {
-    console.log(`Invocation '${invocationId}' succeeded`);
     throwIfInvalidPendingTask(invocationId);
     pendingTasks[invocationId].resolve(resultAsJson);
 };
 
 window._dotNetRuntime.failed = (invocationId, exception) => {
-    console.log(`Invocation '${invocationId}' failed`);
     throwIfInvalidPendingTask(invocationId);
     pendingTasks[invocationId].reject(exception);
 };

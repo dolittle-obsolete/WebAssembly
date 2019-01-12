@@ -33,7 +33,6 @@ export class JSRuntime {
             result.then(e => {
                 this.#invoker.invoke("Succeeded",[invocationId, e]);
             }).catch(e => {
-                console.log(`Failed invoking '${call}' - ${e}`);
                 this.#invoker.invoke("Failed",[invocationId, e]);
             });
         } else {

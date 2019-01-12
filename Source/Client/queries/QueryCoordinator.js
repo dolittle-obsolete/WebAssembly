@@ -28,7 +28,6 @@ export class QueryCoordinator {
         var promise = new Promise((resolve, reject) => {
             let request = QueryRequest.createFrom(query);
             this.#interop.beginInvoke("Execute", [request]).then(result => {
-                console.log(`Result from query : '${result}'`)
                 resolve(result);
             }).catch(exception => reject(exception));
         });

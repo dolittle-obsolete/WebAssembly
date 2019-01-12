@@ -53,7 +53,6 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         {
             try
             {
-                Console.WriteLine($"BeginInvoke {methodName} on {typeName} with {argumentsAsJson} - invocationId : {invocationId}");
                 var methodAndInstance = GetMethodAndInstanceOfType(typeName, methodName);
                 var deserializedArguments = DeserializeArguments(methodAndInstance.method, argumentsAsJson);
                 var task = methodAndInstance.method.Invoke(methodAndInstance.instance, deserializedArguments.ToArray()) as Task;
@@ -63,8 +62,6 @@ namespace Dolittle.Interaction.WebAssembly.Interop
                     {
                         var result = resultProperty.GetValue(t);
                         var serializedResult = SerializeResult(result);
-
-                        Console.WriteLine($"Invocation {invocationId} succeeded - continue on the client");
                         _dotNetRuntime.Invoke("succeeded", invocationId, serializedResult);
                     } else _dotNetRuntime.Invoke("succeeded", invocationId);
                 });
@@ -100,7 +97,6 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error trying to invoke '{methodName}' on '{typeName}' with '{argumentsAsJson}' \nexception {ex}");
                 throw ex;
             }
         }

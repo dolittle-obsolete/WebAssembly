@@ -74,9 +74,9 @@ namespace Dolittle.Interaction.WebAssembly.Queries
         /// </summary>
         /// <param name="queryRequest"></param>
         /// <returns></returns>
-        public Task<QueryResult> Execute(QueryRequest queryRequest)
+        public async Task<QueryResult> Execute(QueryRequest queryRequest)
         {
-            var taskCompletionSource = new TaskCompletionSource<QueryResult>();
+            QueryResult result = null;
           
             try
             {
@@ -88,24 +88,22 @@ namespace Dolittle.Interaction.WebAssembly.Queries
                 PopulateProperties(queryRequest, queryType, query);
 
                 _logger.Trace($"Executing runtime query coordinator");
-                _queryCoordinator.Execute(query, new PagingInfo()).ContinueWith(t => {
-                    _logger.Trace("Result");
-                    if (t.Result.Success) AddClientTypeInformation(t.Result);
-                    _logger.Trace("Client information added - done");
-                    taskCompletionSource.SetResult(t.Result);
-                });
+                result = await _queryCoordinator.Execute(query, new PagingInfo());
+
+                if (result.Success) AddClientTypeInformation(result);
+
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error executing query : '{queryRequest.NameOfQuery}'");
-                taskCompletionSource.SetResult(new QueryResult
+                result = new QueryResult
                 {
                     Exception = ex,
                     QueryName = queryRequest.NameOfQuery
-                });
+                };
             }
 
-            return taskCompletionSource.Task;
+            return result;
         }
 
         void AddClientTypeInformation(QueryResult result)
