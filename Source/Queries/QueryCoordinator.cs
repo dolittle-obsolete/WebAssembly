@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Dolittle.Artifacts;
 using Dolittle.Concepts;
 using Dolittle.DependencyInversion;
@@ -73,9 +74,10 @@ namespace Dolittle.Interaction.WebAssembly.Queries
         /// </summary>
         /// <param name="queryRequest"></param>
         /// <returns></returns>
-        public QueryResult Execute(QueryRequest queryRequest)
+        public Task<QueryResult> Execute(QueryRequest queryRequest)
         {
-            QueryResult queryResult = null;
+            var taskCompletionSource = new TaskCompletionSource<QueryResult>();
+          
             try
             {
                 _executionContextManager.CurrentFor(TenantId.Development, Dolittle.Execution.CorrelationId.New(), ClaimsPrincipal.Current.ToClaims());
@@ -85,20 +87,25 @@ namespace Dolittle.Interaction.WebAssembly.Queries
 
                 PopulateProperties(queryRequest, queryType, query);
 
-                queryResult = _queryCoordinator.Execute(query, new PagingInfo());
-                if (queryResult.Success) AddClientTypeInformation(queryResult);
+                _logger.Trace($"Executing runtime query coordinator");
+                _queryCoordinator.Execute(query, new PagingInfo()).ContinueWith(t => {
+                    _logger.Trace("Result");
+                    if (t.Result.Success) AddClientTypeInformation(t.Result);
+                    _logger.Trace("Client information added - done");
+                    taskCompletionSource.SetResult(t.Result);
+                });
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error executing query : '{queryRequest.NameOfQuery}'");
-                queryResult = new QueryResult
+                taskCompletionSource.SetResult(new QueryResult
                 {
                     Exception = ex,
                     QueryName = queryRequest.NameOfQuery
-                };
+                });
             }
 
-            return queryResult;
+            return taskCompletionSource.Task;
         }
 
         void AddClientTypeInformation(QueryResult result)
