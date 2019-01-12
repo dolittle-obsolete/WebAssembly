@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Query, QueryRequest } from '@dolittle/queries';
-import { MethodInvoker } from '../interop/MethodInvoker';
+import { DotNetRuntime } from '../interop/DotNetRuntime';
 
 
 /**
@@ -16,7 +16,7 @@ export class QueryCoordinator {
      * Initializes a new instance of {CommandCoordinator}
      */
     constructor() {
-        this.#interop = new MethodInvoker("Dolittle.Interaction.WebAssembly.Queries.QueryCoordinator");
+        this.#interop = new DotNetRuntime("Dolittle.Interaction.WebAssembly.Queries.QueryCoordinator");
     }
  
     /**
@@ -27,8 +27,10 @@ export class QueryCoordinator {
     execute(query) {
         var promise = new Promise((resolve, reject) => {
             let request = QueryRequest.createFrom(query);
-            let result = this.#interop.invoke("Execute", [request]);
-            resolve(result);
+            this.#interop.beginInvoke("Execute", [request]).then(result => {
+                console.log(`Result from query : '${result}'`)
+                resolve(result);
+            }).catch(exception => reject(exception));
         });
         return promise;
     }
