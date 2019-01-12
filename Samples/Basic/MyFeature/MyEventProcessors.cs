@@ -10,12 +10,12 @@ namespace Basic.MyFeature
     public class MyEventProcessors : ICanProcessEvents
     {
         readonly ILogger _logger;
-        //readonly IReadModelRepositoryFor<Animal> _repository;
+        readonly IReadModelRepositoryFor<Animal> _repository;
 
-        public MyEventProcessors(ILogger logger) //, IReadModelRepositoryFor<Animal> repository)
+        public MyEventProcessors(ILogger logger, IReadModelRepositoryFor<Animal> repository)
         {
             _logger = logger;
-            //_repository = repository;
+            _repository = repository;
         }
 
         [EventProcessor("0b519add-ae77-40a9-bc9b-30f014e8a186")]

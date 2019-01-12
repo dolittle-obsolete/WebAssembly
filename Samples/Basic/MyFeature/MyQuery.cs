@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebAssembly;
-using Dolittle.ReadModels;
-using Dolittle.Queries;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Dolittle.Interaction.WebAssembly.Interop;
+using Dolittle.Queries;
+using Dolittle.ReadModels;
+using WebAssembly;
 
 namespace Basic.MyFeature
 {
@@ -26,18 +27,22 @@ _repository = repository;
             _jsRuntime = jsRuntime;
         }
 
-
-        public IQueryable<Animal> Query //=> _repository.Query;
+        public Task<IQueryable<Animal>> Query //=> _repository.Query;
         {
             get
             {
-                var task = _jsRuntime.Invoke<IEnumerable<Animal>>("window.mongoDb.getAllAnimals");
-                task.Wait();
+                var tcs = new TaskCompletionSource<IQueryable<Animal>>();
+                _jsRuntime.Invoke<IEnumerable<Animal>>("window.mongoDb.getAllAnimals").ContinueWith(result =>
+                {
+                    Console.WriteLine("Continuing");
+                    Console.WriteLine("Result : " + result.Result);
 
-                Console.WriteLine("Continuing");
-                var result = task.Result;
+                    tcs.SetResult(result.Result.AsQueryable());
+                });
 
-                Console.WriteLine("Result : "+result);
+                return tcs.Task;
+
+                //task.Wait();
 
                 /*
                 var window = (JSObject) WebAssembly.Runtime.GetGlobalObject("window");
@@ -57,7 +62,7 @@ _repository = repository;
 
                 //completion.Task.Wait();
                 //var result = completion.Task.Result as IEnumerable<Animal>;
-                return result.AsQueryable();
+                //return new Animal[0].AsQueryable(); // result.AsQueryable();
             }
 
         }
