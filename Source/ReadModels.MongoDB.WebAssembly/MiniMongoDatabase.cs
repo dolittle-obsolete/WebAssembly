@@ -2,6 +2,7 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dolittle.ResourceTypes.Configuration;
@@ -15,7 +16,9 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
     /// </summary>
     public class MiniMongoDatabase : IMongoDatabase
     {
-        readonly Configuration _configuration;
+        readonly IConfigurationFor<Configuration> _configuration;
+
+        Dictionary<string, object> _collections = new Dictionary<string, object>();
 
         /// <summary>
         /// Initializes a new instance of <see cref="MiniMongoDatabase"/>
@@ -23,7 +26,7 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <param name="configurationFor"></param>
         public MiniMongoDatabase(IConfigurationFor<Configuration> configurationFor)
         {
-            _configuration = configurationFor.Instance;
+            _configuration = configurationFor;
         }
 
         /// <inheritdoc/>
@@ -74,7 +77,11 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <inheritdoc/>
         public IMongoCollection<TDocument> GetCollection<TDocument>(string name, MongoCollectionSettings settings = null)
         {
-            throw new System.NotImplementedException();
+            if( _collections.ContainsKey(name)) return (IMongoCollection<TDocument>)_collections[name];
+            var collection = new MiniMongoCollection<TDocument>(_configuration);
+            _collections[name] = collection;
+            return collection;
+            
         }
 
         /// <inheritdoc/>
