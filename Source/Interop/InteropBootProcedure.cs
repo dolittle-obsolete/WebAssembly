@@ -35,7 +35,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         public void Perform()
         {
             _logger.Trace("Initializing WebAssembly Client Interop");
-            MethodInvoker.Initialize(_container);
+            DotNetRuntime.Initialize(_container);
         }
     }
 }

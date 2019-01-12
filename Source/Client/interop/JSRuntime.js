@@ -4,7 +4,7 @@ import { invoker } from "aurelia-framework";
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { MethodInvoker } from './MethodInvoker';
+import { DotNetRuntime } from './DotNetRuntime';
 
  /**
   * Represents the JavaScript runtime callable from .NET WebAssembly
@@ -16,7 +16,7 @@ export class JSRuntime {
      * Initializes a new instance of {JSRuntime}
      */
     constructor() {
-        this.#invoker = new MethodInvoker('Dolittle.Interaction.WebAssembly.Interop.IJSRuntime');
+        this.#invoker = new DotNetRuntime('Dolittle.Interaction.WebAssembly.Interop.IJSRuntime');
     }
 
     /**
@@ -33,6 +33,7 @@ export class JSRuntime {
             result.then(e => {
                 this.#invoker.invoke("Succeeded",[invocationId, e]);
             }).catch(e => {
+                console.log(`Failed invoking '${call}' - ${e}`);
                 this.#invoker.invoke("Failed",[invocationId, e]);
             });
         } else {

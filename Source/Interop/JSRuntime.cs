@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Dolittle.Lifecycle;
+using Dolittle.Logging;
 using Dolittle.Serialization.Json;
 using WebAssembly;
 
@@ -23,14 +24,17 @@ namespace Dolittle.Interaction.WebAssembly.Interop
     {
         readonly ConcurrentDictionary<Guid, TaskCompletionSourceWrapper> _pendingTasks = new ConcurrentDictionary<Guid, TaskCompletionSourceWrapper>();
         readonly ISerializer _serializer;
+        readonly ILogger _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serializer"></param>
-        public JSRuntime(ISerializer serializer)
+        /// <param name="logger"></param>
+        public JSRuntime(ISerializer serializer, ILogger logger)
         {
             _serializer = serializer;
+            _logger = logger;
         }
 
 
@@ -47,14 +51,16 @@ namespace Dolittle.Interaction.WebAssembly.Interop
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
                 var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
                 var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
-                jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);
-                return taskCompletionSource.Task;
+                jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);               
             }
-            catch
+            catch( Exception ex )
             {
+                _logger.Error(ex, $"Error invoking {identifier}");
                 _pendingTasks.TryRemove(invocationId, out _);
-                throw;
+                taskCompletionSource.SetException(ex);
             }
+
+            return taskCompletionSource.Task;
         }
 
 

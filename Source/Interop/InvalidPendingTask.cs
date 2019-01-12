@@ -15,8 +15,8 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// <summary>
         /// Initializes a new instance of <see cref="InvalidPendingTask"/>
         /// </summary>
-        /// <param name="taskId">Id of task that is invalid</param>
-        public InvalidPendingTask(Guid taskId) : base($"Task with id '{taskId}' is not a pending task")
+        /// <param name="invocationId">Id of task that is invalid</param>
+        public InvalidPendingTask(Guid invocationId) : base($"Invocation with id '{invocationId}' is not a pending task")
         {
         }
     }
