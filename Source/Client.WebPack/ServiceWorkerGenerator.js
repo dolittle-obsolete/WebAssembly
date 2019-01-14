@@ -15,7 +15,7 @@ function getSortedFiles(output, items, fileStartsWith) {
     return filteredSorted;
 }
 
-class ServiceWorkerGenerator {
+export class ServiceWorkerGenerator {
     apply(compiler) {
         compiler.hooks.afterEmit.tap('ServiceWorkerGenerator', compilation => {
             let root = process.cwd();
@@ -52,5 +52,3 @@ class ServiceWorkerGenerator {
         });
     }
 }
-
-module.exports = ServiceWorkerGenerator;
