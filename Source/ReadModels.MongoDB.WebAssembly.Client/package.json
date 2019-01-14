@@ -1,0 +1,43 @@
+{
+  "name": "@dolittle/readmodels.mongodb.webassembly",
+  "version": "1.0.1",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/commonjs/index.js",
+  "module": "dist/esmodule/index.js",
+  "jspm": {
+    "registry": "npm",
+    "jspmPackage": true,
+    "format": "amd",
+    "main": "index",
+    "directories": {
+      "dist": "dist/systemjs"
+    },
+    "dependencies": {
+      "minimongo": "^5.0.1"
+    }
+  },
+  "scripts": {
+    "build": "gulp build",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dolittle-extensions/ReadModels.MongoDB.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dolittle-extensions/ReadModels.MongoDB/issues"
+  },
+  "homepage": "https://github.com/dolittle-extensions/ReadModels.MongoDB#readme",
+  "dependencies": {
+    "minimongo": "^5.0.1"
+  },
+  "devDependencies": {},
+  "files": [
+    "dist"
+  ]
+}
