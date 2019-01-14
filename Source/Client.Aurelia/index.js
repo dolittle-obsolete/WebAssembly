@@ -6,6 +6,7 @@ import { CommandCoordinator } from '@dolittle/commands';
 import { CommandCoordinator as WASMCommandCoordinator } from '@dolittle/webassembly/commands';
 import { QueryCoordinator } from '@dolittle/queries';
 import { QueryCoordinator as WASMQueryCoordinator } from '@dolittle/webassembly/queries';
+import { MongoDB } from '@dolittle/readmodels.mongodb.webassembly';
 import { JSRuntime } from '@dolittle/webassembly/interop';
 
 export function configure(aurelia, config) {
@@ -46,4 +47,6 @@ export function configure(aurelia, config) {
     if (config.offline === true) {
         navigator.serviceWorker.register('service-worker.js');
     }
+
+    window._mongoDB = new MongoDB();
 }

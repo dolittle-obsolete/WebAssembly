@@ -17,7 +17,8 @@
     },
     "dependencies": {
       "@dolittle/commands": "^1.0.12",
-      "@dolittle/queries": "^1.0.14"
+      "@dolittle/queries": "^1.0.14",
+      "@dolittle/readmodels.mongodb.webassembly": "^1.0.0"
     }
   },
   "scripts": {
@@ -36,7 +37,8 @@
   "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
   "dependencies": {
     "@dolittle/commands": "^1.0.12",
-    "@dolittle/queries": "^1.0.14"
+    "@dolittle/queries": "^1.0.14",
+    "@dolittle/readmodels.mongodb.webassembly": "^1.0.0"
   },
   "devDependencies": {},
   "files": [
