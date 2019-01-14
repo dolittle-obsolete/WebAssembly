@@ -20,12 +20,23 @@ export class JSRuntime {
     }
 
     /**
+     * Perform invocation on JavaScript side
+     * @param {string} identifier Fully qualified identifier for the call to make
+     * @param {string} argumentsAsJson Arguments as serialized JSON array
+     */
+    invoke(identifier, argumentsAsJson) {
+        let call = `${identifier}(${argumentsAsJson.substr(1,argumentsAsJson.length-2)})`;
+        eval(call);
+    }
+
+    /**
      * Begin invocation on JavaScript side
      * @param {string} invocationId The unique identifier for the invocation
      * @param {string} identifier Fully qualified identifier for the call to make
      * @param {string} argumentsAsJson Arguments as serialized JSON array
      */
     beginInvoke(invocationId, identifier, argumentsAsJson) {
+        console.log(`Invocation '${identifier}' with '${argumentsAsJson}'`)
         let call = `${identifier}(${argumentsAsJson.substr(1,argumentsAsJson.length-2)})`;
         let result = eval(call);
         
