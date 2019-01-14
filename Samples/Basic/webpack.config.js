@@ -1,6 +1,6 @@
 const config = require('@dolittle/build.aurelia/webpack.config.js')();
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ServiceWorkerGenerator = require('@dolittle/webassembly.webpack/ServiceWorkerGenerator');
+const { ServiceWorkerGenerator } = require('@dolittle/webassembly.webpack');
 
 config.entry = {
     app: ['@babel/polyfill', 'aurelia-bootstrapper'],
