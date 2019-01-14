@@ -41,14 +41,14 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <inheritdoc/>
         public async Task Delete(T readModel)
         {
-            var objectId = GetObjectIdFrom(readModel);
+            var objectId = readModel.GetObjectIdFrom();
             await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", objectId));
         }
 
         /// <inheritdoc/>
         public async Task<T> GetById(object id)
         {
-            var objectId = GetIdAsBsonValue(id);
+            var objectId = id.GetIdAsBsonValue();
 
             var result = await _collection.FindAsync(Builders<T>.Filter.Eq("_id", objectId));
             return result.FirstOrDefault();
@@ -64,33 +64,10 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <inheritdoc/>
         public async Task Update(T readModel)
         {
-            var id = GetObjectIdFrom(readModel);
+            var id = readModel.GetObjectIdFrom();
 
             var filter = Builders<T>.Filter.Eq("_id", id);
             await _collection.ReplaceOneAsync(filter, readModel, new UpdateOptions() { IsUpsert = true });
-        }
-
-        BsonValue GetObjectIdFrom(T entity)
-        {
-            var propInfo = GetIdProperty(entity);
-            object id = propInfo.GetValue(entity);
-
-            return GetIdAsBsonValue(id);
-        }
-
-        BsonValue GetIdAsBsonValue(object id)
-        {
-            var idVal = id;
-            if (id.IsConcept())
-                idVal = id.GetConceptValue();
-
-            var idAsValue = BsonValue.Create(idVal);
-            return idAsValue;
-        }
-
-        PropertyInfo GetIdProperty(T entity)
-        {
-            return typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.Name.ToLowerInvariant()== "id").First();
         }
     }
 }
