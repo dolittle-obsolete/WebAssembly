@@ -4,7 +4,8 @@
         "Samples/Basic",
         "Source/Client",
         "Source/Client.Aurelia",
-        "Source/Client.WebPack"
+        "Source/Client.WebPack",
+        "Source/ReadModels.MongoDB.WebAssembly.Client"
     ],
     "scripts": {
         "build": "gulp build"

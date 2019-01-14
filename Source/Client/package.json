@@ -17,8 +17,8 @@
     },
     "dependencies": {
       "@dolittle/commands": "^1.0.12",
-      "@dolittle/queries": "^1.0.14",
-      "minimongo": "^5.0.1"
+      "@dolittle/core": "^1.0.5",
+      "@dolittle/queries": "^1.0.14"
     }
   },
   "scripts": {
@@ -38,8 +38,7 @@
   "dependencies": {
     "@dolittle/commands": "^1.0.12",
     "@dolittle/core": "^1.0.5",
-    "@dolittle/queries": "^1.0.14",
-    "minimongo": "^5.0.1"
+    "@dolittle/queries": "^1.0.14"
   },
   "devDependencies": {},
   "files": [

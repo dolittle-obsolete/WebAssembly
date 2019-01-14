@@ -34,9 +34,6 @@ _repository = repository;
                 var tcs = new TaskCompletionSource<IQueryable<Animal>>();
                 _jsRuntime.Invoke<IEnumerable<Animal>>("window.mongoDb.getAllAnimals").ContinueWith(result =>
                 {
-                    Console.WriteLine("Continuing");
-                    Console.WriteLine("Result : " + result.Result);
-
                     tcs.SetResult(result.Result.AsQueryable());
                 });
 

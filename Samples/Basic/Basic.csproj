@@ -40,6 +40,7 @@
         
         <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="2.*" />
         <!--<PackageReference Include="Dolittle.Interaction.WebAssembly" Version="2.*" />-->
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.*" />
         <!--<PackageReference Include="Dolittle.Build" Version="2.*"/>-->
 
@@ -58,5 +59,6 @@
         <ProjectReference Include="../../Source/Interop/Interop.csproj"/>
         <ProjectReference Include="../../Source/Commands/Commands.csproj"/>
         <ProjectReference Include="../../Source/Queries/Queries.csproj"/>
+        <ProjectReference Include="../../Source/ReadModels.MongoDB.WebAssembly/ReadModels.MongoDB.WebAssembly.csproj"/>
     </ItemGroup>
 </Project>

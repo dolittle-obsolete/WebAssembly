@@ -16,9 +16,7 @@
         "@dolittle/booting": "^1.0.9",
         "@dolittle/webassembly": "^1.0.0",
         "@dolittle/webassembly.aurelia": "^1.0.0",
-        "@dolittle/webassembly.webpack": "^1.0.0",
-        
-        "minimongo": "^5.0.1"
+        "@dolittle/webassembly.webpack": "^1.0.0"
     }
 }
 

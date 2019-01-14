@@ -1,17 +1,31 @@
 import * as minimongo from 'minimongo';
+import { inject } from 'aurelia-framework'
+import { CommandCoordinator } from '@dolittle/commands';
+import { QueryCoordinator } from '@dolittle/queries';
 
+import { MyCommand } from './MyFeature/MyCommand';
+import { MyQuery } from './MyFeature/MyQuery';
+
+@inject(CommandCoordinator, QueryCoordinator)
 export class index {
+
     results = [];
     animals = [];
-    doc = {Species:'', Name:''};
+    doc = { Species: '', Name: '' };
 
-    constructor() {
+    #commandCoordinator;
+    #queryCoordinator;
+
+    constructor(commandCoordinator, queryCoordinator) {
+        this.#commandCoordinator = commandCoordinator;
+        this.#queryCoordinator = queryCoordinator;
+
 
         let IndexedDb = minimongo.IndexedDb;
         window.mongoDb = {};
 
-        window.mongoDb.database = new IndexedDb({namespace: "mydb"}, function() {
-            console.log("Hello : "+window.mongoDb.database);
+        window.mongoDb.database = new IndexedDb({ namespace: "mydb" }, function () {
+            //console.log("Hello : " + window.mongoDb.database);
             window.mongoDb.database.addCollection("animals", () => {
                 window.mongoDb.collection = window.mongoDb.database.animals;
 
@@ -30,8 +44,8 @@ export class index {
                 */
 
 
-                console.log("Hello : "+window.mongoDb.collection);
-            });           
+                //console.log("Hello : " + window.mongoDb.collection);
+            });
         });
 
         window.mongoDb.insert = (document) => {
@@ -40,57 +54,91 @@ export class index {
 
             window.mongoDb.database.animals.upsert(obj, () => {
                 console.log("upserted");
-    
+
             });
 
         };
 
-        window.mongoDb.getAllAnimals = (callback) => {
-            window.mongoDb.collection.find({}).fetch(results => {
-                callback(JSON.stringify(results));
-            });
-        }
-
-        /*
-        // Create IndexedDb
-        let db = new IndexedDb({namespace: "mydb"}, function() {
-            // Add a collection to the database
-            db.addCollection("animals", function() {
-                let doc = { species: "dog", name: "Bingo" };
-        
-                // Always use upsert for both inserts and modifies
-                db.animals.upsert(doc, function() {
-                    // Success:
-        
-                    // Query dog (with no query options beyond a selector)
-                    db.animals.findOne({ species:"dog" }, {}, function(res) {
-                        console.log("Dog's name is: " + res.name);
-                    });
+        window.mongoDb.getAllAnimals = () => {
+            let promise = new Promise(resolve => {
+                window.mongoDb.collection.find({}).fetch(results => {
+                    resolve(JSON.stringify(results));
                 });
             });
-        }, function() { alert("some error!"); });        
-        */
+            return promise;
+
+            /*
+            // Create IndexedDb
+            let db = new IndexedDb({namespace: "mydb"}, function() {
+                // Add a collection to the database
+                db.addCollection("animals", function() {
+                    let doc = { species: "dog", name: "Bingo" };
+            
+                    // Always use upsert for both inserts and modifies
+                    db.animals.upsert(doc, function() {
+                        // Success:
+            
+                        // Query dog (with no query options beyond a selector)
+                        db.animals.findOne({ species:"dog" }, {}, function(res) {
+                            console.log("Dog's name is: " + res.name);
+                        });
+                    });
+                });
+            }, function() { alert("some error!"); });        
+            */
+        }
     }
 
 
     perform() {
-        //alert("HELLO");
-        let result = JSON.parse(BINDING.call_static_method("[Basic] Basic.Program:HandleCommand",{ something: 42, somehingElse: 'someString'}));
-        console.log(result);
-
-        this.results.push(result);
+        let command = new MyCommand();
+        command.something = 42;
+        this.#commandCoordinator.handle(command).then(result => {
+            this.results.push(result);
+        });
     }
 
     populate() {
-        let result = JSON.parse(BINDING.call_static_method("[Basic] Basic.Program:GetAnimals", []));
+        let self = this;
+
+        this.animals = [];
+
+        let query = new MyQuery();
+        this.#queryCoordinator.execute(query).then(result => {
+            this.animals = result.items;
+        });
     }
 
 
     getData() {
-        window.mongoDb.database.animals.findOne({ Species:"Dog" }, {}, (res) => {
+        window.mongoDb.database.animals.findOne({ Species: "Dog" }, {}, (res) => {
             this.doc = res;
             //console.log("Dog's name is: " + res.Name);
         });
     }
 
+    goOffline() {
+
+        let link = document.createElement("link");
+        link.rel = 'manifest';
+        link.href = '/manifest.json';
+        document.head.appendChild(link);
+
+        navigator.serviceWorker.register('service-worker.js');
+
+    }
+
+    clearCache() {
+        caches.keys().then(names => {
+            for (let name of names)
+                caches.delete(name);
+        });
+
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+
+            for (let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
 }

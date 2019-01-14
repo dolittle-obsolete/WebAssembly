@@ -1,18 +1,18 @@
 using System;
+using Dolittle.Events.Processing;
 using Dolittle.Logging;
+using Dolittle.ReadModels;
 using Dolittle.Serialization.Json;
 using WebAssembly;
-using Dolittle.Events.Processing;
-using Dolittle.ReadModels;
 
 namespace Basic.MyFeature
 {
     public class MyEventProcessors : ICanProcessEvents
     {
         readonly ILogger _logger;
-        readonly IReadModelRepositoryFor<Animal> _repository;
+        readonly IAsyncReadModelRepositoryFor<Animal> _repository;
 
-        public MyEventProcessors(ILogger logger, IReadModelRepositoryFor<Animal> repository)
+        public MyEventProcessors(ILogger logger, IAsyncReadModelRepositoryFor<Animal> repository)
         {
             _logger = logger;
             _repository = repository;
@@ -22,13 +22,23 @@ namespace Basic.MyFeature
         public void Process(MyEvent @event)
         {
             _logger.Information("Event processed");
-            /*
-            var document = new Animal {
-                Species = "Dog",
-                Name = Guid.NewGuid().ToString()
-            };
 
-            _repository.Insert(document);*/
+            try
+            { 
+                var document = new Animal
+                {
+                    Species = "Dog",
+                    Name = Guid.NewGuid().ToString()
+                };
+
+                _repository.Insert(document);
+                _logger.Information("Inserted document");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Couldn't insert document ");
+
+            }
         }
     }
 }
