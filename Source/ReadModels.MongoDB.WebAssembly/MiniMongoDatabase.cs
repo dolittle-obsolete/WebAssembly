@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Dolittle.ResourceTypes.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Dolittle.Interaction.WebAssembly.Interop;
+using Dolittle.Logging;
 
 namespace Dolittle.ReadModels.MongoDB.WebAssembly
 {
@@ -16,17 +18,31 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
     /// </summary>
     public class MiniMongoDatabase : IMongoDatabase
     {
+        internal const string _globalObject = "window._mongoDB";
+
         readonly IConfigurationFor<Configuration> _configuration;
+        readonly IJSRuntime _jsRuntime;
+        readonly ILogger _logger;
 
         Dictionary<string, object> _collections = new Dictionary<string, object>();
+        
 
         /// <summary>
         /// Initializes a new instance of <see cref="MiniMongoDatabase"/>
         /// </summary>
         /// <param name="configurationFor"></param>
-        public MiniMongoDatabase(IConfigurationFor<Configuration> configurationFor)
+        /// <param name="jsRuntime"></param>
+        /// <param name="logger"></param>
+        public MiniMongoDatabase(
+            IConfigurationFor<Configuration> configurationFor,
+            IJSRuntime jsRuntime,
+            ILogger logger)
+            
         {
             _configuration = configurationFor;
+            _jsRuntime = jsRuntime;
+            _jsRuntime.Invoke($"{_globalObject}.initialize", configurationFor.Instance.Database);
+            _logger = logger;
         }
 
         /// <inheritdoc/>
@@ -78,8 +94,10 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         public IMongoCollection<TDocument> GetCollection<TDocument>(string name, MongoCollectionSettings settings = null)
         {
             if( _collections.ContainsKey(name)) return (IMongoCollection<TDocument>)_collections[name];
-            var collection = new MiniMongoCollection<TDocument>(_configuration);
+            var collection = new MiniMongoCollection<TDocument>(name, _configuration,_jsRuntime, _logger);
             _collections[name] = collection;
+
+            _jsRuntime.Invoke($"{_globalObject}.database.addCollection", name);
             return collection;
             
         }

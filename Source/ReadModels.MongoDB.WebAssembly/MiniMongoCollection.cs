@@ -5,7 +5,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dolittle.Interaction.WebAssembly.Interop;
+using Dolittle.Logging;
 using Dolittle.ResourceTypes.Configuration;
+using Dolittle.Serialization.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -19,14 +22,27 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
     public class MiniMongoCollection<T> : IMongoCollection<T>
     {
         readonly Configuration _configuration;
+        readonly string _collectionName;
+        readonly IJSRuntime _jsRuntime;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="MiniMongoDatabase"/>
         /// </summary>
+        /// <param name="collectionName"></param>
         /// <param name="configurationFor"></param>
-        public MiniMongoCollection(IConfigurationFor<Configuration> configurationFor)
+        /// <param name="jsRuntime"></param>
+        /// <param name="logger"></param>
+        public MiniMongoCollection(
+            string collectionName,
+            IConfigurationFor<Configuration> configurationFor,
+            IJSRuntime jsRuntime,
+            ILogger logger)
         {
             _configuration = configurationFor.Instance;
+            _collectionName = collectionName;
+            _jsRuntime = jsRuntime;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
@@ -209,13 +225,13 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <inheritdoc/>
         public Task InsertOneAsync(T document, CancellationToken _cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
         }
 
         /// <inheritdoc/>
         public Task InsertOneAsync(T document, InsertOneOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new System.NotImplementedException();
+            return _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
         }
 
         /// <inheritdoc/>
