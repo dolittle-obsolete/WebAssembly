@@ -17,7 +17,7 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
     public class ResourceTypeRepresentation : IRepresentAResourceType
     {
         static IDictionary<Type, Type> _bindings = new Dictionary<Type, Type>
-        { { typeof(IReadModelRepositoryFor<>), typeof(ReadModelRepositoryFor<>) }
+        { { typeof(IAsyncReadModelRepositoryFor<>), typeof(AsyncReadModelRepositoryFor<>) }
         };
 
         /// <inheritdoc/>
