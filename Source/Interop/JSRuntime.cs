@@ -37,10 +37,19 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             _logger = logger;
         }
 
+        /// <inheritdoc/>
+        public void Invoke(string identifier, params object[] arguments)
+        {
+            var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
+            var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
+            var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
+            jsRuntime.Invoke("invoke", identifier, serializedArguments);
+        }
 
         /// <inheritdoc/>
         public Task<T> Invoke<T>(string identifier, params object[] arguments)
         {
+            
             var invocationId = Guid.NewGuid();
             var taskCompletionSource = new TaskCompletionSource<T>();
             var taskCompletionSourceWrapper = new TaskCompletionSourceWrapper(typeof(T), taskCompletionSource);
@@ -49,6 +58,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             try
             {
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
+                _logger.Information($"BeginInvoke '{identifier}' with '{serializedArguments}");
                 var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
                 var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
                 jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);               

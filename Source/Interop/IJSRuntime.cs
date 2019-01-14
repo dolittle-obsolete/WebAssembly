@@ -13,6 +13,13 @@ namespace Dolittle.Interaction.WebAssembly.Interop
     public interface IJSRuntime
     {
         /// <summary>
+        /// Invoke a JavaScript function
+        /// </summary>
+        /// <param name="identifier">Fully qualified identifier of the function to call</param>
+        /// <param name="arguments">Arguments to pass</param>
+        void Invoke(string identifier, params object[] arguments);
+
+        /// <summary>
         /// Invoke an asynchronous function, typically based on async/await or promise/continuations
         /// </summary>
         /// <param name="identifier">Fully qualified identifier of the function to call</param>
