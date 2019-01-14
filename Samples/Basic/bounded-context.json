@@ -13,8 +13,8 @@
             "development": "MiniMongo"
         },
         "eventStore": {
-            "production": "IndexedDB",
-            "development": "IndexedDB"
+            "production": "InMemory",
+            "development": "InMemory"
         }
     }
 }

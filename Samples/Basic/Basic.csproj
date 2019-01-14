@@ -43,6 +43,7 @@
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.*" />
         <!--<PackageReference Include="Dolittle.Build" Version="2.*"/>-->
+        <PackageReference Include="Dolittle.Runtime.Events.InMemory" Version="2.*" />
 
 <!--
         <PackageReference Include="Uno.SQLitePCLRaw.provider.wasm" Version="2.0.0-dev.6" />
