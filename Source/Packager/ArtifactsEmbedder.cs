@@ -43,27 +43,33 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var dolittleDirectory = Path.Combine(Directory.GetCurrentDirectory(), ".dolittle");
             files.AddRange(Directory.GetFiles(dolittleDirectory));
 
-            var outputTarget = _configuration.EntryAssemblyPath;
-
+            var outputTarget = Path.Combine(_configuration.ManagedOutputPath, Path.GetFileName(_configuration.EntryAssemblyPath));
             Console.WriteLine($"Adding artifacts to '{outputTarget}'");
 
             var tempFile = $"{outputTarget}.temp";
-            using(var assemblyDefinition = AssemblyDefinition.ReadAssembly(outputTarget))
+
+
+            using( var stream = File.OpenRead(outputTarget) )
             {
-                foreach (var file in files.Where(File.Exists))
+                using(var assemblyDefinition = AssemblyDefinition.ReadAssembly(stream))
                 {
-                    var name = $"{assemblyDefinition.Name.Name}.{Path.GetFileName(file)}";
-                    Console.WriteLine($"  Adding resource '{name}'");
-                    var embeddedResource = new EmbeddedResource(name, ManifestResourceAttributes.Public, File.OpenRead(file));
-                    assemblyDefinition.MainModule.Resources.Add(embeddedResource);
+                    foreach (var file in files.Where(File.Exists))
+                    {
+                        var name = $"{assemblyDefinition.Name.Name}.{Path.GetFileName(file)}";
+                        Console.WriteLine($"  Adding resource '{name}'");
+                        var embeddedResource = new EmbeddedResource(name, ManifestResourceAttributes.Public, File.OpenRead(file));
+                        assemblyDefinition.MainModule.Resources.Add(embeddedResource);
+                    }
+
+                    AddAssembliesJson(assemblyDefinition);
+
+                    assemblyDefinition.Write(tempFile);
                 }
 
-                AddAssembliesJson(assemblyDefinition);
-
-                assemblyDefinition.Write(tempFile);
+                stream.Close();
             }
 
-            var attempts = 3;
+            var attempts = 5;
             do
             {
                 if (!IsLocked(outputTarget)) break;
