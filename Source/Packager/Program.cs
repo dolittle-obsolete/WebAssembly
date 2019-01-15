@@ -18,11 +18,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var paths = new AssemblyPaths(configuration);
             var managedFilesFileCopier = new FileCopier(configuration.ManagedOutputPath);
             var staticFilesFileCopier = new FileCopier(configuration.OutputPath);
-            
-
             var assemblies = new Assemblies(configuration, paths);
             var artifactsEmbedder = new ArtifactsEmbedder(configuration, assemblies);
-            artifactsEmbedder.Perform();
 
             managedFilesFileCopier.Copy(assemblies.AllImportedAssemblyPaths);
             managedFilesFileCopier.Copy(assemblies.AllImportedAssemblyDebugSymbolPaths);
@@ -57,6 +54,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
 "  			this.mono_wasm_runtime_is_ready = true;\n");
 
             File.WriteAllText(monoJsDestination, monoJs);
+
+            artifactsEmbedder.Perform();
         }
     }
 }

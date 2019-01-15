@@ -4,17 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 import { IndexedDb } from 'minimongo';
 
+window.CSUUID = function(input) {
+    return input;
+};
+
+
 /**
  * Represents a wrapper for the MiniMongo collection
  */
 export class Collection {
+    #name;
     #database;
 
     /**
      * Initializes a new instance of {Collection}
+     * @param {string} name The name of the collection
      * @param {IndexedDb} database The underlying database
      */
-    constructor(database) {
+    constructor(name, database) {
+        this.#name = name;
         this.#database = database;
     }
 
@@ -23,13 +31,44 @@ export class Collection {
      * @param {Any} document 
      */
     upsert(document) {
+
         let promise = new Promise((resolve, reject) => {
-            this.#database.upsert(document, () => {
-                resolve();
-            });
+            console.log(`Upsert ${document}`);
+            if( document.id ) document._id = document.id;
+
+            try {
+                this.#database[this.#name].upsert(document, () => {
+                    console.log(`Upserted`);
+                    resolve();
+                });
+            } catch (ex) {
+                console.log(`Exception ${ex}`);
+                reject(ex);
+            }
         });
         return promise;
     }
 
 
+    /**
+     * Find documents
+     * @param {*} selector Selector to use
+     * @param {*} options Options to use
+     */
+    find(selector, options) {
+        let actualSelector = eval(`actualSelector = ${selector}`);
+        
+        let promise = new Promise((resolve, reject) => {
+            this.#database[this.#name].find(actualSelector, options)
+                .fetch(result => {
+                    let resultAsJson = JSON.stringify(result);
+                    console.log(`Found ${resultAsJson}`);
+                    resolve(JSON.stringify(resultAsJson));
+                }, error => {
+                    console.log(`Error ${error}`);
+                    reject(error);
+                });
+        });
+        return promise;
+    }
 }

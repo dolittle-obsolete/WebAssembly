@@ -18,6 +18,8 @@ export class Database {
     constructor(databaseName) {
         this.#database = new IndexedDb({
             namespace: databaseName
+        }, () => {
+            console.log(`Database ${databaseName} is ready`);
         });
     }
 
@@ -26,9 +28,11 @@ export class Database {
      * @param {string} name Name of the collection
      */
     addCollection(name) {
-        this[name] = new Collection(this.#database);
+        console.log(`Add collection ${name}`);
+        this[name] = new Collection(name, this.#database);
 
         this.#database.addCollection(name, () => {
+            console.log(`Collection ${name} added`)
 
         });
     }

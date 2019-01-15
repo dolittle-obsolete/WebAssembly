@@ -2,6 +2,7 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,9 +13,11 @@ using Dolittle.Serialization.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 
 namespace Dolittle.ReadModels.MongoDB.WebAssembly
 {
+
     /// <summary>
     /// 
     /// </summary>
@@ -25,6 +28,7 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         readonly string _collectionName;
         readonly IJSRuntime _jsRuntime;
         private readonly ILogger _logger;
+        private readonly ISerializer _serializer;
 
         /// <summary>
         /// Initializes a new instance of <see cref="MiniMongoDatabase"/>
@@ -32,33 +36,41 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <param name="collectionName"></param>
         /// <param name="configurationFor"></param>
         /// <param name="jsRuntime"></param>
+        /// <param name="serializer"></param>
         /// <param name="logger"></param>
         public MiniMongoCollection(
             string collectionName,
             IConfigurationFor<Configuration> configurationFor,
             IJSRuntime jsRuntime,
+            ISerializer serializer,
             ILogger logger)
         {
             _configuration = configurationFor.Instance;
             _collectionName = collectionName;
             _jsRuntime = jsRuntime;
             _logger = logger;
+            _serializer = serializer;
         }
 
         /// <inheritdoc/>
-        public CollectionNamespace CollectionNamespace => throw new System.NotImplementedException();
+        public CollectionNamespace CollectionNamespace =>
+        throw new System.NotImplementedException();
 
         /// <inheritdoc/>
-        public IMongoDatabase Database => throw new System.NotImplementedException();
+        public IMongoDatabase Database =>
+        throw new System.NotImplementedException();
 
         /// <inheritdoc/>
-        public IBsonSerializer<T> DocumentSerializer => throw new System.NotImplementedException();
+        public IBsonSerializer<T> DocumentSerializer =>
+        throw new System.NotImplementedException();
 
         /// <inheritdoc/>
-        public IMongoIndexManager<T> Indexes => throw new System.NotImplementedException();
+        public IMongoIndexManager<T> Indexes =>
+        throw new System.NotImplementedException();
 
         /// <inheritdoc/>
-        public MongoCollectionSettings Settings => throw new System.NotImplementedException();
+        public MongoCollectionSettings Settings =>
+        throw new System.NotImplementedException();
 
         /// <inheritdoc/>
         public IAsyncCursor<TResult> Aggregate<TResult>(PipelineDefinition<T, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -265,9 +277,30 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         }
 
         /// <inheritdoc/>
-        public Task<IAsyncCursor<TProjection>> FindAsync<TProjection>(FilterDefinition<T> filter, FindOptions<T, TProjection> options = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IAsyncCursor<TProjection>> FindAsync<TProjection>(FilterDefinition<T> filter, FindOptions<T, TProjection> options = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new System.NotImplementedException();
+            var documentSerializer = BsonSerializer.SerializerRegistry.GetSerializer<T>();
+            var renderedFilter = filter.Render(documentSerializer, BsonSerializer.SerializerRegistry);
+            var filterAsJson = renderedFilter.ToJson();
+            _logger.Trace($"Finding with filter {filterAsJson}");
+            var result = await _jsRuntime.Invoke<string>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.find", filterAsJson);
+            _logger.Information($"Deserialize to projection type : {typeof(TProjection).AssemblyQualifiedName}");
+            _logger.Information($"Result to serialize '{result}'");
+
+            try
+            {
+                var deserialized = _serializer.FromJson<IEnumerable<TProjection>>(result);
+                _logger.Information("Create async result");
+                var asyncResult = new AsyncResult<TProjection>(deserialized);
+
+                return asyncResult;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "Error deserializing");
+                throw ex;
+            }
         }
 
         /// <inheritdoc/>
@@ -397,15 +430,15 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         }
 
         /// <inheritdoc/>
-        public Task InsertOneAsync(T document, CancellationToken _cancellationToken)
+        public async Task InsertOneAsync(T document, CancellationToken _cancellationToken)
         {
-            return _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
+            await _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
         }
 
         /// <inheritdoc/>
-        public Task InsertOneAsync(T document, InsertOneOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task InsertOneAsync(T document, InsertOneOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
+            await _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", document);
         }
 
         /// <inheritdoc/>
@@ -460,14 +493,14 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         public async Task<ReplaceOneResult> ReplaceOneAsync(FilterDefinition<T> filter, T replacement, UpdateOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             await _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", replacement);
-            return new ReplaceOneResult.Acknowledged(1,1,BsonValue.Create(0));
+            return new ReplaceOneResult.Acknowledged(1, 1, BsonValue.Create(0));
         }
 
         /// <inheritdoc/>
         public async Task<ReplaceOneResult> ReplaceOneAsync(IClientSessionHandle session, FilterDefinition<T> filter, T replacement, UpdateOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             await _jsRuntime.Invoke<object>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.upsert", replacement);
-            return new ReplaceOneResult.Acknowledged(1,1,BsonValue.Create(0));
+            return new ReplaceOneResult.Acknowledged(1, 1, BsonValue.Create(0));
         }
 
         /// <inheritdoc/>

@@ -41,15 +41,15 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         public void Invoke(string identifier, params object[] arguments)
         {
             var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
-            var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
-            var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
+            var window = (JSObject) global::WebAssembly.Runtime.GetGlobalObject("window");
+            var jsRuntime = (JSObject) window.GetObjectProperty("_jsRuntime");
             jsRuntime.Invoke("invoke", identifier, serializedArguments);
         }
 
         /// <inheritdoc/>
         public Task<T> Invoke<T>(string identifier, params object[] arguments)
         {
-            
+
             var invocationId = Guid.NewGuid();
             var taskCompletionSource = new TaskCompletionSource<T>();
             var taskCompletionSourceWrapper = new TaskCompletionSourceWrapper(typeof(T), taskCompletionSource);
@@ -59,11 +59,11 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             {
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
                 _logger.Information($"BeginInvoke '{identifier}' with '{serializedArguments}");
-                var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
-                var jsRuntime = (JSObject)window.GetObjectProperty("_jsRuntime");
-                jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);               
+                var window = (JSObject) global::WebAssembly.Runtime.GetGlobalObject("window");
+                var jsRuntime = (JSObject) window.GetObjectProperty("_jsRuntime");
+                jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
                 _logger.Error(ex, $"Error invoking {identifier}");
                 _pendingTasks.TryRemove(invocationId, out _);
@@ -73,14 +73,28 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             return taskCompletionSource.Task;
         }
 
-
         /// <inheritdoc/>
         public void Succeeded(Guid invocationId, string resultAsJson)
         {
             TaskCompletionSourceWrapper taskCompletionSourceWrapper;
-            if(!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper) ) throw new InvalidPendingTask(invocationId);
+            if (!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
 
-            var result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
+            if (resultAsJson.IndexOf("\"") == 0) resultAsJson = resultAsJson.Substring(1);
+            if (resultAsJson.IndexOf("\"") == resultAsJson.Length - 1) resultAsJson = resultAsJson.Substring(0, resultAsJson.Length - 1);
+            resultAsJson = resultAsJson.Replace("\\\"", "\"");
+            resultAsJson = resultAsJson.Replace("\\\"", "\"");
+
+            object result;
+            if (taskCompletionSourceWrapper.Type == typeof(string))
+            {
+                Console.WriteLine($"Succeeded with {resultAsJson}");
+                result = resultAsJson;
+            }
+            else
+            {
+                result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
+            }
+
             taskCompletionSourceWrapper.SetResult(result);
         }
 
@@ -88,7 +102,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         public void Failed(Guid invocationId, string exception)
         {
             TaskCompletionSourceWrapper taskCompletionSourceWrapper;
-            if(!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper) ) throw new InvalidPendingTask(invocationId);
+            if (!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
             taskCompletionSourceWrapper.SetException(new JSException(exception));
         }
     }

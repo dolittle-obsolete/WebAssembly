@@ -10,9 +10,50 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Dolittle.Interaction.WebAssembly.Interop;
 using Dolittle.Logging;
+using Dolittle.Booting;
+using Dolittle.DependencyInversion;
+using Dolittle.Execution;
+using Dolittle.Tenancy;
+using Dolittle.Serialization.Json;
 
 namespace Dolittle.ReadModels.MongoDB.WebAssembly
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class BootProcedure : ICanPerformBootProcedure
+    {
+        readonly IJSRuntime _jsRuntime;
+        private readonly IConfigurationFor<Configuration> _configurationFor;
+        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="executionContextManager"></param>
+        /// <param name="jsRuntime"></param>
+        public BootProcedure(
+            IContainer container,
+            IExecutionContextManager executionContextManager,
+            IJSRuntime jsRuntime)
+        {
+            _jsRuntime = jsRuntime;
+            
+            executionContextManager.CurrentFor(TenantId.Development);
+            _configurationFor = container.Get<IConfigurationFor<Configuration>>();
+        }
+
+        /// <inheritdoc/>
+        public bool CanPerform() => true;
+
+        /// <inheritdoc/>
+        public void Perform()
+        {
+            _jsRuntime.Invoke($"{MiniMongoDatabase._globalObject}.initialize", _configurationFor.Instance.Database);
+        }
+    }
+
     /// <summary>
     /// Represents an implementation of <see cref="IMongoDatabase"/> for working with MiniMongo
     /// </summary>
@@ -22,26 +63,29 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
 
         readonly IConfigurationFor<Configuration> _configuration;
         readonly IJSRuntime _jsRuntime;
+        private readonly ISerializer _serializer;
         readonly ILogger _logger;
 
         Dictionary<string, object> _collections = new Dictionary<string, object>();
-        
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="MiniMongoDatabase"/>
         /// </summary>
         /// <param name="configurationFor"></param>
         /// <param name="jsRuntime"></param>
+        /// <param name="serializer"></param>
         /// <param name="logger"></param>
         public MiniMongoDatabase(
             IConfigurationFor<Configuration> configurationFor,
             IJSRuntime jsRuntime,
+            ISerializer serializer,
             ILogger logger)
             
         {
             _configuration = configurationFor;
-            _jsRuntime = jsRuntime;
-            _jsRuntime.Invoke($"{_globalObject}.initialize", configurationFor.Instance.Database);
+            _jsRuntime = jsRuntime;            
+            _serializer = serializer;
             _logger = logger;
         }
 
@@ -130,7 +174,7 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         public IMongoCollection<TDocument> GetCollection<TDocument>(string name, MongoCollectionSettings settings = null)
         {
             if( _collections.ContainsKey(name)) return (IMongoCollection<TDocument>)_collections[name];
-            var collection = new MiniMongoCollection<TDocument>(name, _configuration,_jsRuntime, _logger);
+            var collection = new MiniMongoCollection<TDocument>(name, _configuration,_jsRuntime, _serializer, _logger);
             _collections[name] = collection;
 
             _jsRuntime.Invoke($"{_globalObject}.database.addCollection", name);

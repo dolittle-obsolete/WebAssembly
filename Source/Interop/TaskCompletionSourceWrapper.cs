@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dolittle.Interaction.WebAssembly.Interop
@@ -40,7 +41,9 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// <param name="exception"><see cref="Exception"/> to set</param>
         public void SetException(Exception exception)
         {
-            typeof(TaskCompletionSource<>).MakeGenericType(Type).GetMethod("SetException").Invoke(Instance, new[] { exception });
+            var setExceptionMethods = typeof(TaskCompletionSource<>).MakeGenericType(Type).GetMethods().Where(_ => _.Name == "SetException");
+            var method = setExceptionMethods.SingleOrDefault(_ => _.GetParameters()[0].ParameterType == typeof(Exception));
+            if( method != null ) method.Invoke(Instance, new[] { exception });
         }
 
         /// <summary>
