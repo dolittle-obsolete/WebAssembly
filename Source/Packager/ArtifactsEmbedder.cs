@@ -69,29 +69,9 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                 stream.Close();
             }
 
-            var attempts = 5;
-            do
-            {
-                if (!IsLocked(outputTarget)) break;
-                Console.WriteLine($"File is locked - retrying in 200ms - attempts left #{attempts}");
-                Thread.Sleep(200);
-                attempts--;
-            } while (attempts > 0);
-
             File.Delete(outputTarget);
             File.Move(tempFile, outputTarget);
 
-        }
-
-        bool IsLocked(string path)
-        {
-            try
-            {
-                File.OpenWrite(path).Close();
-                return false;
-            }
-
-            catch (Exception) { return true; }
         }
 
         void AddAssembliesJson(AssemblyDefinition assemblyDefinition)
