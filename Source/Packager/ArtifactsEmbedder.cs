@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Mono.Cecil;
 
 namespace Dolittle.Interaction.WebAssembly.Packager
@@ -62,9 +63,29 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                 assemblyDefinition.Write(tempFile);
             }
 
+            var attempts = 3;
+            do
+            {
+                if (!IsLocked(outputTarget)) break;
+                Console.WriteLine($"File is locked - retrying in 200ms - attempts left #{attempts}");
+                Thread.Sleep(200);
+                attempts--;
+            } while (attempts > 0);
+
             File.Delete(outputTarget);
             File.Move(tempFile, outputTarget);
 
+        }
+
+        bool IsLocked(string path)
+        {
+            try
+            {
+                File.OpenWrite(path).Close();
+                return false;
+            }
+
+            catch (Exception) { return true; }
         }
 
         void AddAssembliesJson(AssemblyDefinition assemblyDefinition)
