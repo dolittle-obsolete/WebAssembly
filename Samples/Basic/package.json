@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node run.js & http-server -c-1 wwwroot"
+        "start": "dotnet watch build & npx webpack --watch --progress & http-server -c-1 wwwroot"
     },
     "author": "",
     "license": "ISC",
