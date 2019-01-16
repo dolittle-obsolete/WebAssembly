@@ -282,22 +282,17 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
             var documentSerializer = BsonSerializer.SerializerRegistry.GetSerializer<T>();
             var renderedFilter = filter.Render(documentSerializer, BsonSerializer.SerializerRegistry);
             var filterAsJson = renderedFilter.ToJson();
-            _logger.Trace($"Finding with filter {filterAsJson}");
             var result = await _jsRuntime.Invoke<string>($"{MiniMongoDatabase._globalObject}.database.{_collectionName}.find", filterAsJson);
-            _logger.Information($"Deserialize to projection type : {typeof(TProjection).AssemblyQualifiedName}");
-            _logger.Information($"Result to serialize '{result}'");
 
             try
             {
                 var deserialized = _serializer.FromJson<IEnumerable<TProjection>>(result);
-                _logger.Information("Create async result");
                 var asyncResult = new AsyncResult<TProjection>(deserialized);
 
                 return asyncResult;
             }
             catch (Exception ex)
             {
-
                 _logger.Error(ex, "Error deserializing");
                 throw ex;
             }
