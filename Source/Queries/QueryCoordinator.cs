@@ -5,10 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dolittle.Artifacts;
+using Dolittle.Assemblies;
+using Dolittle.Collections;
 using Dolittle.Concepts;
 using Dolittle.DependencyInversion;
 using Dolittle.Dynamic;
@@ -81,7 +84,7 @@ namespace Dolittle.Interaction.WebAssembly.Queries
             try
             {
                 _executionContextManager.CurrentFor(TenantId.Development, Dolittle.Execution.CorrelationId.New(), ClaimsPrincipal.Current.ToClaims());
-                _logger.Information($"Executing query : {queryRequest.NameOfQuery}");
+
                 var queryType = _typeFinder.GetQueryTypeByName(queryRequest.GeneratedFrom);
                 var query = _container.Get(queryType) as IQuery;
 
