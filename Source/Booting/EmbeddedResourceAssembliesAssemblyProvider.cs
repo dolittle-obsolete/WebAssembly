@@ -10,9 +10,30 @@ using Dolittle.Assemblies;
 using Dolittle.Collections;
 using Microsoft.Extensions.DependencyModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Dolittle.Interaction.WebAssembly.Booting
 {
+
+    /// <summary>
+    /// EqualityComparer for <see cref="Library"/>
+    /// </summary>
+    public class LibraryComparer : IEqualityComparer<Library>
+    {
+        /// <inheritdoc/>
+        public bool Equals(Library x, Library y)
+        {
+            return x.Name.Equals(y.Name);
+        }
+
+        /// <inheritdoc/>
+        public int GetHashCode(Library obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
+
     /// <summary>
     /// Represents a <see cref="ICanProvideAssemblies">assembly provider</see> that will provide assemblies based on
     /// an embedded JSON file called 'assemblies.json' that holds an array of strings
@@ -24,7 +45,8 @@ namespace Dolittle.Interaction.WebAssembly.Booting
         /// </summary>
         public EmbeddedResourceAssembliesAssemblyProvider(Assembly assembly)
         {
-            var name = $"{assembly.GetName().Name}.assemblies.json";
+            var name = $"{assembly.GetName().Name}.libraries.json";
+            System.Console.WriteLine($"Using assemblies defined in resource : {name}");
             var manifestResourceNames = assembly.GetManifestResourceNames();
 
             if( !manifestResourceNames.Any(_ => _.Trim() == name) ) 
@@ -38,9 +60,25 @@ namespace Dolittle.Interaction.WebAssembly.Booting
             {
                 var json = reader.ReadToEnd();
 
-                var assemblies = JsonConvert.DeserializeObject<string[]>(json);
-                Libraries = assemblies
-                    .Select(_ => new Library("Package", _, "1.0.0", string.Empty, new Dependency[0], false)).Distinct().ToArray();
+                System.Console.WriteLine($"Libraries : {json}");
+
+
+                var libraries = JsonConvert.DeserializeObject<dynamic[]>(json);
+                libraries.ForEach(_ => {
+                    System.Console.WriteLine($"{_.Type.Value}");
+
+                });
+
+                var comparer = new LibraryComparer();
+
+                Libraries = libraries
+                    .Select(_ => new Library(
+                        _.Type.Value, 
+                        _.Name.Value, 
+                        _.Version.Value, 
+                        string.Empty,
+                        new Dependency[0], false))
+                    .Distinct(comparer).ToArray();
             }
         }
 

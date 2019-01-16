@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Mono.Cecil;
+using Newtonsoft.Json;
 
 namespace Dolittle.Interaction.WebAssembly.Packager
 {
@@ -62,6 +63,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                     }
 
                     AddAssembliesJson(assemblyDefinition);
+                    AddLibrariesJson(assemblyDefinition);
 
                     assemblyDefinition.Write(tempFile);
                 }
@@ -76,13 +78,29 @@ namespace Dolittle.Interaction.WebAssembly.Packager
 
         void AddAssembliesJson(AssemblyDefinition assemblyDefinition)
         {
+            var name = $"{assemblyDefinition.Name.Name}.assemblies.json";
+            Console.WriteLine($"  Adding resource '{name}'");
             var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());
             var json = $"[{fileList}]";
             var assembliesResource = new EmbeddedResource(
-                $"{assemblyDefinition.Name.Name}.assemblies.json",
+                name,
                 ManifestResourceAttributes.Public,
                 Encoding.UTF8.GetBytes(json));
             assemblyDefinition.MainModule.Resources.Add(assembliesResource);
         }
+
+        void AddLibrariesJson(AssemblyDefinition assemblyDefinition)
+        {
+            var name = $"{assemblyDefinition.Name.Name}.libraries.json";
+            Console.WriteLine($"  Adding resource '{name}'");
+            var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());           
+            var json = JsonConvert.SerializeObject(_assemblies.Libraries);
+            var assembliesResource = new EmbeddedResource(
+                name,
+                ManifestResourceAttributes.Public,
+                Encoding.UTF8.GetBytes(json));
+            assemblyDefinition.MainModule.Resources.Add(assembliesResource);
+        }
+
     }
 }

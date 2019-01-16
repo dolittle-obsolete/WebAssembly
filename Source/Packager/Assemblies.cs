@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Dolittle.Assemblies;
+using Dolittle.Collections;
+using Microsoft.Extensions.DependencyModel;
 using Mono.Cecil;
 
 namespace Dolittle.Interaction.WebAssembly.Packager
@@ -23,6 +25,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         IEnumerable<string> _rootAssemblyPaths;
         IEnumerable<string> _allImportedAssemblyPaths;
         IEnumerable<string> _allImportedAssemblyDebugSymbolPaths;
+        IEnumerable<Library> _libraries;
+        IAssemblyContext _assemblyContext;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Assemblies"/>
@@ -35,6 +39,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             _assemblyPaths = assemblyPaths;
             PopulateRootAssemblies();
             ImportAllAssemblies();
+            PopulateLibraries();
         }
 
         void ImportAllAssemblies()
@@ -56,6 +61,11 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         /// Gets all the root assemblies
         /// </summary>
         public IEnumerable<Assembly> RootAssemblies => _rootAssemblies;
+
+        /// <summary>
+        /// Gets all assemblies represented as <see cref="Library"/> - more metadata
+        /// </summary>
+        public IEnumerable<Library> Libraries => _libraries;
 
         /// <summary>
         /// Gets all the paths to all the root assemblies
@@ -115,8 +125,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var rootAssembly = Assembly.LoadFrom(_configuration.EntryAssemblyPath);
             _rootAssemblies.Add(rootAssembly);
 
-            var assemblyContext = new AssemblyContext(rootAssembly);
-            _rootAssemblies.AddRange(assemblyContext.GetReferencedAssemblies());
+            _assemblyContext = new AssemblyContext(rootAssembly);
+            _rootAssemblies.AddRange(_assemblyContext.GetReferencedAssemblies());
 
             _rootAssemblyPaths = _rootAssemblies.Select(_ =>
             {
@@ -131,5 +141,19 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             });
         }
 
+        void PopulateLibraries()
+        {
+            var projectAssemblies = _assemblyContext.GetProjectReferencedAssemblies();
+            var assemblyNames = _allImportedAssemblyPaths.Select(_ => Path.GetFileNameWithoutExtension(_));
+
+            _libraries = assemblyNames.Select(_ => new Library(
+                projectAssemblies.Any(a => a.GetName().Name == _)?"Project":"Package",
+                _,
+                "1.0.0",
+                string.Empty, 
+                new Dependency[0], 
+                false
+            ));
+        }
     }
 }

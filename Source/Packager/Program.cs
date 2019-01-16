@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Dolittle.Interaction.WebAssembly.Packager
 {
@@ -35,11 +36,15 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             managedFiles.AddRange(assemblies.AllImportedAssemblyPaths);
             managedFiles.AddRange(assemblies.AllImportedAssemblyDebugSymbolPaths);
 
+            var librariesFilePath = Path.Combine(configuration.OutputPath, "libraries.json");
+            File.WriteAllText(librariesFilePath, JsonConvert.SerializeObject(assemblies.Libraries, Formatting.Indented));
+
             var assembliesFilePath = Path.Combine(configuration.OutputPath, "assemblies.json");
             var fileList = string.Join(",\n\t\t", managedFiles.Select(_ => $"\"{Path.GetFileName(_)}\"").ToArray());
             File.WriteAllText(assembliesFilePath, $"[\n\t\t{fileList}\n]");
 
             var monoConfigPath = Path.Combine(configuration.OutputPath, "mono-config.js");
+            
             File.WriteAllText(monoConfigPath,
                 $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: 0, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
             );
