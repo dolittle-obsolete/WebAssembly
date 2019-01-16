@@ -24,7 +24,6 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// </summary>
         public AsyncResult(IEnumerable<T> result)
         {
-            Console.WriteLine("AsyncResult");
             _results = result;
         }
 
@@ -40,7 +39,6 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         /// <inheritdoc/>
         public bool MoveNext(CancellationToken cancellationToken = default(CancellationToken))
         {
-            Console.WriteLine("MoveNext");
             var canMove = _canMove;
             _canMove = false;
             return canMove;
