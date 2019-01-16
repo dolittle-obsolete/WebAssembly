@@ -18,7 +18,7 @@ using Dolittle.Queries;
 using System.Threading.Tasks;
 //using Microsoft.EntityFrameworkCore;
 using System.Threading;
-
+using Dolittle.Interaction.WebAssembly.Interop;
 
 namespace Basic
 {
@@ -38,6 +38,9 @@ namespace Basic
             var container = bootResult.Container;
             var logger = container.Get<ILogger>();
             logger.Information("We're running");
+
+            var interop = container.Get<IJSRuntime>();
+            interop.Invoke("window._dolittleLoaded");
 
             //SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_WebAssembly());
 

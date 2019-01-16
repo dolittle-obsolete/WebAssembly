@@ -10,7 +10,8 @@
     "license": "ISC",
     "devDependencies": {
         "@dolittle/build.aurelia": "^3.2.1",
-        "http-server": "^0.11.1"
+        "http-server": "^0.11.1",
+        "webpack-cli": "^3.2.1"
     },
     "dependencies": {
         "@dolittle/booting": "^1.0.9",
@@ -19,4 +20,3 @@
         "@dolittle/webassembly.webpack": "^1.0.0"
     }
 }
-
