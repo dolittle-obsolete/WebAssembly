@@ -46,7 +46,6 @@ namespace Dolittle.Interaction.WebAssembly.Booting
         public EmbeddedResourceAssembliesAssemblyProvider(Assembly assembly)
         {
             var name = $"{assembly.GetName().Name}.libraries.json";
-            System.Console.WriteLine($"Using assemblies defined in resource : {name}");
             var manifestResourceNames = assembly.GetManifestResourceNames();
 
             if( !manifestResourceNames.Any(_ => _.Trim() == name) ) 
@@ -59,15 +58,7 @@ namespace Dolittle.Interaction.WebAssembly.Booting
             using( var reader = new StreamReader(resource) ) 
             {
                 var json = reader.ReadToEnd();
-
-                System.Console.WriteLine($"Libraries : {json}");
-
-
                 var libraries = JsonConvert.DeserializeObject<dynamic[]>(json);
-                libraries.ForEach(_ => {
-                    System.Console.WriteLine($"{_.Type.Value}");
-
-                });
 
                 var comparer = new LibraryComparer();
 
