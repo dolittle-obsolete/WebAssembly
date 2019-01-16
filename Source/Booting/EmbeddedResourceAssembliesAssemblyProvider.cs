@@ -14,26 +14,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Dolittle.Interaction.WebAssembly.Booting
 {
-
-    /// <summary>
-    /// EqualityComparer for <see cref="Library"/>
-    /// </summary>
-    public class LibraryComparer : IEqualityComparer<Library>
-    {
-        /// <inheritdoc/>
-        public bool Equals(Library x, Library y)
-        {
-            return x.Name.Equals(y.Name);
-        }
-
-        /// <inheritdoc/>
-        public int GetHashCode(Library obj)
-        {
-            return obj.GetHashCode();
-        }
-    }
-
-
     /// <summary>
     /// Represents a <see cref="ICanProvideAssemblies">assembly provider</see> that will provide assemblies based on
     /// an embedded JSON file called 'assemblies.json' that holds an array of strings
