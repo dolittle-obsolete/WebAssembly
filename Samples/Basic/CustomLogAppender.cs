@@ -7,8 +7,8 @@ namespace Basic
     {
         public void Append(string filePath, int lineNumber, string member, LogLevel level, string message, Exception exception = null)
         {
-            if (exception != null) Console.WriteLine($"({filePath} - {member}[{lineNumber}]) - {level} - {message} - {exception.Message} - {exception.StackTrace}");
-            else Console.WriteLine($"({filePath} - {member}[{lineNumber}]) - {level} - {message}");
+            if (exception != null) Console.WriteLine($"{System.DateTime.UtcNow} - ({filePath} - {member}[{lineNumber}]) - {level} - {message} - {exception.Message} - {exception.StackTrace}");
+            else Console.WriteLine($"{System.DateTime.UtcNow} - ({filePath} - {member}[{lineNumber}]) - {level} - {message}");
         }
     }
 }
