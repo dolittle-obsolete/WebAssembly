@@ -1,5 +1,8 @@
 <template>
     <section class="index">
+        <div if.bind="isOffline">Offline</div>
+        <div else>Online</div>
+
         <div if.bind="loading">
             Loading
         </div>

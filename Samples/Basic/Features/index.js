@@ -21,13 +21,19 @@ export class index {
 
     loading = true;
 
+    isOffline = false;
+
     constructor(commandCoordinator, queryCoordinator) {
         this.#commandCoordinator = commandCoordinator;
         this.#queryCoordinator = queryCoordinator;
 
         window._dolittleLoaded = () => {
-            this.loading = false;¯
+            this.loading = false;
         };
+
+        navigator.serviceWorker.getRegistration().then((serviceWorker) => {
+            this.isOffline = serviceWorker ? true : false;
+        });
 
         let IndexedDb = minimongo.IndexedDb;
         window.mongoDb = {};        
@@ -131,8 +137,9 @@ export class index {
         link.href = '/manifest.json';
         document.head.appendChild(link);
 
-        navigator.serviceWorker.register('service-worker.js');
-
+        navigator.serviceWorker.register('service-worker.js').then(() => {
+            this.isOffline = true;
+        });
     }
 
     clearCache() {
@@ -146,6 +153,8 @@ export class index {
             for (let registration of registrations) {
                 registration.unregister();
             }
+
+            this.isOffline = false;
         });
     }
 }
