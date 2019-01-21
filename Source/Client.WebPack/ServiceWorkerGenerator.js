@@ -16,11 +16,21 @@ function getSortedFiles(output, items, fileStartsWith) {
 }
 
 export class ServiceWorkerGenerator {
+    #config;
+
+    constructor(config) {
+        if (config) {
+            this.#config = {
+                assembliesFileFolder: config.assembliesFileFolder || path.join(process.cwd(),'publish'),
+                outputFolder: config.outputFolder || path.join(process.cwd(),'wwwroot')
+            }
+        }
+    }
+
     apply(compiler) {
         compiler.hooks.afterEmit.tap('ServiceWorkerGenerator', compilation => {
-            let root = process.cwd();
-            let output = path.join(root, 'wwwroot');
-            let assembliesFile = path.join(root, 'publish', 'assemblies.json');
+            let output = this.#config.outputFolderr
+            let assembliesFile = path.join(this.#config.assembliesFileFolder, 'assemblies.json');
             let outputFile = path.join(output, serviceWorkerFile);
 
             fs.readFile(templateFile, (err, content) => {
