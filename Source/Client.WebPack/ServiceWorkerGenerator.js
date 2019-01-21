@@ -29,7 +29,7 @@ export class ServiceWorkerGenerator {
 
     apply(compiler) {
         compiler.hooks.afterEmit.tap('ServiceWorkerGenerator', compilation => {
-            let output = this.#config.outputFolderr
+            let output = this.#config.outputFolder;
             let assembliesFile = path.join(this.#config.assembliesFileFolder, 'assemblies.json');
             let outputFile = path.join(output, serviceWorkerFile);
 
