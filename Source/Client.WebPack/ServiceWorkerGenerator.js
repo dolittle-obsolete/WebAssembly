@@ -19,11 +19,14 @@ export class ServiceWorkerGenerator {
     #config;
 
     constructor(config) {
+        this.#config = {
+            assembliesFileFolder: path.join(process.cwd(),'publish'),
+            outputFolder: path.join(process.cwd(),'wwwroot')
+        };
+
         if (config) {
-            this.#config = {
-                assembliesFileFolder: config.assembliesFileFolder || path.join(process.cwd(),'publish'),
-                outputFolder: config.outputFolder || path.join(process.cwd(),'wwwroot')
-            }
+            this.#config.assembliesFileFolder = config.assembliesFileFolder || this.#config.assembliesFileFolder;
+            this.#config.outputFolder = config.outputFolder || this.#config.outputFolder;
         }
     }
 
