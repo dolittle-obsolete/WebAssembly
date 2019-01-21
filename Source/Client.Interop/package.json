@@ -1,0 +1,45 @@
+{
+  "name": "@dolittle/webassembly.interop",
+  "version": "1.0.0",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/commonjs/index.js",
+  "module": "dist/esmodule/index.js",
+  "jspm": {
+    "registry": "npm",
+    "jspmPackage": true,
+    "format": "amd",
+    "main": "index",
+    "directories": {
+      "dist": "dist/systemjs"
+    },
+    "dependencies": {
+      "@dolittle/core": "^1.0.5",
+      "@dolittle/exceptions": "~1.0.1"
+    }
+  },
+  "scripts": {
+    "build": "gulp build",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dolittle-interaction/WebAssembly.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dolittle-interaction/WebAssembly/issues"
+  },
+  "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
+  "dependencies": {
+    "@dolittle/core": "^1.0.5",
+    "@dolittle/exceptions": "~1.0.1"
+  },
+  "devDependencies": {},
+  "files": [
+    "dist"
+  ]
+}

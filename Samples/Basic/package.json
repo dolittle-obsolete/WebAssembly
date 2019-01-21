@@ -15,7 +15,9 @@
     },
     "dependencies": {
         "@dolittle/booting": "^1.0.9",
-        "@dolittle/webassembly": "^1.0.0",
+        "@dolittle/webassembly.interop": "^1.0.0",
+        "@dolittle/webassembly.commands": "^1.0.0",
+        "@dolittle/webassembly.queries": "^1.0.0",
         "@dolittle/webassembly.aurelia": "^1.0.0",
         "@dolittle/webassembly.webpack": "^1.0.0"
     }

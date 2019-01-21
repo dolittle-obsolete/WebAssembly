@@ -1,6 +1,6 @@
 {
-  "name": "@dolittle/webassembly",
-  "version": "1.0.4",
+  "name": "@dolittle/webassembly.commands",
+  "version": "1.0.0",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -17,9 +17,7 @@
     },
     "dependencies": {
       "@dolittle/commands": "^1.0.12",
-      "@dolittle/core": "^1.0.5",
-      "@dolittle/exceptions": "~1.0.1",
-      "@dolittle/queries": "^1.0.14"
+      "@dolittle/webassembly": "^1.0.0"
     }
   },
   "scripts": {
@@ -38,9 +36,7 @@
   "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
   "dependencies": {
     "@dolittle/commands": "^1.0.12",
-    "@dolittle/core": "^1.0.5",
-    "@dolittle/exceptions": "~1.0.1",
-    "@dolittle/queries": "^1.0.14"
+    "@dolittle/webassembly.interop": "^1.0.0"
   },
   "devDependencies": {},
   "files": [

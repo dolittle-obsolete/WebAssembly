@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Command, CommandRequest } from '@dolittle/commands';
-import { DotNetRuntime } from '../interop/DotNetRuntime';
+import { DotNetRuntime } from '@dolittle/webassembly.interop/DotNetRuntime';
 
 
 /**
