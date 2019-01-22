@@ -26,7 +26,6 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         IEnumerable<string> _allImportedAssemblyPaths;
         IEnumerable<string> _allImportedAssemblyDebugSymbolPaths;
         IEnumerable<Library> _libraries;
-        IAssemblyContext _assemblyContext;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Assemblies"/>
@@ -39,7 +38,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             _assemblyPaths = assemblyPaths;
             PopulateRootAssemblies();
             ImportAllAssemblies();
-            PopulateLibraries();
+            //PopulateLibraries();
         }
 
         void ImportAllAssemblies()
@@ -58,12 +57,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         }
 
         /// <summary>
-        /// Gets all the root assemblies
-        /// </summary>
-        public IEnumerable<Assembly> RootAssemblies => _rootAssemblies;
-
-        /// <summary>
-        /// Gets all assemblies represented as <see cref="Library"/> - more metadata
+        /// Gets all assemblies represented as <see cref="Library"/>
         /// </summary>
         public IEnumerable<Library> Libraries => _libraries;
 
@@ -123,6 +117,54 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         void PopulateRootAssemblies()
         {
             var rootAssembly = Assembly.LoadFrom(_configuration.EntryAssemblyPath);
+            var assemblyContext = new AssemblyContext(rootAssembly);
+
+            var libraries = new List<Library>();
+            libraries.Add(new Library(
+                "Project",
+                rootAssembly.GetName().Name,
+                "1.0.0",
+                string.Empty,
+                new Dependency[0],
+                false
+            ));
+
+            libraries.AddRange(assemblyContext.GetReferencedLibraries());
+            _libraries = libraries;
+
+            var paths = new List<string>();
+            libraries.ForEach(library =>
+            {
+                var path = library.Path;
+                if (string.IsNullOrEmpty(path))
+                {
+                    if (library is RuntimeLibrary)
+                    {
+                        var assetsPaths = ((RuntimeLibrary) library)
+                            .RuntimeAssemblyGroups
+                            .SelectMany(_ => _.AssetPaths)
+                            .Where(_ => Path.GetExtension(_).ToLower() == ".dll");
+
+                        var bestMatchedPaths = assetsPaths.Select(_ => _assemblyPaths.FindBestMatchFor(_));
+                        paths.AddRange(bestMatchedPaths);
+                    }
+                    else if (library is CompilationLibrary)
+                    {
+                        var bestMatchedPaths = ((CompilationLibrary)library).Assemblies.Select(_ => _assemblyPaths.FindBestMatchFor(_));
+                        paths.AddRange(bestMatchedPaths);
+                    }
+                }
+                else
+                {
+                    paths.Add(path);
+                }
+            });
+            _rootAssemblyPaths = paths;
+
+            /*
+            var rootAssembly = Assembly.LoadFrom(_configuration.EntryAssemblyPath);
+            
+
             _rootAssemblies.Add(rootAssembly);
 
             _assemblyContext = new AssemblyContext(rootAssembly);
@@ -138,22 +180,23 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                     path = _assemblyPaths.FindBestMatchFor(uri.AbsolutePath);
                 }
                 return path;
-            });
+            });*/
         }
 
-        void PopulateLibraries()
-        {
-            var projectAssemblies = _assemblyContext.GetProjectReferencedAssemblies();
-            var assemblyNames = _allImportedAssemblyPaths.Select(_ => Path.GetFileNameWithoutExtension(_));
+        /*
+                void PopulateLibraries()
+                {
+                    var projectAssemblies = _assemblyContext.GetProjectReferencedAssemblies();
+                    var assemblyNames = _allImportedAssemblyPaths.Select(_ => Path.GetFileNameWithoutExtension(_));
 
-            _libraries = assemblyNames.Select(_ => new Library(
-                projectAssemblies.Any(a => a.GetName().Name == _)?"Project":"Package",
-                _,
-                "1.0.0",
-                string.Empty, 
-                new Dependency[0], 
-                false
-            ));
-        }
+                    _libraries = assemblyNames.Select(_ => new Library(
+                        projectAssemblies.Any(a => a.GetName().Name == _)?"Project":"Package",
+                        _,
+                        "1.0.0",
+                        string.Empty, 
+                        new Dependency[0], 
+                        false
+                    ));
+                }*/
     }
 }
