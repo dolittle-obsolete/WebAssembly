@@ -16,10 +16,11 @@ using Basic.MyFeature;
 using Dolittle.Runtime.Commands;
 using Dolittle.Queries;
 using System.Threading.Tasks;
-//using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using Dolittle.Interaction.WebAssembly.Interop;
-
+using SQLitePCL;
+using Microsoft.EntityFrameworkCore;
+using Remotion.Linq;
 namespace Basic
 {
     class Program
@@ -42,14 +43,26 @@ namespace Basic
             var interop = container.Get<IJSRuntime>();
             interop.Invoke("window._dolittleLoaded");
 
-            //SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_WebAssembly());
+			/*var a = new SQLite3Provider_WebAssembly();
+			var res = a.sqlite3_open("gekki", out var handle);
 
-            //SampleClass.Run().Wait();
+			System.Console.WriteLine($"Hello there! {res} {handle}");
+			*/
+
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_WebAssembly());
+
+            SampleClass.Run().Wait();
+
+			#pragma warning disable 0162
+			if (false)
+			{
+				var a = new QueryModel(null, null);
+			}
 
         }
     }
 
-#if(false)
+#if(true)
 	public class SampleClass
 	{
 		public static async Task Run()
@@ -104,7 +117,7 @@ namespace Basic
 			// optionsBuilder.UseLoggerFactory(LogExtensionPoint.AmbientLoggerFactory);
 			// optionsBuilder.EnableSensitiveDataLogging(true);
 
-			optionsBuilder.UseSqlite($"data source=local.db");
+			optionsBuilder.UseSqlite($"Data Source=blogging.db");
 		}
 	}    
 
