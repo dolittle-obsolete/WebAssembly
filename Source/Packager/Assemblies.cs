@@ -27,6 +27,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         IEnumerable<string> _allImportedAssemblyDebugSymbolPaths;
         IEnumerable<Library> _libraries;
 
+        List<string> _skippedImports = new List<string>();
+
         /// <summary>
         /// Initializes a new instance of <see cref="Assemblies"/>
         /// </summary>
@@ -38,7 +40,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             _assemblyPaths = assemblyPaths;
             PopulateRootAssemblies();
             ImportAllAssemblies();
-            //PopulateLibraries();
+
+            _skippedImports.ForEach(_ => Console.WriteLine("  Skipped imports for '{_}'"));
         }
 
         void ImportAllAssemblies()
@@ -91,12 +94,17 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                 foreach (var assemblyReference in module.AssemblyReferences)
                 {
                     var referenceFile = $"{assemblyReference.Name}.dll";
+                    referenceFile = _rootAssemblyPaths
+                                        .Where(_ => 
+                                            Path.GetFileName(_).ToLowerInvariant() == referenceFile.ToLowerInvariant())
+                                        .SingleOrDefault() ?? referenceFile;
+
                     Import(referenceFile, files);
                 }
             } 
             catch
             {
-                Console.WriteLine($"Skipping references for {file} - {bestMatchedFile}");
+                _skippedImports.Add(file);
             }
         }
 
@@ -135,68 +143,11 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var paths = new List<string>();
             libraries.ForEach(library =>
             {
-                var path = library.Path;
-                if (string.IsNullOrEmpty(path))
-                {
-                    if (library is RuntimeLibrary)
-                    {
-                        var assetsPaths = ((RuntimeLibrary) library)
-                            .RuntimeAssemblyGroups
-                            .SelectMany(_ => _.AssetPaths)
-                            .Where(_ => Path.GetExtension(_).ToLower() == ".dll");
-
-                        var bestMatchedPaths = assetsPaths.Select(_ => _assemblyPaths.FindBestMatchFor(_));
-                        paths.AddRange(bestMatchedPaths);
-                    }
-                    else if (library is CompilationLibrary)
-                    {
-                        var bestMatchedPaths = ((CompilationLibrary)library).Assemblies.Select(_ => _assemblyPaths.FindBestMatchFor(_));
-                        paths.AddRange(bestMatchedPaths);
-                    }
-                }
-                else
-                {
-                    paths.Add(path);
-                }
+                var assetsPaths = assemblyContext.GetAssemblyPathsFor(library);
+                var bestMatchedPaths = assetsPaths.Select(_ => _assemblyPaths.FindBestMatchFor(_));
+                paths.AddRange(bestMatchedPaths);
             });
             _rootAssemblyPaths = paths;
-
-            /*
-            var rootAssembly = Assembly.LoadFrom(_configuration.EntryAssemblyPath);
-            
-
-            _rootAssemblies.Add(rootAssembly);
-
-            _assemblyContext = new AssemblyContext(rootAssembly);
-            _rootAssemblies.AddRange(_assemblyContext.GetReferencedAssemblies());
-
-            _rootAssemblyPaths = _rootAssemblies.Select(_ =>
-            {
-                var path = string.Empty;
-                if (_.CodeBase == null) path = _assemblyPaths.FindBestMatchFor($"{_.GetName().Name}.dll");
-                else
-                {
-                    var uri = new Uri(_.CodeBase);
-                    path = _assemblyPaths.FindBestMatchFor(uri.AbsolutePath);
-                }
-                return path;
-            });*/
         }
-
-        /*
-                void PopulateLibraries()
-                {
-                    var projectAssemblies = _assemblyContext.GetProjectReferencedAssemblies();
-                    var assemblyNames = _allImportedAssemblyPaths.Select(_ => Path.GetFileNameWithoutExtension(_));
-
-                    _libraries = assemblyNames.Select(_ => new Library(
-                        projectAssemblies.Any(a => a.GetName().Name == _)?"Project":"Package",
-                        _,
-                        "1.0.0",
-                        string.Empty, 
-                        new Dependency[0], 
-                        false
-                    ));
-                }*/
-    }
+   }
 }
