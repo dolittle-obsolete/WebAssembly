@@ -27,7 +27,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         IEnumerable<string> _allImportedAssemblyDebugSymbolPaths;
         IEnumerable<Library> _libraries;
 
-        List<string> _skippedImports = new List<string>();
+        HashSet<SkippedImport> _skippedImports = new HashSet<SkippedImport>();
 
         /// <summary>
         /// Initializes a new instance of <see cref="Assemblies"/>
@@ -40,8 +40,6 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             _assemblyPaths = assemblyPaths;
             PopulateRootAssemblies();
             ImportAllAssemblies();
-
-            _skippedImports.ForEach(_ => Console.WriteLine("  Skipped imports for '{_}'"));
         }
 
         void ImportAllAssemblies()
@@ -58,6 +56,11 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             _allImportedAssemblyPaths = importedFiles.Where(_ => Path.GetExtension(_).ToLower() == ".dll").Distinct();
             _allImportedAssemblyDebugSymbolPaths = importedFiles.Where(_ => Path.GetExtension(_).ToLower() == ".pdb").Distinct();
         }
+
+        /// <summary>
+        /// Gets all the skipped imports
+        /// </summary>
+        public IEnumerable<SkippedImport> SkippedImports => _skippedImports;
 
         /// <summary>
         /// Gets all assemblies represented as <see cref="Library"/>
@@ -102,9 +105,9 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                     Import(referenceFile, files);
                 }
             } 
-            catch
+            catch(Exception ex)
             {
-                _skippedImports.Add(file);
+                _skippedImports.Add(new SkippedImport(file,ex.Message));
             }
         }
 
@@ -143,6 +146,11 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var paths = new List<string>();
             libraries.ForEach(library =>
             {
+                if( library.Name == "Remotion.Linq") 
+                {
+                    var i=0;
+                    i++;
+                }
                 var assetsPaths = assemblyContext.GetAssemblyPathsFor(library);
                 var bestMatchedPaths = assetsPaths.Select(_ => _assemblyPaths.FindBestMatchFor(_));
                 paths.AddRange(bestMatchedPaths);

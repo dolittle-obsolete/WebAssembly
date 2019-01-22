@@ -2,9 +2,11 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Dolittle.Collections;
 using Newtonsoft.Json;
 
 namespace Dolittle.Interaction.WebAssembly.Packager
@@ -61,6 +63,8 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             File.WriteAllText(monoJsDestination, monoJs);
 
             artifactsEmbedder.Perform();
+
+            assemblies.SkippedImports.ForEach(_ => Console.WriteLine($"  Skipped imports for '{_.File}' with reason '{_.Reason}'"));
         }
     }
 }
