@@ -45,14 +45,21 @@
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.*" />
         <PackageReference Include="Dolittle.Runtime.Events.InMemory" Version="2.*" />
 
-<!--
         <PackageReference Include="Uno.SQLitePCLRaw.provider.wasm" Version="2.0.0-dev.6" />
+        <PackageReference Include="SQLitePCLRaw.core" Version="1.1.12" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
+        <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+<!--
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+
+
+
         <PackageReference Include="Uno.sqlite-wasm" Version="1.0.0-dev.715" />-->
         <!--<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.58" />-->
         <!--
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.2.0" />-->
+        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.2.0" />
+        -->
     </ItemGroup>
 
     <ItemGroup>
