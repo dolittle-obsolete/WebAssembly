@@ -24,6 +24,10 @@ export function configure(aurelia) {
         aurelia.use.developmentLogging();
     }
     aurelia.start().then(() => aurelia.setRoot(PLATFORM.moduleName('app')));
+
+    window.print = (message) => {
+        console.log(message);
+    };
 }
 
 

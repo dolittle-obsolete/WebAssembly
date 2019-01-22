@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Dolittle.Execution;
-using Dolittle.Serialization.Json;
-using Dolittle.Runtime.Commands.Coordination;
-using Dolittle.Queries.Coordination;
-using Dolittle.Tenancy;
-using Dolittle.Logging;
-using Dolittle.Artifacts;
-using Dolittle.PropertyBags;
-using Dolittle.Commands;
-using Dolittle.Collections;
-using Dolittle.Booting;
-using Basic.MyFeature;
-using Dolittle.Runtime.Commands;
-using Dolittle.Queries;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
+using Basic.MyFeature;
+using Dolittle.Artifacts;
+using Dolittle.Booting;
+using Dolittle.Collections;
+using Dolittle.Commands;
+using Dolittle.Execution;
 using Dolittle.Interaction.WebAssembly.Interop;
-using SQLitePCL;
+using Dolittle.Logging;
+using Dolittle.PropertyBags;
+using Dolittle.Queries;
+using Dolittle.Queries.Coordination;
+using Dolittle.Runtime.Commands;
+using Dolittle.Runtime.Commands.Coordination;
+using Dolittle.Serialization.Json;
+using Dolittle.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Remotion.Linq;
+using SQLitePCL;
 namespace Basic
 {
     class Program
@@ -43,83 +43,83 @@ namespace Basic
             var interop = container.Get<IJSRuntime>();
             interop.Invoke("window._dolittleLoaded");
 
-			/*var a = new SQLite3Provider_WebAssembly();
-			var res = a.sqlite3_open("gekki", out var handle);
+            //var db = new SQLite3Provider_WebAssembly();
+            //var res = db.sqlite3_open("gekki", out var handle);
 
-			System.Console.WriteLine($"Hello there! {res} {handle}");
-			*/
+            //System.Console.WriteLine($"Hello there! {res} {handle}");
 
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_WebAssembly());
 
-            SampleClass.Run().Wait();
-
-			#pragma warning disable 0162
-			if (false)
-			{
-				var a = new QueryModel(null, null);
-			}
+            SampleClass.Run();
 
         }
     }
 
 #if(true)
-	public class SampleClass
-	{
-		public static async Task Run()
-		{
-			using (var db = new BloggingContext())
-			{
-				db.Database.EnsureCreated();
+    public class SampleClass
+    {
+        public static void Run()
+        {
+            Task.Run(async() =>
+            {
+                Console.WriteLine("Create Blogging context");
+                using(var db = new BloggingContext())
+                {
+                    //Console.WriteLine("Ensure created");
+                    //db.Database.EnsureCreated();
 
-				Console.WriteLine("Database created");
+                    //Console.WriteLine("Database created");
 
-				db.Blogs.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
-				var count = await db.SaveChangesAsync(CancellationToken.None);
+                    db.Blogs.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
+                    var count = await db.SaveChangesAsync(CancellationToken.None);
 
-				Console.WriteLine("{0} records saved to database", count);
+                    Console.WriteLine("{0} records saved to database", count);
 
-				Console.WriteLine();
-				Console.WriteLine("All blogs in database:");
-				foreach (var blog in db.Blogs)
-				{
-					Console.WriteLine(" - {0}", blog.Url);
-				}
-			}
-		}
-	}
+                    Console.WriteLine();
+                    Console.WriteLine("All blogs in database:");
+                    foreach (var blog in db.Blogs)
+                    {
+                        Console.WriteLine(" - {0}", blog.Url);
+                    }
+                }
+            });
+        }
+    }
 
-	public class Blog
-	{
-		public int BlogId { get; set; }
-		public string Url { get; set; }
+    public class Blog
+    {
+        public int BlogId { get; set; }
+        public string Url { get; set; }
 
-		public List<Post> Posts { get; set; }
-	}
+        public List<Post> Posts { get; set; }
+    }
 
-	public class Post
-	{
-		public int PostId { get; set; }
-		public string Title { get; set; }
-		public string Content { get; set; }
+    public class Post
+    {
+        public int PostId { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
 
-		public int BlogId { get; set; }
-		public Blog Blog { get; set; }
-	}
+        public int BlogId { get; set; }
+        public Blog Blog { get; set; }
+    }
 
-	public class BloggingContext : DbContext
-	{
-		public DbSet<Blog> Blogs { get; set; }
-		public DbSet<Post> Posts { get; set; }
+    public class BloggingContext : DbContext
+    {
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			// Uncomment those to enable logging
-			// optionsBuilder.UseLoggerFactory(LogExtensionPoint.AmbientLoggerFactory);
-			// optionsBuilder.EnableSensitiveDataLogging(true);
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // Uncomment those to enable logging
+            // optionsBuilder.UseLoggerFactory(LogExtensionPoint.AmbientLoggerFactory);
+            // optionsBuilder.EnableSensitiveDataLogging(true);
 
-			optionsBuilder.UseSqlite($"Data Source=blogging.db");
-		}
-	}    
+            this.Database.AutoTransactionsEnabled = false;
+
+            optionsBuilder.UseSqlite($"Data Source=blogging.db");
+        }
+    }
 
 #endif    
 }
