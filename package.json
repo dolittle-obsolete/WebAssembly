@@ -7,7 +7,8 @@
         "Source/Client.Interop",
         "Source/Client.Queries",
         "Source/Client.WebPack",
-        "Source/ReadModels.MongoDB.WebAssembly.Client"
+        "Source/ReadModels.MongoDB.WebAssembly.Client",
+        "Source/Runtime.Events.WebAssembly.Dev.Client"
     ],
     "scripts": {
         "build": "gulp build"

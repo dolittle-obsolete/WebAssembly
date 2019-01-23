@@ -7,6 +7,9 @@ import { CommandCoordinator as WASMCommandCoordinator } from '@dolittle/webassem
 import { QueryCoordinator } from '@dolittle/queries';
 import { QueryCoordinator as WASMQueryCoordinator } from '@dolittle/webassembly.queries';
 import { MongoDB } from '@dolittle/readmodels.mongodb.webassembly';
+import { EventProcessorOffsetRepository } from '@dolittle/runtime.events.webassembly.dev/Processing';
+import { EventStore } from '@dolittle/runtime.events.webassembly.dev/Store';
+
 import { JSRuntime } from '@dolittle/webassembly.interop';
 
 export function configure(aurelia, config) {
@@ -49,4 +52,8 @@ export function configure(aurelia, config) {
     }
 
     window._mongoDB = new MongoDB();
+    window._eventStore = {
+        eventProcessorOffsetRepository: new EventProcessorOffsetRepository(),
+        eventStore: new EventStore()
+    }
 }

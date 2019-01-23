@@ -12,9 +12,7 @@ config.plugins.push(new CopyWebpackPlugin([
     { from: 'publish/mono.js', to: 'mono.js', flatten: true },
     { from: 'publish/mono.wasm', to: 'mono.wasm', flatten: true },
     { from: 'manifest.json', to: 'manifest.json', flatten: true },
-    { from: 'dolittle.png', to: 'dolittle.png', flatten: true },
-    { from: 'sqlite3.wasm', to: 'sqlite3.wasm', flatten: true },
-    { from: 'sqlite3.js', to: 'sqlite3.js', flatten: true }
+    { from: 'dolittle.png', to: 'dolittle.png', flatten: true }
 ]));
 
 config.plugins.push(new ServiceWorkerGenerator());

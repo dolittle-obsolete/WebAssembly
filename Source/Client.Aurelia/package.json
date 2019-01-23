@@ -21,7 +21,8 @@
             "@dolittle/webassembly.interop": "^1.0.0",
             "@dolittle/webassembly.commands": "^1.0.0",
             "@dolittle/webassembly.queries": "^1.0.0",
-            "@dolittle/readmodels.mongodb.webassembly": "^1.0.0"
+            "@dolittle/readmodels.mongodb.webassembly": "^1.0.0",
+            "@dolittle/runtime.events.webassembly.dev": "^1.0.0"
         }
     },
     "scripts": {
@@ -44,7 +45,8 @@
         "@dolittle/webassembly.interop": "^1.0.0",
         "@dolittle/webassembly.commands": "^1.0.0",
         "@dolittle/webassembly.queries": "^1.0.0",
-        "@dolittle/readmodels.mongodb.webassembly": "^1.0.0"
+        "@dolittle/readmodels.mongodb.webassembly": "^1.0.0",
+        "@dolittle/runtime.events.webassembly.dev": "^1.0.0"
     },
     "devDependencies": {},
     "files": [

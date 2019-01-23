@@ -30,10 +30,6 @@ export function configure(aurelia) {
     };
 }
 
-
-import SQLiteWasm from './sqlitenet';
-SQLite.Database.enablePersistence();
-
 //import { Bootloader, BootProcedures, BootProcedure } from '@dolittle/booting';
 //import { Bootloader, BootloaderResult } from '@dolittle/booting';
 
