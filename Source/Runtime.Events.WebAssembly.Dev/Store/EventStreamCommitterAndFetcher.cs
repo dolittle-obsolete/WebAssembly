@@ -5,15 +5,18 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
-using Dolittle.Lifecycle;
-using Dolittle.Events;
-using Dolittle.Runtime.Events;
-using Dolittle.Runtime.Events.Store;
+using System.Threading.Tasks;
 using Dolittle.Artifacts;
+using Dolittle.Events;
 using Dolittle.Execution;
 using Dolittle.Interaction.WebAssembly.Interop;
+using Dolittle.Lifecycle;
+using Dolittle.Logging;
+using Dolittle.Runtime.Events;
+using Dolittle.Runtime.Events.Store;
 using Dolittle.Serialization.Json;
 using Newtonsoft.Json;
 
@@ -25,14 +28,14 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
     [SingletonPerTenant]
     public class EventStreamCommitterAndFetcher : ICommitEventStreams, IFetchCommittedEvents, IFetchEventSourceVersion
     {
-        const string _globalObject = "window._eventStore.EventStore";
+        const string _globalObject = "window._eventStore.eventStore";
 
         private readonly object lock_object = new object();
 
         private readonly List<CommittedEventStream> _commits = new List<CommittedEventStream>();
         private readonly HashSet<CommitId> _duplicates = new HashSet<CommitId>();
-        private readonly ConcurrentDictionary<EventSourceKey,VersionedEventSource> _versions = new ConcurrentDictionary<EventSourceKey,VersionedEventSource>();
-        private readonly ConcurrentDictionary<EventSourceKey,EventSourceVersion> _currentVersions = new ConcurrentDictionary<EventSourceKey,EventSourceVersion>();
+        private readonly ConcurrentDictionary<EventSourceKey, VersionedEventSource> _versions = new ConcurrentDictionary<EventSourceKey, VersionedEventSource>();
+        private readonly ConcurrentDictionary<EventSourceKey, EventSourceVersion> _currentVersions = new ConcurrentDictionary<EventSourceKey, EventSourceVersion>();
 
         private ulong _sequenceNumber = 0;
 
@@ -42,10 +45,28 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
         /// <summary>
         /// 
         /// </summary>
-        public EventStreamCommitterAndFetcher(IJSRuntime jsRuntime, ISerializer serializer)
+        public EventStreamCommitterAndFetcher(IJSRuntime jsRuntime, ISerializer serializer, ILogger logger)
         {
             _jsRuntime = jsRuntime;
             _serializer = serializer;
+
+            Task.Run(async() =>
+            {
+                var result = await _jsRuntime.Invoke<string>($"{_globalObject}.load");
+
+                try
+                {
+                    logger.Information($"Loaded events : {result}");
+                    var deserialized = serializer.FromJson<IEnumerable<CommittedEventStream>>(result);
+                    logger.Information("Deserialized");
+                    _commits.AddRange(deserialized);
+                    logger.Information($"Event Store contains {_commits.Count} events");
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Issues loading events");
+                }
+            });
         }
 
         /// <summary>
@@ -63,7 +84,7 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
         /// <inheritdoc />
         public CommittedEventStream Commit(UncommittedEventStream uncommittedEvents)
         {
-            return Commit(uncommittedEvents,IncrementCount());
+            return Commit(uncommittedEvents, IncrementCount());
         }
 
         /// <inheritdoc />
@@ -77,10 +98,10 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
                 var commit = new CommittedEventStream(commitSequenceNumber, uncommittedEvents.Source, uncommittedEvents.Id, uncommittedEvents.CorrelationId, uncommittedEvents.Timestamp, uncommittedEvents.Events);
                 _commits.Add(commit);
                 _duplicates.Add(commit.Id);
-                _versions.AddOrUpdate(commit.Source.Key,commit.Source,(id,ver) => commit.Source);
+                _versions.AddOrUpdate(commit.Source.Key, commit.Source, (id, ver) => commit.Source);
 
-                var commitsAsJson = _serializer.ToJson(_commits); // Crashes - circular dependencies
-                _jsRuntime.Invoke($"{_globalObject}.save",commitsAsJson);
+                var commitsAsJson = _serializer.ToJson(_commits, SerializationOptions.CamelCase);
+                _jsRuntime.Invoke($"{_globalObject}.save", commitsAsJson);
 
                 return commit;
             }
@@ -102,7 +123,7 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
         void ThrowIfConcurrencyConflict(VersionedEventSource version)
         {
             VersionedEventSource ver;
-            if(_versions.TryGetValue(version.Key, out ver))
+            if (_versions.TryGetValue(version.Key, out ver))
             {
                 if (ver == version || ver.Version.Commit >= version.Version.Commit)
                 {
@@ -143,21 +164,21 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
             return GetEventsFromCommits(commits, artifactId);
         }
 
-         SingleEventTypeEventStream GetEventsFromCommits(IEnumerable<CommittedEventStream> commits, ArtifactId eventType)
-         {
+        SingleEventTypeEventStream GetEventsFromCommits(IEnumerable<CommittedEventStream> commits, ArtifactId eventType)
+        {
             var events = new List<CommittedEventEnvelope>();
-            foreach(var commit in commits)
+            foreach (var commit in commits)
             {
-                events.AddRange(commit.Events.FilteredByEventType(eventType).Select(e => new CommittedEventEnvelope(commit.Sequence,e.Metadata,e.Event)));
+                events.AddRange(commit.Events.FilteredByEventType(eventType).Select(e => new CommittedEventEnvelope(commit.Sequence, e.Metadata, e.Event)));
             }
             return new SingleEventTypeEventStream(events);
-         }
+        }
 
         /// <inheritdoc />
         public EventSourceVersion GetCurrentVersionFor(EventSourceKey eventSource)
         {
             VersionedEventSource v;
-            if(_versions.TryGetValue(eventSource, out v))
+            if (_versions.TryGetValue(eventSource, out v))
             {
                 return v.Version;
             }

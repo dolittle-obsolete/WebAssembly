@@ -10,14 +10,14 @@ namespace Basic.MyFeature
     public class MyEventProcessors : ICanProcessEvents
     {
         readonly ILogger _logger;
-        readonly IAsyncReadModelRepositoryFor<Animal> _repository;
+        //readonly IAsyncReadModelRepositoryFor<Animal> _repository;
 
         readonly ISerializer _serializer;
 
-        public MyEventProcessors(ILogger logger, IAsyncReadModelRepositoryFor<Animal> repository, ISerializer serializer)
+        public MyEventProcessors(ILogger logger, /*IAsyncReadModelRepositoryFor<Animal> repository,*/ ISerializer serializer)
         {
             _logger = logger;
-            _repository = repository;
+            //_repository = repository;
             _serializer = serializer;
         }
 
@@ -40,6 +40,7 @@ namespace Basic.MyFeature
                     Name = Guid.NewGuid().ToString()
                 };
 
+                /*
                 _repository.Insert(document).ContinueWith(t =>
                 {
                     _logger.Information("Inserted document");
@@ -52,6 +53,7 @@ namespace Basic.MyFeature
 
                     });
                 });
+                */
             }
             catch (Exception ex)
             {

@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import * as storage from '../Storage';
 
+const COMMITS_KEY = 'commits';
+
 /**
  * Represents the storage for our event store
  */
@@ -14,17 +16,21 @@ export class EventStore {
      * Initializes a new instance of {EventStore}
      */
     constructor() {
-
-        this.#storage = storage;
-
+        this.#storage = storage.storage;
     }
 
     /**
      * Load the event store 
      */
-    load() {
-
-        return "{}";
+    load() {       
+        let promise = new Promise((resolve, reject) => {
+            let store = this.#storage.commits;
+            let request = store.get(COMMITS_KEY);
+            request.onsuccess = e => {
+                resolve(e.target.result.content);
+            }
+        });
+        return promise;
     }
 
     /**
@@ -32,7 +38,12 @@ export class EventStore {
      * @param {string} json 
      */
     save(json) {
-        console.log(`Save Events : {json}`);
-
+        let commits = JSON.parse(json);
+        let obj = {
+            purpose: COMMITS_KEY,
+            content: commits
+        };
+        let store = this.#storage.commits;
+        store.add(obj);
     }
 }
