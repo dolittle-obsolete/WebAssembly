@@ -21,7 +21,7 @@ namespace Dolittle.Interaction.WebAssembly.Booting
         /// <inheritdoc/>
         public int GetHashCode(Library obj)
         {
-            return obj.GetHashCode();
+            return obj.Name.GetHashCode();
         }
     }
 }
