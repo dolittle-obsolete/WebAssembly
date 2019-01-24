@@ -2,7 +2,7 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as storage from '../Storage';
+import { storage } from '../Storage';
 
 const COMMITS_KEY = 'commits';
 
@@ -16,7 +16,7 @@ export class EventStore {
      * Initializes a new instance of {EventStore}
      */
     constructor() {
-        this.#storage = storage.storage;
+        this.#storage = storage;
     }
 
     /**
@@ -46,4 +46,13 @@ export class EventStore {
         let store = this.#storage.commits;
         store.add(obj);
     }
+
+    getSequenceNumber() {
+
+    }
+
+    setSequenceNumber(sequenceNumber) {
+
+    }
+
 }

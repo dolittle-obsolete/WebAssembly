@@ -57,6 +57,7 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
                 try
                 {
                     logger.Information($"Loaded events : {result}");
+
                     var deserialized = serializer.FromJson<IEnumerable<CommittedEventStream>>(result);
                     logger.Information("Deserialized");
                     _commits.AddRange(deserialized);
