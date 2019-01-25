@@ -10,14 +10,14 @@ namespace Basic.MyFeature
     public class MyEventProcessors : ICanProcessEvents
     {
         readonly ILogger _logger;
-        //readonly IAsyncReadModelRepositoryFor<Animal> _repository;
+        readonly IAsyncReadModelRepositoryFor<Animal> _repository;
 
         readonly ISerializer _serializer;
 
-        public MyEventProcessors(ILogger logger, /*IAsyncReadModelRepositoryFor<Animal> repository,*/ ISerializer serializer)
+        public MyEventProcessors(ILogger logger, IAsyncReadModelRepositoryFor<Animal> repository, ISerializer serializer)
         {
             _logger = logger;
-            //_repository = repository;
+            _repository = repository;
             _serializer = serializer;
         }
 
@@ -31,7 +31,8 @@ namespace Basic.MyFeature
                 /*
                 var existing = _repository.GetById(Guid.Parse("358b9a07-51fa-4da1-af6d-ffff04a08a00"));
                 var existingAsJson = _serializer.ToJson(existing);
-                _logger.Information($"Existing document : {existingAsJson}");*/
+                _logger.Information($"Existing document : {existingAsJson}");
+                */
 
                 var document = new Animal
                 {
@@ -40,7 +41,6 @@ namespace Basic.MyFeature
                     Name = Guid.NewGuid().ToString()
                 };
 
-                /*
                 _repository.Insert(document).ContinueWith(t =>
                 {
                     _logger.Information("Inserted document");
@@ -53,7 +53,6 @@ namespace Basic.MyFeature
 
                     });
                 });
-                */
             }
             catch (Exception ex)
             {
