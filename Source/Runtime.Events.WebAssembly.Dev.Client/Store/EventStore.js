@@ -27,7 +27,7 @@ export class EventStore {
             let store = this.#storage.commits;
             let request = store.get(COMMITS_KEY);
             request.onsuccess = e => {
-                resolve(e.target.result.content);
+                resolve(e.target.result ? e.target.result.content : []);
             }
         });
         return promise;
@@ -44,7 +44,7 @@ export class EventStore {
             content: commits
         };
         let store = this.#storage.commits;
-        store.add(obj);
+        store.put(obj);
     }
 
     getSequenceNumber() {

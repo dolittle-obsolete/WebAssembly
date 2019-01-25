@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dolittle.Artifacts;
+using Dolittle.Collections;
 using Dolittle.Events;
 using Dolittle.Execution;
 using Dolittle.Interaction.WebAssembly.Interop;
@@ -52,15 +53,13 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
 
             Task.Run(async() =>
             {
-                var result = await _jsRuntime.Invoke<string>($"{_globalObject}.load");
+                var result = await _jsRuntime.Invoke<IEnumerable<CommittedEventStream>>($"{_globalObject}.load");
+                logger.Information($"Loaded events {result}");
 
                 try
                 {
-                    logger.Information($"Loaded events : {result}");
-
-                    var deserialized = serializer.FromJson<IEnumerable<CommittedEventStream>>(result);
-                    logger.Information("Deserialized");
-                    _commits.AddRange(deserialized);
+                    _commits.AddRange(result);
+                    _sequenceNumber = _commits.Max(_ => (ulong)_.Sequence);
                     logger.Information($"Event Store contains {_commits.Count} events");
                 }
                 catch (Exception ex)
