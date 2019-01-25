@@ -2,6 +2,12 @@
 using Dolittle.Booting;
 using Dolittle.Interaction.WebAssembly.Interop;
 using Dolittle.Logging;
+using Dolittle.Execution;
+using Dolittle.Tenancy;
+using Dolittle.Types;
+using Dolittle.ResourceTypes;
+using Dolittle.Collections;
+
 namespace Basic
 {
     class Program
@@ -20,6 +26,9 @@ namespace Basic
             var container = bootResult.Container;
             var logger = container.Get<ILogger>();
             logger.Information("We're running");
+
+            var executionContextManager = container.Get<IExecutionContextManager>();
+            executionContextManager.CurrentFor(TenantId.Development);
 
             var interop = container.Get<IJSRuntime>();
             interop.Invoke("window._dolittleLoaded");
