@@ -9,16 +9,20 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-#pragma warning disable 1591
 namespace Dolittle.Runtime.Events.WebAssembly.Dev
 {
+    /// <summary>
+    /// Represents a Json converter that handles PropertyBags, currently by leveraging (abusing) the MongoDB BSON serializers and strings
+    /// </summary>
     public class PropertyBagSerializer : JsonConverter
     {
+        /// <inheritdoc/>
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(PropertyBag);
         }
-
+        
+        /// <inheritdoc/>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var json = reader.Value as string;
@@ -27,7 +31,8 @@ namespace Dolittle.Runtime.Events.WebAssembly.Dev
             bson.ForEach(_ => dict.Add(_.Name, _.Value));
             return new PropertyBag(dict);
         }
-
+        
+        /// <inheritdoc/>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var bson = PropertyBagBsonSerializer.Serialize(value as PropertyBag);
@@ -36,8 +41,12 @@ namespace Dolittle.Runtime.Events.WebAssembly.Dev
         }
     }
 
+    /// <summary>
+    /// The provider that registers the PropertyBag JsonConverter
+    /// </summary>
     public class PropertyBagSerializerProvider : ICanProvideConverters
     {
+        /// <inheritdoc/>
         public IEnumerable<JsonConverter> Provide()
         {
             return new[] {
@@ -46,4 +55,3 @@ namespace Dolittle.Runtime.Events.WebAssembly.Dev
         }
     }
 }
-#pragma warning restore 1591
