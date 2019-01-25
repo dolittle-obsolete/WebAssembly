@@ -11,26 +11,33 @@ const EVENT_PROCESSOR_OFFSETS_OBJECT_STORE = "eventProcessorOffsets";
  */
 class Storage {
     #database;
-    #commits;
-    #eventProcessorOffsets;
-
+    #promise;
+    
     constructor() {
-        let request = indexedDB.open('EventStore', 1);
+        this.#promise = new Promise((resolve, reject) => {
+            let request = indexedDB.open('EventStore', 1);
 
-        request.onupgradeneeded = e => {
-            let database = e.target.result;
-            database.createObjectStore(COMMITS_OBJECT_STORE, { keyPath: 'purpose' });
-            database.createObjectStore(EVENT_PROCESSOR_OFFSETS_OBJECT_STORE, { keyPath: 'eventProcessorId' });
-        }
+            request.onupgradeneeded = e => {
+                let database = e.target.result;
+                database.createObjectStore(COMMITS_OBJECT_STORE, { keyPath: 'purpose' });
+                database.createObjectStore(EVENT_PROCESSOR_OFFSETS_OBJECT_STORE, { keyPath: 'eventProcessorId' });
+            }
 
-        request.onsuccess = e => {
-            this.#database = e.target.result;
+            request.onsuccess = e => {
+                console.log('Database preloaded');
+                this.#database = e.target.result;
+                resolve(e.target.result);
+            }
 
-        }
-
-        request.onerror = e => {
-            console.log(`Error during initializing IndexedDB - ${e}`);
-        };
+            request.onerror = e => {
+                console.log(`Error during initializing IndexedDB - ${e}`);
+                reject(e);
+            };
+        });
+    }
+    
+    preload() {
+        return this.#promise;
     }
 
     get database() {
@@ -46,6 +53,7 @@ class Storage {
     }
 
     #getObjectStore(store) {
+        console.log('Asking for transaction', this.#database);
         let transaction = this.#database.transaction(store, 'readwrite');
         return transaction.objectStore(store);
     }

@@ -6,28 +6,33 @@ import { storage } from '../Storage';
 
 const COMMITS_KEY = 'commits';
 
+let commits = [];
+
 /**
  * Represents the storage for our event store
  */
 export class EventStore {
-    #storage;
 
     /**
      * Initializes a new instance of {EventStore}
      */
     constructor() {
-        this.#storage = storage;
     }
 
     /**
      * Load the event store 
      */
-    load() {       
+    load() {
+        return commits;
+    }
+
+    static preload() {       
         let promise = new Promise((resolve, reject) => {
-            let store = this.#storage.commits;
+            let store = storage.commits;
             let request = store.get(COMMITS_KEY);
             request.onsuccess = e => {
-                resolve(e.target.result ? e.target.result.content : []);
+                commits = e.target.result ? e.target.result.content : [];
+                resolve(commits);
             }
         });
         return promise;
@@ -38,21 +43,13 @@ export class EventStore {
      * @param {string} json 
      */
     save(json) {
-        let commits = JSON.parse(json);
+        commits = JSON.parse(json);
         let obj = {
             purpose: COMMITS_KEY,
             content: commits
         };
-        let store = this.#storage.commits;
+        let store = storage.commits;
         store.put(obj);
-    }
-
-    getSequenceNumber() {
-
-    }
-
-    setSequenceNumber(sequenceNumber) {
-
     }
 
 }
