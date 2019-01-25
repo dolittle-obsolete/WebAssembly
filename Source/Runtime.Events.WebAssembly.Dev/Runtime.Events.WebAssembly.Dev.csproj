@@ -3,7 +3,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <AssemblyName>Dolittle.ReadModels.MongoDB.WebAssembly</AssemblyName>
+        <AssemblyName>Dolittle.Events.WebAssembly.Dev</AssemblyName>
         <WasmBuild>False</WasmBuild>
     </PropertyGroup>
 
