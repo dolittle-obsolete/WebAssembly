@@ -61,9 +61,7 @@ export class Collection {
         let promise = new Promise((resolve, reject) => {
             this.#database[this.#name].find(actualSelector, options)
                 .fetch(result => {
-                    let resultAsJson = JSON.stringify(result);
-                    console.log(`Found ${resultAsJson}`);
-                    resolve(resultAsJson);
+                    resolve(result);
                 }, error => {
                     console.log(`Error ${error}`);
                     reject(error);
