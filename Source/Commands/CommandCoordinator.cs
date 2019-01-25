@@ -50,27 +50,11 @@ namespace Dolittle.Interaction.WebAssembly.Commands
         /// <summary>
         /// Handle a command
         /// </summary>
-        /// <param name="json">JSON representation of a <see cref="CommandRequest"/></param>
+        /// <param name="commandRequest">The <see cref="CommandRequest"/></param>
         /// <returns><see cref="CommandResult"/></returns>
-        public CommandResult Handle(string json)
+        public CommandResult Handle(CommandRequestWithDefaultGeneration commandRequest)
         {
-            _logger.Information($"Handle : {json}");
-
-            var commandRequestKeyValues = _serializer.GetKeyValuesFromJson(json);
-            var correlationId = Guid.Parse(commandRequestKeyValues["correlationId"].ToString());
-            _executionContextManager.CurrentFor(TenantId.Development, correlationId);
-
-            var content = _serializer.GetKeyValuesFromJson(commandRequestKeyValues["content"].ToString());
-
-            var commandRequest = new CommandRequest(
-                Guid.Parse(commandRequestKeyValues["correlationId"].ToString()),
-                Guid.Parse(commandRequestKeyValues["type"].ToString()),
-                ArtifactGeneration.First,
-                content.ToDictionary(keyValue => keyValue.Key.ToPascalCase(), keyValue => keyValue.Value)
-            );
-
-            var result = _commandCoordinator.Handle(commandRequest);
-            return result;
+            return _commandCoordinator.Handle(commandRequest);
         }
     }  
 }
