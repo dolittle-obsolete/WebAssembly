@@ -286,7 +286,9 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
 
             try
             {
-                var deserialized = _serializer.FromJson<IEnumerable<TProjection>>(result);
+                IEnumerable<TProjection> deserialized;
+                if( result == "[]") deserialized = new TProjection[0];
+                else deserialized = _serializer.FromJson<IEnumerable<TProjection>>(result);
                 var asyncResult = new AsyncResult<TProjection>(deserialized);
 
                 return asyncResult;
