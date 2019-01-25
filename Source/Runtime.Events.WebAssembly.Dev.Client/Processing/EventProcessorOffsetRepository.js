@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { storage } from '../Storage';
 
+const OFFSETS_KEY = 'offsets';
+
 /**
  * 
  */
@@ -11,13 +13,32 @@ export class EventProcessorOffsetRepository {
     #storage;
 
     constructor() {
-
         this.#storage = storage;
-
     }
 
-    get storage() {
-        return this.#storage;
+    /**
+     * 
+     */
+    load() {
+        let promise = new Promise((resolve, reject) => {
+            let store = this.#storage.eventProcessorOffsets;
+            let request = store.getAll();
+            request.onsuccess = e => {
+                resolve(e.target.result ? e.target.result : []);
+            }
+        });
+        return promise;
     }
 
+    /**
+     * 
+     * @param {string} json 
+     */
+    save(eventProcessorId, committedEventVersion) {
+        let store = this.#storage.eventProcessorOffsets;
+        store.put({
+            eventProcessorId: eventProcessorId,
+            content: committedEventVersion,
+        });
+    }
 }

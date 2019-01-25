@@ -96,7 +96,6 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"ERROR INVOKING: {ex}");
                 throw ex;
             }
         }

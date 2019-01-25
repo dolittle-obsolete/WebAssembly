@@ -6,9 +6,16 @@
 
 namespace Dolittle.Runtime.Events.Processing.WebAssembly.Dev
 {
+    using Dolittle.Collections;
+    using Dolittle.Interaction.WebAssembly.Interop;
+    using Dolittle.Logging;
     using Dolittle.Runtime.Events.Processing;
     using Dolittle.Runtime.Events.Store;
+    using Dolittle.Serialization.Json;
+    using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// In-Memory Implementation of <see cref="IEventProcessorOffsetRepository" />
@@ -16,14 +23,45 @@ namespace Dolittle.Runtime.Events.Processing.WebAssembly.Dev
     /// </summary>
     public class EventProcessorOffsetRepository : IEventProcessorOffsetRepository
     {
+        const string _globalObject = "window._eventStore.eventProcessorOffsetRepository";
+        readonly IJSRuntime _jsRuntime;
+        readonly ILogger _logger;
         ConcurrentDictionary<EventProcessorId,CommittedEventVersion> _lastProcessed;
+
+        class EventProcessorOffset
+        {
+            public EventProcessorOffset(EventProcessorId eventProcessorId, CommittedEventVersion content)
+            {
+                EventProcessorId = eventProcessorId;
+                Content = content;
+            }
+            public EventProcessorId EventProcessorId;
+            public CommittedEventVersion Content;
+        }
 
         /// <summary>
         /// Instantiates an instance of <see cref="EventProcessorOffsetRepository" />
         /// </summary>
-        public EventProcessorOffsetRepository()
+        public EventProcessorOffsetRepository(IJSRuntime jSRuntime, ISerializer serializer, ILogger logger)
         {
+            _jsRuntime = jSRuntime;
+            _logger = logger;
             _lastProcessed = new ConcurrentDictionary<EventProcessorId, CommittedEventVersion>();
+
+            Task.Run(async() =>
+            {
+                try
+                {
+                    var result = await _jsRuntime.Invoke<IEnumerable<EventProcessorOffset>>($"{_globalObject}.load");
+                    result.ForEach(_ => {
+                        _lastProcessed.AddOrUpdate(_.EventProcessorId,_.Content,(id,v) => _.Content);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Issues loading offsets");
+                }
+            });
         }
 
         /// <inheritdoc />
@@ -37,6 +75,8 @@ namespace Dolittle.Runtime.Events.Processing.WebAssembly.Dev
         public void Set(EventProcessorId eventProcessorId, CommittedEventVersion committedEventVersion)
         {
             _lastProcessed.AddOrUpdate(eventProcessorId,committedEventVersion,(id,v) => committedEventVersion);
+            _logger.Information($"Saving event processor offset");
+            _jsRuntime.Invoke($"{_globalObject}.save", eventProcessorId, committedEventVersion);
         }
 
         #region IDisposable Support

@@ -74,6 +74,7 @@ export class DotNetRuntime {
      * @returns {Any} Result from the CLR method
      */
     invoke(methodName, args, outputType) {
+        //console.log(`C#Invoke '${this.#type}'.'${methodName}' with '${args}'`);
         initializeIfNotInitialized();
 
         let argsAsJson = this.#serializeArguments(args);
@@ -90,6 +91,7 @@ export class DotNetRuntime {
     * @returns {Promise} Promise for continuation
     */
     beginInvoke(methodName, args, outputType) {
+        //console.log(`C#BeginInvoke '${this.#type}'.'${methodName}' with '${args}'`);
         initializeIfNotInitialized();
 
         let argsAsJson = this.#serializeArguments(args);

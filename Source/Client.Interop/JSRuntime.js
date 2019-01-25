@@ -25,7 +25,7 @@ export class JSRuntime {
      * @param {string} argumentsAsJson Arguments as serialized JSON array
      */
     invoke(identifier, argumentsAsJson) {
-        console.log(`Invocation '${identifier}' with '${argumentsAsJson}'`)
+        //console.log(`Invocation '${identifier}' with '${argumentsAsJson}'`)
         let object = window;
         const path = identifier.split('.');
         const method = path.pop();
@@ -48,10 +48,10 @@ export class JSRuntime {
             result.then(e => {
                 this.#invoker.invoke("Succeeded",[invocationId, JSON.stringify(e)]);
             }).catch(e => {
-                this.#invoker.invoke("Failed",[invocationId, e]);
+                this.#invoker.invoke("Failed",[invocationId, JSON.stringify(e)]);
             });
         } else {
-            this.#invoker.invoke("Succeeded",[invocationId, result]);
+            this.#invoker.invoke("Succeeded",[invocationId, JSON.stringify(result)]);
         }
     }
 }
