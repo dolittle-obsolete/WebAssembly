@@ -18,7 +18,9 @@ using Dolittle.Lifecycle;
 using Dolittle.Logging;
 using Dolittle.Runtime.Events;
 using Dolittle.Runtime.Events.Store;
+using Dolittle.Runtime.Events.WebAssembly.Dev;
 using Dolittle.Serialization.Json;
+using Dolittle.Types;
 using Newtonsoft.Json;
 
 namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
@@ -42,15 +44,16 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
 
         readonly IJSRuntime _jsRuntime;
         readonly ISerializer _serializer;
+        private readonly IInstancesOf<IWantToBeNotifiedWhenEventsAreCommited> _commitListeners;
 
         /// <summary>
         /// 
         /// </summary>
-        public EventStreamCommitterAndFetcher(IJSRuntime jsRuntime, ISerializer serializer, ILogger logger)
+        public EventStreamCommitterAndFetcher(IJSRuntime jsRuntime, ISerializer serializer, ILogger logger, IInstancesOf<IWantToBeNotifiedWhenEventsAreCommited> commitListeners)
         {
             _jsRuntime = jsRuntime;
             _serializer = serializer;
-
+            _commitListeners = commitListeners;
             var result = _jsRuntime.Invoke<IEnumerable<CommittedEventStream>>($"{_globalObject}.load").Result;
             logger.Information($"Loaded events {result}");
 
@@ -60,7 +63,6 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
                 _sequenceNumber = _commits.Max(_ => (ulong)_.Sequence);
             }
             logger.Information($"Event Store contains {_commits.Count} events");
-
         }
 
         /// <summary>
@@ -96,6 +98,8 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
 
                 var commitsAsJson = _serializer.ToJson(_commits, SerializationOptions.CamelCase);
                 _jsRuntime.Invoke($"{_globalObject}.save", commitsAsJson);
+
+                _commitListeners.ForEach(_ => _.Handle(commit));
 
                 return commit;
             }
