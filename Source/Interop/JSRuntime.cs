@@ -77,8 +77,11 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             TaskCompletionSourceWrapper taskCompletionSourceWrapper;
             if (!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
 
-            object result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
-            taskCompletionSourceWrapper.SetResult(result);
+            if( string.IsNullOrEmpty(resultAsJson)) taskCompletionSourceWrapper.SetResult(null);
+            else {
+                object result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
+                taskCompletionSourceWrapper.SetResult(result);
+            }
         }
 
         /// <inheritdoc/>
