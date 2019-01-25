@@ -18,6 +18,7 @@ function initializeIfNotInitialized() {
     if (!initialized) {
         invokeMethodBinding = Module.mono_bind_static_method(invokeMethod);
         beginInvokeMethodBinding = Module.mono_bind_static_method(beginInvokeMethod);
+        initialized = true;
     }
 }
 
@@ -76,7 +77,7 @@ export class DotNetRuntime {
         initializeIfNotInitialized();
 
         let argsAsJson = this.#serializeArguments(args);
-        let resultAsJson = invokeMethodBinding(this.#type, methodName, argsAsJson)
+        let resultAsJson = invokeMethodBinding(this.#type, methodName, argsAsJson);
         let result = this.#deserializeResult(resultAsJson, outputType);
         return result;
     }
@@ -105,24 +106,10 @@ export class DotNetRuntime {
     }
 
     #serializeArguments(args) {
-        let serializedArgs = [];
-        args.forEach(_ => serializedArgs.push(JSON.stringify(_)));
-        let argsAsJson = JSON.stringify(serializedArgs);
-        return argsAsJson;
+        return JSON.stringify(args);
     }
 
     #deserializeResult(resultAsJson, outputType) {
-        let result = JSON.parse(resultAsJson);
-        if (outputType) {
-            let instance = new outputType();
-            for (var property in instance) {
-                if (result.hasOwnProperty(property)) {
-                    instance[property] = result[property];
-                }
-            }
-            return instance;
-        }
-
-        return result;
+        return JSON.parse(resultAsJson);
     }
 }

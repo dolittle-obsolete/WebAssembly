@@ -31,8 +31,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             _serializer = _container.Get<ISerializer>();
             _typeFinder = _container.Get<ITypeFinder>();
 
-            var window = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("window");
-            _dotNetRuntime = (JSObject)window.GetObjectProperty("_dotNetRuntime");
+            _dotNetRuntime = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("_dotNetRuntime");
         }
 
         /// <summary>
@@ -97,6 +96,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine($"ERROR INVOKING: {ex}");
                 throw ex;
             }
         }
@@ -120,36 +120,12 @@ namespace Dolittle.Interaction.WebAssembly.Interop
 
         static IEnumerable<object> DeserializeArguments(MethodInfo method, string argumentsAsJson)
         {
-            var arguments = _serializer.FromJson<string[]>(argumentsAsJson);
-            var deserializedArguments = new List<object>();
-            var parameters = method.GetParameters();
-            for (var parameterIndex = 0; parameterIndex < parameters.Length; parameterIndex++)
-            {
-                var argument = arguments[parameterIndex];
-                if (argument.IndexOf("\"") == 0) argument = argument.Substring(1);
-                if (argument.IndexOf("\"") == argument.Length - 1) argument = argument.Substring(0, argument.Length - 1);
-                argument = argument.Replace("\\\"", "\"");
-
-                var parameter = parameters[parameterIndex];
-                if (parameter.ParameterType == typeof(string))
-                {
-                    deserializedArguments.Add(argument);
-                }
-                else if (parameter.ParameterType == typeof(Guid))
-                {
-                    deserializedArguments.Add(Guid.Parse(argument));
-                }
-                else if (parameter.ParameterType == typeof(bool))
-                {
-                    deserializedArguments.Add(bool.Parse(arguments[parameterIndex]));
-                }
-                else
-                {
-                    var deserializedArgument = _serializer.FromJson(parameter.ParameterType, argument, SerializationOptions.CamelCase);
-                    deserializedArguments.Add(deserializedArgument);
-                }
-            }
-            return deserializedArguments;
+            var deserialized = _serializer.FromJson<object[]>(argumentsAsJson);
+            var arguments = method.GetParameters().Select((parameter, index) => {
+                var argumentAsJson = _serializer.ToJson(deserialized[index], SerializationOptions.CamelCase);
+                return _serializer.FromJson(parameter.ParameterType, argumentAsJson);
+            });
+            return arguments;
         }
     }
 }
