@@ -63,7 +63,7 @@ export class Collection {
                 .fetch(result => {
                     let resultAsJson = JSON.stringify(result);
                     console.log(`Found ${resultAsJson}`);
-                    resolve(JSON.stringify(resultAsJson));
+                    resolve(resultAsJson);
                 }, error => {
                     console.log(`Error ${error}`);
                     reject(error);
