@@ -37,10 +37,10 @@ export class index {
 
         let IndexedDb = minimongo.IndexedDb;
         window.mongoDb = {};        
-        window.mongoDb.database = new IndexedDb({ namespace: "mydb" }, function () {
+        window.mongoDb.database = new IndexedDb({ namespace: "read_model_database_for_Basic" }, function () {
             //console.log("Hello : " + window.mongoDb.database);
-            window.mongoDb.database.addCollection("animals", () => {
-                window.mongoDb.collection = window.mongoDb.database.animals;
+            window.mongoDb.database.addCollection("Animal", () => {
+                window.mongoDb.collection = window.mongoDb.database.Animal;
 
                 /*
                 let doc = { species: "dog", name: "Bingo" };
@@ -65,7 +65,7 @@ export class index {
             let obj = JSON.parse(document);
             //console.log(document);
 
-            window.mongoDb.database.animals.upsert(obj, () => {
+            window.mongoDb.database.Animal.upsert(obj, () => {
                 console.log("upserted");
 
             });

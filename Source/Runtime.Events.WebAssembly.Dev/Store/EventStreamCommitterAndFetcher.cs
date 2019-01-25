@@ -51,22 +51,16 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
             _jsRuntime = jsRuntime;
             _serializer = serializer;
 
-            Task.Run(async() =>
-            {
-                var result = await _jsRuntime.Invoke<IEnumerable<CommittedEventStream>>($"{_globalObject}.load");
-                logger.Information($"Loaded events {result}");
+            var result = _jsRuntime.Invoke<IEnumerable<CommittedEventStream>>($"{_globalObject}.load").Result;
+            logger.Information($"Loaded events {result}");
 
-                try
-                {
-                    _commits.AddRange(result);
-                    _sequenceNumber = _commits.Max(_ => (ulong)_.Sequence);
-                    logger.Information($"Event Store contains {_commits.Count} events");
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Issues loading events");
-                }
-            });
+            _commits.AddRange(result);
+            if (_commits.Count() > 0)
+            {
+                _sequenceNumber = _commits.Max(_ => (ulong)_.Sequence);
+            }
+            logger.Information($"Event Store contains {_commits.Count} events");
+
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ import { QueryCoordinator as WASMQueryCoordinator } from '@dolittle/webassembly.
 import { MongoDB } from '@dolittle/readmodels.mongodb.webassembly';
 import { EventProcessorOffsetRepository } from '@dolittle/runtime.events.webassembly.dev/Processing';
 import { EventStore } from '@dolittle/runtime.events.webassembly.dev/Store';
+import { storage } from '@dolittle/runtime.events.webassembly.dev';
 
 import { JSRuntime } from '@dolittle/webassembly.interop';
 
@@ -27,33 +28,38 @@ export function configure(aurelia, config) {
 
     console.log(`Using '${config.entryPoint}' as entrypoint for WebAssembly `)
 
-    window.Module = {};
+    storage.preload().then(_ => EventProcessorOffsetRepository.preload()).then(_ => EventStore.preload()).catch(error => {
+        console.error('Error preloading', error);
+    }).then(_ => {
+        // Now the rest of the system should be ready for booting
+        window.Module = {};
 
-    window.Module.onRuntimeInitialized = () => {
-        MONO.mono_load_runtime_and_bcl(
-            'managed',
-            'managed',
-            1,
-            config.assemblies,
-            () => {
-                Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime");
-                BINDING.call_static_method(config.entryPoint, []);
-            }
-        );
-    };
+        window.Module.onRuntimeInitialized = () => {
+            MONO.mono_load_runtime_and_bcl(
+                'managed',
+                'managed',
+                1,
+                config.assemblies,
+                () => {
+                    Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime");
+                    BINDING.call_static_method(config.entryPoint, []);
+                }
+            );
+        };
 
-    let monoScript = document.createElement('script');
-    monoScript.async = true;
-    monoScript.src = config.monoScript;
-    document.body.appendChild(monoScript);
+        let monoScript = document.createElement('script');
+        monoScript.async = true;
+        monoScript.src = config.monoScript;
+        document.body.appendChild(monoScript);
 
-    if (config.offline === true) {
-        navigator.serviceWorker.register('service-worker.js');
-    }
+        if (config.offline === true) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
 
-    window._mongoDB = new MongoDB();
-    window._eventStore = {
-        eventProcessorOffsetRepository: new EventProcessorOffsetRepository(),
-        eventStore: new EventStore()
-    }
+        window._mongoDB = new MongoDB();
+        window._eventStore = {
+            eventProcessorOffsetRepository: new EventProcessorOffsetRepository(),
+            eventStore: new EventStore()
+        }
+    });
 }

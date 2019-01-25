@@ -48,19 +48,9 @@ namespace Dolittle.Runtime.Events.Processing.WebAssembly.Dev
             _logger = logger;
             _lastProcessed = new ConcurrentDictionary<EventProcessorId, CommittedEventVersion>();
 
-            Task.Run(async() =>
-            {
-                try
-                {
-                    var result = await _jsRuntime.Invoke<IEnumerable<EventProcessorOffset>>($"{_globalObject}.load");
-                    result.ForEach(_ => {
-                        _lastProcessed.AddOrUpdate(_.EventProcessorId,_.Content,(id,v) => _.Content);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Issues loading offsets");
-                }
+            var result = _jsRuntime.Invoke<IEnumerable<EventProcessorOffset>>($"{_globalObject}.load").Result;
+            result.ForEach(_ => {
+                _lastProcessed.AddOrUpdate(_.EventProcessorId,_.Content,(id,v) => _.Content);
             });
         }
 
