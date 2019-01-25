@@ -75,7 +75,7 @@ export class index {
         window.mongoDb.getAllAnimals = () => {
             let promise = new Promise(resolve => {
                 window.mongoDb.collection.find({}).fetch(results => {
-                    resolve(JSON.stringify(results));
+                    resolve(results);
                 });
             });
             return promise;
