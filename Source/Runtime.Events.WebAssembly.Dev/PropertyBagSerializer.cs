@@ -28,7 +28,10 @@ namespace Dolittle.Runtime.Events.WebAssembly.Dev
             var json = reader.Value as string;
             var bson = BsonDocument.Parse(json);
             var dict = new NullFreeDictionary<string, object>();
-            bson.ForEach(_ => dict.Add(_.Name, _.Value));
+            bson.ForEach(_ => {
+                var value = BsonTypeMapper.MapToDotNetValue(_.Value);
+                dict.Add(_.Name, value);
+            });
             return new PropertyBag(dict);
         }
         
