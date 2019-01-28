@@ -5,6 +5,7 @@ using Dolittle.Collections;
 using Dolittle.PropertyBags;
 using Dolittle.Runtime.Events.MongoDB;
 using Dolittle.Serialization.Json;
+using Dolittle.Strings;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -27,12 +28,7 @@ namespace Dolittle.Runtime.Events.WebAssembly.Dev
         {
             var json = reader.Value as string;
             var bson = BsonDocument.Parse(json);
-            var dict = new NullFreeDictionary<string, object>();
-            bson.ForEach(_ => {
-                var value = BsonTypeMapper.MapToDotNetValue(_.Value);
-                dict.Add(_.Name, value);
-            });
-            return new PropertyBag(dict);
+            return PropertyBagBsonSerializer.Deserialize(bson);
         }
         
         /// <inheritdoc/>
