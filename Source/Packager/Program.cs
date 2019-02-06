@@ -25,18 +25,26 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             var artifactsEmbedder = new ArtifactsEmbedder(configuration, assemblies);
 
             managedFilesFileCopier.Copy(assemblies.AllImportedAssemblyPaths);
-            managedFilesFileCopier.Copy(assemblies.AllImportedAssemblyDebugSymbolPaths);
+            if( !configuration.IsRelease ) managedFilesFileCopier.Copy(assemblies.AllImportedAssemblyDebugSymbolPaths);
+
+            var configurationPath = configuration.IsRelease?"release":"debug";
 
             staticFilesFileCopier.Copy(new[] {
-                Path.Combine(paths.Sdk, "debug", "mono.js"),
-                Path.Combine(paths.Sdk, "debug", "mono.wasm"),
-                Path.Combine(paths.Sdk, "debug", "mono.wasm.map"),
-                Path.Combine(paths.Sdk, "debug", "mono.wast")
+                Path.Combine(paths.Sdk, configurationPath, "mono.js"),
+                Path.Combine(paths.Sdk, configurationPath, "mono.wasm")
             });
+
+            if( !configuration.IsRelease ) 
+            {
+                staticFilesFileCopier.Copy(new[] {
+                    Path.Combine(paths.Sdk, "debug", "mono.wasm.map"),
+                    Path.Combine(paths.Sdk, "debug", "mono.wast")
+                });
+            }
 
             var managedFiles = new List<string>();
             managedFiles.AddRange(assemblies.AllImportedAssemblyPaths);
-            managedFiles.AddRange(assemblies.AllImportedAssemblyDebugSymbolPaths);
+            if( !configuration.IsRelease ) managedFiles.AddRange(assemblies.AllImportedAssemblyDebugSymbolPaths);
 
             var librariesFilePath = Path.Combine(configuration.OutputPath, "libraries.json");
             File.WriteAllText(librariesFilePath, JsonConvert.SerializeObject(assemblies.Libraries, Formatting.Indented));
@@ -51,7 +59,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
                 $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: 0, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
             );
 
-            var monoJsSource = Path.Combine(paths.Sdk, "debug", "mono.js");
+            var monoJsSource = Path.Combine(paths.Sdk, configurationPath, "mono.js");
             var monoJsDestination = Path.Combine(configuration.OutputPath, "mono.js");
             var monoJs = File.ReadAllText(monoJsSource);
             monoJs = monoJs.Replace("this.mono_wasm_runtime_is_ready=true;debugger","this.mono_wasm_runtime_is_ready=true;");

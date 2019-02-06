@@ -24,6 +24,7 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             SdkRoot = arguments[1];
             OutputPath = arguments[2];
             BoundedContextFilePath = arguments[3];
+            if( arguments.Length > 3 ) IsRelease = arguments[4].ToLowerInvariant() == "release"?true:false;
 
             ManagedOutputPath = Path.Combine(OutputPath, "managed");
 
@@ -51,10 +52,14 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         /// </summary>
         public string ManagedOutputPath { get; }
 
-
         /// <summary>
         /// Gets the path to the 'bounded-context.json' file
         /// </summary>
         public string BoundedContextFilePath { get; }
+
+        /// <summary>
+        /// Gets whether or not this is a release build
+        /// </summary>
+        public bool IsRelease { get; }
     }
 }

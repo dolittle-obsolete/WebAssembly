@@ -15,17 +15,22 @@ namespace Basic
         static void Main(string[] args)
         {
             var before = DateTime.Now;
+            Console.WriteLine("Start Dolittle");
 
             var bootResult = Bootloader.Configure(_ => _
                 .WithEntryAssembly(typeof(Program).Assembly)
                 .WithAssembliesSpecifiedIn(typeof(Program).Assembly)
                 .SynchronousScheduling()
-                .UseLogAppender(new CustomLogAppender())
+                .NoLogging()
+                //.UseLogAppender(new CustomLogAppender())
             ).Start();
 
             var container = bootResult.Container;
             var logger = container.Get<ILogger>();
-            logger.Information("We're running");
+            var after = DateTime.Now;
+            var delta = after.Subtract(before);
+
+            Console.WriteLine($"We're running - took {delta.TotalSeconds}");
 
             var executionContextManager = container.Get<IExecutionContextManager>();
             executionContextManager.CurrentFor(TenantId.Development);

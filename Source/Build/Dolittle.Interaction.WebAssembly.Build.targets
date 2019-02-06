@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Target Name="ArtifactsAfterBuild" AfterTargets="AfterBuild">
-    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmPath) $(WasmOutput) $(DolittleBoundedContextConfigPath)"/>
+    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmPath) $(WasmOutput) $(DolittleBoundedContextConfigPath) $(Configuration)"/>
   </Target>   
 </Project>  
