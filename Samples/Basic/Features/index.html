@@ -6,6 +6,9 @@
         <div if.bind="loading">
             Loading
         </div>
+        <div else>
+            Total load time: ${totalLoadTime}ms
+        </div>
 
         <button click.delegate="perform()">Execute Command</button>
         <button click.delegate="getData()">Get Data Inserted in MongoDb</button>
