@@ -54,9 +54,10 @@ namespace Dolittle.Interaction.WebAssembly.Packager
             File.WriteAllText(assembliesFilePath, $"[\n\t\t{fileList}\n]");
 
             var monoConfigPath = Path.Combine(configuration.OutputPath, "mono-config.js");
+            var enableDebugging = configuration.IsRelease?0:1;
             
             File.WriteAllText(monoConfigPath,
-                $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: 0, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
+                $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: {enableDebugging}, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
             );
 
             var monoJsSource = Path.Combine(paths.Sdk, configurationPath, "mono.js");
