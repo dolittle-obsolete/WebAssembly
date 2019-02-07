@@ -119,7 +119,6 @@ export class index {
 
     populate() {
         this.animals = [];
-
         let query = new MyQuery();
         this.#queryCoordinator.execute(query).then(result => {
             this.animals = result.items;
@@ -129,11 +128,10 @@ export class index {
 
     getData() {
 
-        /*
-        window.mongoDb.database.animals.findOne({ Species: "Dog" }, {}, (res) => {
+        window.mongoDb.database.Animal.findOne({ species: "Dog" }, {}, (res) => {
             this.doc = res;
             //console.log("Dog's name is: " + res.Name);
-        });*/
+        });
     }
 
     goOffline() {
