@@ -25,7 +25,7 @@ $ git submodule update --init --recursive
 
 ## Building
 
-All the build things are from a submodule.
+To build the .NET part of this, you have use the `Build` submodule
 To build, run one of the following:
 
 Windows:
@@ -38,6 +38,23 @@ Linux / macOS
 
 ```shell
 $ Build\build.sh
+```
+
+For the JavaScript client parts, you need to first of all restore all packages.
+This project relies on [yarn](https://yarnpkg.com) as a pre-requisite. You simply
+then run 
+
+```shell
+$ yarn
+```
+
+At the root to restore packages.
+
+To build all the different JavaScript packages locally for use in for instance the sample,
+you simply run:
+
+```shell
+$ yarn build
 ```
 
 ## Packages

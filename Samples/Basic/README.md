@@ -16,7 +16,6 @@ $ (cd ../.. && yarn)
 $ yarn run start
 ```
 
-Once this is running, you simply navigate to [http://localhost:8080/index.html](http://localhost:8080/index.html).
-
+Once this is running, you simply navigate to [http://localhost:8080/](http://localhost:8080/).
 
 > __Note:__ This repository is using yarn workspaces, so the dependecies must be installed from the root directory of the repository. It will fail upon build otherwise.
