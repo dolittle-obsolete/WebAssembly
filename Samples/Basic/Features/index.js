@@ -23,12 +23,18 @@ export class index {
 
     isOffline = false;
 
+    totalLoadTime = 0;
+
     constructor(commandCoordinator, queryCoordinator) {
         this.#commandCoordinator = commandCoordinator;
         this.#queryCoordinator = queryCoordinator;
+        let before = new Date();
 
         window._dolittleLoaded = () => {
             this.loading = false;
+            let after = new Date();
+            //console.log(`Total time : ${after - before}`);
+            this.totalLoadTime = after-before;
         };
 
         navigator.serviceWorker.getRegistration().then((serviceWorker) => {
