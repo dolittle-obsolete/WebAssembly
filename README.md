@@ -90,13 +90,13 @@ To keep this repository as lightweight as possible the Mono Wasm dependency is d
 
 ### Updating the Mono Wasm reference to a greater version
 
-To update the Mono Wasm build to a greater version - one needs to update the [Build.csproj](./Source/Build/Build.csproj).
+To update the Mono Wasm build to a greater version - one needs to update the [Core.csproj](./Source/Core/Core.csproj).
 The `DownloadFile` task points to a `SourceUrl` - this is the attribute that needs to be updated:
 
 ```xml
 <DownloadFile DestinationFolder="."
               DestinationFileName="mono-wasm.zip"
-              SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/1384/ubuntu-1804-amd64/sdks/wasm/mono-wasm-2fd171c4f9d.zip"/>
+              SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/2016/Azure/processDownloadRequest/2016/ubuntu-1804-amd64/sdks/wasm/mono-wasm-33189ef31f3.zip"/>
 ```
 
 You update it by finding the URL to for instance the last successful build artifacts from [here](https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/).
