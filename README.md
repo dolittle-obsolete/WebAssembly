@@ -104,6 +104,11 @@ You update it by finding the URL to for instance the last successful build artif
 Navigate to it and get the link:
 ![](./GetLink.gif)
 
+## Debugging
+
+https://hackernoon.com/introducing-uno-webassembly-projects-and-debugging-f360d4776df3
+https://docs.microsoft.com/en-us/aspnet/core/razor-components/debugging?view=aspnetcore-3.0
+
 ## More details
 
 To learn more about the projects of Dolittle and how to contribute, please go [here](https://github.com/dolittle/Home).
