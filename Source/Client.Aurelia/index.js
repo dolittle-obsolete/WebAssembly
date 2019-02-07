@@ -22,6 +22,7 @@ export function configure(aurelia, config) {
     config.assemblies = config.assemblies || [];
     config.monoScript = config.monoScript || 'mono.js';
     config.offline = config.offline || false;
+    config.debugging = config.debugging || false;
 
     if (config.entryPoint == '') throw "Missing entrypoint in Dolittle WebAssembly plugin configuration";
     if (config.assemblies.length == 0) throw "Missing assemblies in Dolittle WebAssembly plugin configuration";
@@ -38,7 +39,7 @@ export function configure(aurelia, config) {
             MONO.mono_load_runtime_and_bcl(
                 'managed',
                 'managed',
-                1,
+                config.debugging?1:0,
                 config.assemblies,
                 () => {
                     Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime");
