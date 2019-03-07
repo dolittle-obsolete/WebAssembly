@@ -36,6 +36,7 @@
                 <tr repeat.for="animal of animals">
                     <td>${animal.species}</td>
                     <td>${animal.name}</td>
+                    <td><button click.delegate="delete(animal)">Delete</button></td>
                 </tr>
 
             </tbody>

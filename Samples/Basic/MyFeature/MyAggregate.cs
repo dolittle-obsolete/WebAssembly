@@ -15,5 +15,10 @@ namespace Basic.MyFeature
 
         }
 
+        public void Delete()
+        {
+            Apply(new AnimalDeleted());
+        }
+
     }
 }

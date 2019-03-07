@@ -26,9 +26,11 @@ namespace Basic.MyFeature
         {
             get
             {   
+                Console.WriteLine("QUERY");
                 var tcs = new TaskCompletionSource<IQueryable<Animal>>();
                 _jsRuntime.Invoke<IEnumerable<Animal>>("window.mongoDb.getAllAnimals").ContinueWith(result =>
                 {
+                    Console.WriteLine("Result");
                     tcs.SetResult(result.Result.AsQueryable());
                 });
 

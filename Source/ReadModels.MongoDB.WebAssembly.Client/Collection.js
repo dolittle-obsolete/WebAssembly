@@ -69,4 +69,23 @@ export class Collection {
         });
         return promise;
     }
+
+    /**
+     * Delete one document based on a selector criteria
+     * @param {*} selector 
+     */
+    deleteOne(selector) {
+        let actualSelector = eval(`actualSelector = ${selector}`);
+        let promise = new Promise((resolve, reject) => {
+            let collection = this.#database[this.#name];
+            collection.findOne(actualSelector, {}, result => {
+                collection.remove(result._id, () => {
+                    collection.resolveRemove(result._id, () => {
+                        resolve();
+                    }, () => reject());                       
+                }, () => reject());
+            }, () => reject());
+        });
+        return promise;
+    }
 }

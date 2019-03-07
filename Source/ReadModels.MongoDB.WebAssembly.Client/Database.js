@@ -33,7 +33,6 @@ export class Database {
 
         this.#database.addCollection(name, () => {
             console.log(`Collection ${name} added`)
-
         });
     }
 }

@@ -23,5 +23,13 @@ namespace Basic.MyFeature
             var aggregate = _repository.Get(Guid.NewGuid());
             aggregate.DoStuff();
         }
+
+        public void Handle(DeleteAnimal command)
+        {
+            _logger.Information("Handling the command");
+            var aggregate = _repository.Get(command.Animal);
+            aggregate.Delete();
+        }
+        
     }
 }

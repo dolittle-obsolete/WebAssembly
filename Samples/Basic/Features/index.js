@@ -6,6 +6,8 @@ import { QueryCoordinator } from '@dolittle/queries';
 import { MyCommand } from './MyFeature/MyCommand';
 import { MyQuery } from './MyFeature/MyQuery';
 
+import { DeleteAnimal } from './MyFeature/DeleteAnimal';
+
 import { Guid } from '@dolittle/core';
 
 
@@ -122,6 +124,19 @@ export class index {
         let query = new MyQuery();
         this.#queryCoordinator.execute(query).then(result => {
             this.animals = result.items;
+        });
+
+        window.mongoDb.getAllAnimals().then(result => {
+            this.animals = result;
+
+        });
+    }
+
+    delete(animal) {
+        let command = new DeleteAnimal();
+        command.animal = animal._id;
+        this.#commandCoordinator.handle(command).then(result => {
+            this.results.push(result);
         });
     }
 

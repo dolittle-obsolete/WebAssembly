@@ -4,12 +4,20 @@
       "0889884d-ae6b-46a1-adc0-7bdcb11c19d3": {
         "generation": 1,
         "type": "Basic.MyFeature.MyCommand, Basic"
+      },
+      "11ec01e3-bc6c-45b2-9454-f63715fc0046": {
+        "generation": 1,
+        "type": "Basic.MyFeature.DeleteAnimal, Basic"
       }
     },
     "events": {
       "de9736e4-ba10-4eeb-86a4-9771eb51205b": {
         "generation": 1,
         "type": "Basic.MyFeature.MyEvent, Basic"
+      },
+      "19cdaf6e-bfd7-4922-b8be-f573774afce8": {
+        "generation": 1,
+        "type": "Basic.MyFeature.AnimalDeleted, Basic"
       }
     },
     "eventSources": {

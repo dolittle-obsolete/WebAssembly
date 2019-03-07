@@ -2,6 +2,7 @@ using System;
 using Dolittle.Events.Processing;
 using Dolittle.Logging;
 using Dolittle.ReadModels;
+using Dolittle.Runtime.Events;
 using Dolittle.Serialization.Json;
 using WebAssembly;
 
@@ -59,6 +60,23 @@ namespace Basic.MyFeature
                 _logger.Error(ex, "Couldn't insert document ");
 
             }
+        }
+
+        [EventProcessor("473c597b-7d3c-4e93-829b-46ef485dd980")]
+        public void Process(AnimalDeleted @event, EventSourceId eventSourceId)
+        {
+            Console.WriteLine("Delete it");
+            _repository.GetById(eventSourceId).ContinueWith(t =>
+            {
+                Console.WriteLine("Animal fetched");
+                var animal = t.Result;
+                _repository.Delete(animal).ContinueWith(_ =>
+                {
+                    Console.WriteLine("Deleted");
+                    _logger.Information("Deleted");
+                });
+
+            });
         }
     }
 }

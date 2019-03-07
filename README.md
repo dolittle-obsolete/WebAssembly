@@ -125,6 +125,7 @@ Navigate to it and get the link:
 
 https://hackernoon.com/introducing-uno-webassembly-projects-and-debugging-f360d4776df3
 https://docs.microsoft.com/en-us/aspnet/core/razor-components/debugging?view=aspnetcore-3.0
+https://www.hanselman.com/blog/CompilingCToWASMWithMonoAndBlazorThenDebuggingNETSourceWithRemoteDebuggingInChromeDevTools.aspx
 
 Mono Issue:
 https://github.com/mono/mono/issues/8378
