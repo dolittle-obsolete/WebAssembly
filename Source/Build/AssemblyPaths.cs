@@ -1,24 +1,32 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 using System.Collections.Generic;
 using System.IO;
+using Dolittle.Build;
+using Dolittle.Lifecycle;
 
-namespace Dolittle.Interaction.WebAssembly.Packager
+namespace Dolittle.Interaction.WebAssembly.Build
 {
     /// <summary>
     /// Represents something that knows about all the assembly paths
     /// </summary>
+    [Singleton]
     public class AssemblyPaths
     {
         /// <summary>
         /// Initialize a new instance of <see cref="AssemblyPaths"/>
         /// </summary>
         /// <param name="configuration">The current configuration</param>
-        public AssemblyPaths(Configuration configuration)
+        /// <param name="buildTarget">The current <see cref="BuildTarget"/></param>
+        public AssemblyPaths(Configuration configuration, BuildTarget buildTarget)
         {
             Sdk = configuration.SdkRoot;
             Bcl = Path.Combine(Sdk, "wasm-bcl", "wasm");
             Framework = Path.Combine(Sdk, "framework");
             Facades = Path.Combine(Bcl, "Facades");
-            Root = Path.GetDirectoryName(configuration.EntryAssemblyPath);
+            Root = Path.GetDirectoryName(buildTarget.TargetAssemblyPath);
             SearchPaths = new string[] {
                 Sdk,
                 Bcl,

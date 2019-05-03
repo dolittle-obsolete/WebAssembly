@@ -1,6 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="TaskFolder;TaskAssembly">
     <PropertyGroup>
-        <WasmPackager>dotnet &quot;$(MSBuildThisFileDirectory)../tools/Dolittle.Interaction.WebAssembly.Packager.dll&quot;</WasmPackager>
         <WasmOutput>./publish</WasmOutput>
     </PropertyGroup>
 </Project>

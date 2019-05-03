@@ -8,15 +8,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Dolittle.Assemblies;
+using Dolittle.Build;
 using Dolittle.Collections;
+using Dolittle.Lifecycle;
 using Microsoft.Extensions.DependencyModel;
 using Mono.Cecil;
 
-namespace Dolittle.Interaction.WebAssembly.Packager
+namespace Dolittle.Interaction.WebAssembly.Build
 {
     /// <summary>
     /// Represents a system that knows how to discover assemblies
     /// </summary>
+    [Singleton]
     public class Assemblies
     {
         readonly List<Assembly> _rootAssemblies = new List<Assembly>();
@@ -28,16 +31,22 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         IEnumerable<Library> _libraries;
 
         HashSet<SkippedImport> _skippedImports = new HashSet<SkippedImport>();
+        private readonly BuildTarget _buildTarget;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Assemblies"/>
         /// </summary>
         /// <param name="configuration">Current <see cref="Configuration"/></param>
+        /// <param name="buildTarget">Current <see cref="BuildTarget"/></param>
         /// <param name="assemblyPaths">Paths for assemblies</param>
-        public Assemblies(Configuration configuration, AssemblyPaths assemblyPaths)
+        public Assemblies(
+            Configuration configuration,
+            BuildTarget buildTarget,
+            AssemblyPaths assemblyPaths)
         {
             _configuration = configuration;
             _assemblyPaths = assemblyPaths;
+            _buildTarget = buildTarget;
             PopulateRootAssemblies();
             ImportAllAssemblies();
         }
@@ -127,31 +136,23 @@ namespace Dolittle.Interaction.WebAssembly.Packager
 
         void PopulateRootAssemblies()
         {
-            var rootAssembly = Assembly.LoadFrom(_configuration.EntryAssemblyPath);
-            var assemblyContext = new AssemblyContext(rootAssembly);
-
             var libraries = new List<Library>();
             libraries.Add(new Library(
                 "Project",
-                rootAssembly.GetName().Name,
+                _buildTarget.AssemblyName.Name,
                 "1.0.0",
                 string.Empty,
                 new Dependency[0],
                 false
             ));
 
-            libraries.AddRange(assemblyContext.GetReferencedLibraries());
+            libraries.AddRange(_buildTarget.AssemblyContext.GetReferencedLibraries());
             _libraries = libraries;
 
             var paths = new List<string>();
             libraries.ForEach(library =>
             {
-                if( library.Name == "Remotion.Linq") 
-                {
-                    var i=0;
-                    i++;
-                }
-                var assetsPaths = assemblyContext.GetAssemblyPathsFor(library);
+                var assetsPaths = _buildTarget.AssemblyContext.GetAssemblyPathsFor(library);
                 var bestMatchedPaths = assetsPaths.Select(_ => _assemblyPaths.FindBestMatchFor(_));
                 paths.AddRange(bestMatchedPaths);
             });

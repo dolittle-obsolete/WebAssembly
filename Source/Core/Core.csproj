@@ -20,7 +20,7 @@
     <Target Name="PreparePackageBinaries" BeforeTargets="GenerateNuspec">
         <DownloadFile DestinationFolder="." 
                       DestinationFileName="mono-wasm.zip" 
-                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/2016/Azure/processDownloadRequest/2016/ubuntu-1804-amd64/sdks/wasm/mono-wasm-33189ef31f3.zip"/>
+                      SourceUrl="https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/2740/Azure/processDownloadRequest/2740/ubuntu-1804-amd64/sdks/wasm/mono-wasm-231da41c789.zip"/>
 
         <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
         <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>

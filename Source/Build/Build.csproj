@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../../Build/MSBuild/default.props"/>
+    <Import Project="../../Build/MSBuild/default.props" />
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,20 +10,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />        
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
-        <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+        <PackageReference Include="Dolittle.Assemblies" Version="2.*" />
+        <PackageReference Include="Dolittle.Build" Version="2.*" />
+        <PackageReference Include="Dolittle.Build.MSBuild" Version="2.*" />
+        <PackageReference Include="Dolittle.Configuration" Version="2.*" />
+        <PackageReference Include="Dolittle.Concepts" Version="2.*" />
     </ItemGroup>
 
     <ItemGroup>
         <Content Include="Dolittle.Interaction.WebAssembly.Build.props" PackagePath="build\" />
         <Content Include="Dolittle.Interaction.WebAssembly.Build.targets" PackagePath="build\" />
-        <Content Include="tools\**\*" Exclude="tools\**\*.nupkg" PackagePath="tools\" />
-        <Compile Remove="tools\**\*"/>
+        <!--<Content Include="tools\**\*" Exclude="tools\**\*.nupkg" PackagePath="tools\" />
+        <Compile Remove="tools\**\*"/>-->
     </ItemGroup>   
-    
-    <Target Name="PreparePackageBinaries" BeforeTargets="GenerateNuspec">
-        <Exec Command="dotnet publish -o $(ProjectDir)\tools -c $(Configuration)" WorkingDirectory="..\Packager"/>
+
+    <Target Name="PublishBuildPlugin" BeforeTargets="GenerateNuspec">
+        <Exec Command="dotnet publish -c $(Configuration)" WorkingDirectory="."/>
     </Target>
+
+    <Target Name="PackTaskDependencies" AfterTargets="PublishBuildPlugin">
+        
+        <ItemGroup>
+            <_PackageFiles Include=".\bin\$(Configuration)\*\publish\**\*">
+                <PackagePath>tasks\%(RecursiveDir)</PackagePath>
+                <Visible>false</Visible>
+                <BuildAction>Content</BuildAction>
+            </_PackageFiles>
+        </ItemGroup>
+    </Target>
+
 </Project>

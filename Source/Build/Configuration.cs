@@ -2,29 +2,34 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
 using System.Collections.Generic;
 using System.IO;
+using Dolittle.Configuration;
 
-namespace Dolittle.Interaction.WebAssembly.Packager
+namespace Dolittle.Interaction.WebAssembly.Build
 {
     /// <summary>
     /// Represents the configuration for the packager
     /// </summary>
-    public class Configuration
+    public class Configuration : IConfigurationObject
     {
-
         /// <summary>
         /// Initalizes a new instance of <see cref="Configuration"/>
         /// </summary>
-        /// <param name="arguments">Command line arguments</param>
-        public Configuration(string[] arguments)
+        /// <param name="sdkRoot">The path to the root of the WASM Mono SDK</param>
+        /// <param name="outputPath">The path to where to output files</param>
+        /// <param name="boundedContextFilePath">The path to the bounded-context.json file</param>
+        /// <param name="isRelease">Boolean indicating whether or not this is a release build or not</param>
+        public Configuration(
+            string sdkRoot,
+            string outputPath,
+            string boundedContextFilePath,
+            bool isRelease)
         {
-            EntryAssemblyPath = arguments[0];
-            SdkRoot = arguments[1];
-            OutputPath = arguments[2];
-            BoundedContextFilePath = arguments[3];
-            if( arguments.Length > 3 ) IsRelease = arguments[4].ToLowerInvariant() == "release"?true:false;
+            SdkRoot = sdkRoot;
+            OutputPath = outputPath;
+            BoundedContextFilePath = boundedContextFilePath;
+            IsRelease = isRelease;
 
             ManagedOutputPath = Path.Combine(OutputPath, "managed");
 
@@ -36,11 +41,6 @@ namespace Dolittle.Interaction.WebAssembly.Packager
         /// Get the path to the root of the sdk
         /// </summary>
         public string SdkRoot { get; }
-
-        /// <summary>
-        /// Gets the path to the entry assembly
-        /// </summary>
-        public string EntryAssemblyPath { get; }
 
         /// <summary>
         /// Gets the output path to be used

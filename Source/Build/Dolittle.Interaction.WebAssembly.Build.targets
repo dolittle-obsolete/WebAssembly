@@ -1,5 +1,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="ArtifactsAfterBuild" AfterTargets="AfterBuild">
-    <Exec Command="$(WasmPackager) $(TargetPath) $(WasmPath) $(WasmOutput) $(DolittleBoundedContextConfigPath) $(Configuration)"/>
-  </Target>   
+    <ItemGroup>
+        <DolittleBuildPlugin Include="Dolittle.Interaction.WebAssembly.Build.BuildTask">
+            <Assembly>$(MSBuildThisFileDirectory)../tasks/netstandard2.0/publish/Dolittle.Interaction.WebAssembly.Build.dll</Assembly>
+            <SdkRoot>$(WasmPath)</SdkRoot>
+            <OutputPath>$(WasmOutput)</OutputPath>
+            <BoundedContextFilePath>$(DolittleBoundedContextConfigPath)</BoundedContextFilePath>
+            <IsRelease Condition="'$(Configuration)'=='Release'">true</IsRelease>
+            <IsRelease Condition="'$(Configuration)'!='Release'">false</IsRelease>
+        </DolittleBuildPlugin>
+    </ItemGroup>
 </Project>  

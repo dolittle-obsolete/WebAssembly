@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 using Dolittle.Concepts;
 
-namespace Dolittle.Interaction.WebAssembly.Packager
+namespace Dolittle.Interaction.WebAssembly.Build
 {
     /// <summary>
     /// Represents a skipped import
