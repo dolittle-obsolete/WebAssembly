@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../**/*.csproj" Exclude="../WebAssembly/WebAssembly.csproj;../Core/Core.csproj;../Build/Build.csproj;../Packager/Packager.csproj" />
+        <ProjectReference Include="../**/*.csproj" Exclude="../WebAssembly/WebAssembly.csproj;../Core/Core.csproj;../Build/Build.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Dolittle.SDK" Version="2.*" />
+        <PackageReference Include="Dolittle.SDK" Version="3.*" />
     </ItemGroup>
 </Project>
 

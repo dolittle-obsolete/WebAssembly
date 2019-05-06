@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.Concepts" Version="2.*" />
-        <PackageReference Include="Dolittle.Runtime.ReadModels" Version="2.*" />
-        <PackageReference Include="Dolittle.Runtime.Events.MongoDB" Version="2.*" />
-        <PackageReference Include="Dolittle.ResourceTypes.Configuration" Version="2.*" />
+        <PackageReference Include="Dolittle.Concepts" Version="3.*" />
+        <PackageReference Include="Dolittle.Runtime.ReadModels" Version="3.*" />
+        <PackageReference Include="Dolittle.Runtime.Events.MongoDB" Version="3.*" />
+        <PackageReference Include="Dolittle.ResourceTypes.Configuration" Version="3.*" />
         <PackageReference Include="MongoDB.Driver" Version="2.7.0" />
     </ItemGroup>
 
