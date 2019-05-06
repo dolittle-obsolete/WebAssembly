@@ -256,6 +256,12 @@ All you need to do is add the package to your NPM based Web project:
 $ npm install --save-dev @dolittle/webassembly.webpack
 ```
 
+...or with yarn
+
+```shell
+$ yarn install -D @dolittle/webassembly.webpack
+```
+
 All you then need to do is import the plugin and add it to the plugins.
 
 ```javascript

@@ -14,3 +14,6 @@ stages, you're at your own risk.
 However, that being said - we have so far had good experience with it on projects
 we've used, we just need a bit more time with it.
 {{% /notice %}}
+
+To get started with Dolittle and the WebAssembly support, read our
+[getting started guide](./getting_started).
