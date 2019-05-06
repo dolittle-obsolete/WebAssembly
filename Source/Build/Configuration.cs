@@ -20,16 +20,19 @@ namespace Dolittle.Interaction.WebAssembly.Build
         /// <param name="outputPath">The path to where to output files</param>
         /// <param name="boundedContextFilePath">The path to the bounded-context.json file</param>
         /// <param name="isRelease">Boolean indicating whether or not this is a release build or not</param>
+        /// <param name="dolittleFolder">The path to the .dolittle folder</param>
         public Configuration(
             string sdkRoot,
             string outputPath,
             string boundedContextFilePath,
-            bool isRelease)
+            bool isRelease,
+            string dolittleFolder)
         {
             SdkRoot = sdkRoot;
             OutputPath = outputPath;
             BoundedContextFilePath = boundedContextFilePath;
             IsRelease = isRelease;
+            DolittleFolder = dolittleFolder;
 
             ManagedOutputPath = Path.Combine(OutputPath, "managed");
 
@@ -61,5 +64,10 @@ namespace Dolittle.Interaction.WebAssembly.Build
         /// Gets whether or not this is a release build
         /// </summary>
         public bool IsRelease { get; }
+
+        /// <summary>
+        /// Gets the path to the .dolittle folder
+        /// </summary>
+        public string DolittleFolder { get; }
     }
 }

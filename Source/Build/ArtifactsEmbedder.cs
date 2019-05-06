@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Dolittle.Build;
+using Dolittle.Collections;
 using Mono.Cecil;
 using Newtonsoft.Json;
 
@@ -25,7 +26,6 @@ namespace Dolittle.Interaction.WebAssembly.Build
         readonly Assemblies _assemblies;
         readonly ITargetAssemblyModifiers _modifiers;
         readonly IBuildMessages _buildMessages;
-
 
         /// <summary>
         /// Initializes a new instance of <see cref="ArtifactsEmbedder"/>
@@ -54,11 +54,14 @@ namespace Dolittle.Interaction.WebAssembly.Build
         /// </summary>
         public void Perform()
         {
-            var files = new List<string>();
-            files.Add(_configuration.BoundedContextFilePath);
+            var files = new List<string>
+            {
+                _configuration.BoundedContextFilePath
+            };
 
-            var dolittleDirectory = Path.Combine(Directory.GetCurrentDirectory(), ".dolittle");
-            files.AddRange(Directory.GetFiles(dolittleDirectory));
+            files.AddRange(Directory.GetFiles(_configuration.DolittleFolder));
+
+            OverrideWithLocalFiles(files);
 
             foreach (var file in files.Where(File.Exists))
             {
@@ -71,9 +74,32 @@ namespace Dolittle.Interaction.WebAssembly.Build
             AddLibrariesJson();
         }
 
+        void OverrideWithLocalFiles(List<string> files)
+        {
+            var overrideDolittleFolder = Path.Combine(Directory.GetCurrentDirectory(), ".dolittle");
+            if (Directory.Exists(overrideDolittleFolder))
+            {
+                var overridden = new Dictionary<string, string>();
+                var overrideFiles = Directory.GetFiles(overrideDolittleFolder);
+                files.ForEach(file =>
+                {
+                    overrideFiles.ForEach(overrideFile =>
+                    {
+                        if (Path.GetFileName(overrideFile) == Path.GetFileName(file))
+                        {
+                            _buildMessages.Information($"Overriding artifact '{Path.GetFileName(file)}' locally");
+                            overridden[file] = overrideFile;
+                        }
+                    });
+                });
+                files.RemoveAll(_ => overridden.Keys.Contains(_));
+                files.AddRange(overridden.Values);
+            }
+        }
+
         void AddAssembliesJson()
         {
-            var name = $"{_buildTarget.AssemblyName.Name}.assemblies.json";            
+            var name = $"{_buildTarget.AssemblyName.Name}.assemblies.json";
             _buildMessages.Information($"Adding assemblies list resource '{name}'");
             var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());
             var json = $"[{fileList}]";
@@ -84,7 +110,7 @@ namespace Dolittle.Interaction.WebAssembly.Build
         {
             var name = $"{_buildTarget.AssemblyName.Name}.libraries.json";
             _buildMessages.Information($"Adding libraries list resource '{name}'");
-            var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());           
+            var fileList = string.Join(",", _assemblies.AllImportedAssemblyPaths.Select(_ => $"\"{Path.GetFileNameWithoutExtension(_)}\"").ToArray());
             var json = JsonConvert.SerializeObject(_assemblies.Libraries);
             _modifiers.AddModifier(new EmbedResource(name, Encoding.UTF8.GetBytes(json)));
         }

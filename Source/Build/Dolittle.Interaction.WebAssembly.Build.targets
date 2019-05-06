@@ -7,6 +7,7 @@
             <BoundedContextFilePath>$(DolittleBoundedContextConfigPath)</BoundedContextFilePath>
             <IsRelease Condition="'$(Configuration)'=='Release'">true</IsRelease>
             <IsRelease Condition="'$(Configuration)'!='Release'">false</IsRelease>
+            <DolittleFolder>$(DolittleFolder)</DolittleFolder>
         </DolittleBuildPlugin>
     </ItemGroup>
 </Project>  
