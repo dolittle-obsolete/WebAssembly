@@ -1,5 +1,7 @@
 # Dolittle WebAssembly Interaction Layer
 
+If you're looking for a finished sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
+
 ## TEMPORARY
 
 When releasing package from locally:
