@@ -52,7 +52,6 @@ namespace Dolittle.Interaction.WebAssembly.Build
 
             staticFilesFileCopier.Copy(new []
             {
-                Path.Combine(_assemblyPaths.Sdk, configurationPath, "mono.js"),
                 Path.Combine(_assemblyPaths.Sdk, configurationPath, "mono.wasm")
             });
 
