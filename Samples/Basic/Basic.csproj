@@ -36,17 +36,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.SDK" Version="2.*" />
+        <PackageReference Include="Dolittle.SDK" Version="3.*" />
         
-        <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="2.*" />
-        <!--<PackageReference Include="Dolittle.Interaction.WebAssembly" Version="2.*" />-->
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
+        <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="3.*" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly" Version="3.*" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="3.*" />
         
-        <PackageReference Include="Dolittle.Build.MSBuild" Version="2.*"/>
-        <PackageReference Include="Dolittle.SDK.Build" Version="2.*" />
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.*" />
+        <PackageReference Include="Dolittle.Build.MSBuild" Version="3.*"/>
+        <PackageReference Include="Dolittle.SDK.Build" Version="3.*" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="3.*" />
     </ItemGroup>
 
+    <!--
     <ItemGroup>
         <ProjectReference Include="../../Source/Booting/Booting.csproj" />
         <ProjectReference Include="../../Source/Interop/Interop.csproj" />
@@ -54,5 +55,5 @@
         <ProjectReference Include="../../Source/Queries/Queries.csproj" />
         <ProjectReference Include="../../Source/ReadModels.MongoDB.WebAssembly/ReadModels.MongoDB.WebAssembly.csproj" />
         <ProjectReference Include="../../Source/Runtime.Events.WebAssembly.Dev/Runtime.Events.WebAssembly.Dev.csproj" />
-    </ItemGroup>
+    </ItemGroup>-->
 </Project>
