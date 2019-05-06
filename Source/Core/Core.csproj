@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.SDK" Version="2.*" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="Dolittle.Interaction.WebAssembly.Core.props" PackagePath="build\" />
         <Content Include="Dolittle.Interaction.WebAssembly.Core.targets" PackagePath="build\" />
         <Content Include="wasm\**\*" Exclude="wasm\**\*.nupkg" PackagePath="tools\mono\" />
@@ -24,6 +20,7 @@
 
         <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
         <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
+        <RemoveDir Directories="wasm/Templates"/>
     </Target>
 </Project>
 
