@@ -29,7 +29,9 @@ export function configure(aurelia, config) {
 
     console.log(`Using '${config.entryPoint}' as entrypoint for WebAssembly `)
 
-    storage.preload().then(_ => EventProcessorOffsetRepository.preload()).then(_ => EventStore.preload()).catch(error => {
+    storage.preload()
+            .then(_ => EventProcessorOffsetRepository.preload())
+            .then(_ => EventStore.preload()).catch(error => {
         console.error('Error preloading', error);
     }).then(_ => {
         // Now the rest of the system should be ready for booting
