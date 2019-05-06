@@ -2,7 +2,7 @@
     <Import Project="../../Build/MSBuild/default.props" />
 
     <PropertyGroup>
-        <OutputType>library</OutputType>
+        <OutputType>exe</OutputType>
         <TargetFramework>netstandard2.0</TargetFramework>
 
         <!-- Optimize build time -->
@@ -37,11 +37,13 @@
 
     <ItemGroup>
         <PackageReference Include="Dolittle.SDK" Version="2.*" />
-        <!--<PackageReference Include="Dolittle.Build" Version="2.*"/>-->
         
         <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="2.*" />
         <!--<PackageReference Include="Dolittle.Interaction.WebAssembly" Version="2.*" />-->
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="2.*" />
+        
+        <PackageReference Include="Dolittle.Build.MSBuild" Version="2.*"/>
+        <PackageReference Include="Dolittle.SDK.Build" Version="2.*" />
         <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="2.*" />
     </ItemGroup>
 
