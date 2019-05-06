@@ -5,7 +5,7 @@ keywords: WebAssembly, Getting Started
 author: einari
 weight: 2
 ---
-This section describes how you can get started with WebAssembly support.
+This section describes how you can get started with the Dolittle WebAssembly support.
 If you're looking for a finished sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
 
 {{% notice information %}}
@@ -20,8 +20,8 @@ make use of our WebAssembly support.
 
 The Dolittle WebAssembly support can be used from do different perspectives:
 
-- Want to have a client / server version and be able to go to client and be offline, sharing code between them
-- Client only - no server, or the code on the server is different from the client
+* Want to have a client / server version and be able to go to client and be offline, sharing code between them
+* Client only - no server, or the code on the server is different from the client
 
 Today, the WebAssembly support is oriented around .NET and leveraging the work of [the Mono Project](https://www.mono-project.com).
 On top of this you'll need a Web based project based on the framework of your liking, be it a Single Page Framework or server side
@@ -49,9 +49,10 @@ $ dotnet new classlib
 The Mono SDK for WebAssembly has been packaged into a single NuGet package, called [Dolittle.Interaction.WebAssembly.Core](https://www.nuget.org/packages/Dolittle.Interaction.WebAssembly.Core/). This is a heavy package with everything needed for Monos WebAssembly support
 inside it.
 
-Dolittle has a specific build pipeline, and we do need that as well. This walkthrough also assumes the Dolittle.SDK
-and also assumes Autofac as the IoC container, MongoDB as database and our own development Event Store.
-Add the following dependencies to your `.csproj` file:
+Dolittle has a specific build pipeline, and we do need that as well. This walkthrough also assumes the [Dolittle.SDK](https://www.nuget.org/packages/Dolittle.SDK/)
+and also assumes [Autofac](https://autofac.org/) as the IoC container, [MongoDB](https://www.mongodb.com) as database and our own development Event Store.
+
+After creating the `classlib`, Add the following dependencies to your `.csproj` file:
 
 ```xml
 <ItemGroup>
@@ -72,7 +73,7 @@ Add the following dependencies to your `.csproj` file:
 </ItemGroup>
 ```
 
-Dolittle has a specific build pipeline that does a few things, amongst others it generates metadata
+Dolittle has a specific build pipeline that does a few things, for instance it generates metadata
 about your application in the form of a topology and all artifacts within that topology.
 The topology is a map of the application in Dolittle terminology of Application, Bounded Context,
 Modules and Features. Within these are [artifacts](https://dolittle.io/runtime/runtime/artifacts/).
@@ -84,7 +85,7 @@ The SDK part can be configured, according to the documentation found [here](/run
 For the most part we can probably leave it with the default values. All depending on what your starting
 point is and what you're trying to achieve.
 
-Below is an example of setting up the properties in the `.csproj`
+Below is an example of setting up the properties in your `.csproj`
 
 ```xml
 <PropertyGroup>
@@ -110,6 +111,7 @@ Below is an example of setting up the properties in the `.csproj`
 </PropertyGroup>
 
 ```
+
 {{% notice information %}}
 The Dolittle tooling relies on a configuration file called `bounded-context.json`, this governs
 the types of resources being used for things like Read Models and Event Store. This configuration
