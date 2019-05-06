@@ -59,15 +59,13 @@ Add the following dependencies to your `.csproj` file:
 
     <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="3.*" />
 
-    <PackageReference Include="Dolittle.Interaction.WebAssembly.Booting" Version="3.*" />
-    <PackageReference Include="Dolittle.Interaction.WebAssembly.Interop" Version="3.*" />
-    <PackageReference Include="Dolittle.Interaction.WebAssembly.Commands" Version="3.*" />
-    <PackageReference Include="Dolittle.Interaction.WebAssembly.Queries" Version="3.*" />
+    <PackageReference Include="Dolittle.Interaction.WebAssembly" Version="3.*" />
+    <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="3.*" />
+
     <PackageReference Include="Dolittle.Events.WebAssembly.Dev" Version="3.*" />
     <PackageReference Include="Dolittle.ReadModels.MongoDB.WebAssembly" Version="3.*" />
 
-    <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="3.*" />
-
+    <!-- Build pipeline -->
     <PackageReference Include="Dolittle.Build.MSBuild" Version="3.*"/>
     <PackageReference Include="Dolittle.SDK.Build" Version="3.*" />
     <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="3.*" />
