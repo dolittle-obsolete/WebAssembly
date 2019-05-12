@@ -3,7 +3,7 @@ title: Getting started
 description: Get started with Dolittle WebAssembly support
 keywords: WebAssembly, Getting Started
 author: einari
-weight: 2
+weight: 3
 ---
 This section describes how you can get started with the Dolittle WebAssembly support.
 If you're looking for a finished sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
