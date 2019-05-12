@@ -9,7 +9,7 @@ This section describes how you can get started with the Dolittle WebAssembly sup
 If you're looking for a finished sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
 
 {{% notice information %}}
-If you're going to use all of Dolittle and not just the [Fundamentals](/fundamentals) part,
+If you're going to use all of Dolittle and not just the [Fundamentals]({{< relref fundamentals >}}) part,
 we recommend you get familiar with [Dolittle, its runtime, building blocks and SDK](/runtime).
 
 You can use bits and pieces and you do not need to take in all of Dolittle to be able to
