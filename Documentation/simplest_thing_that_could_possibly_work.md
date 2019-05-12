@@ -1,6 +1,6 @@
 ---
-title: Getting started clean
-description: Get started with Dolittle WebAssembly support - clean
+title: Simplest thing that could possibly work
+description: What is the simplest thing that could possibly work
 keywords: WebAssembly, Getting Started
 author: einari
 weight: 2
