@@ -9,8 +9,8 @@ This section describes how you can get started with the Dolittle WebAssembly sup
 If you're looking for a finished sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
 
 {{% notice information %}}
-If you're going to use all of Dolittle and not just the [Fundamentals]({{< relref fundamentals >}}) part,
-we recommend you get familiar with [Dolittle, its runtime, building blocks and SDK](/runtime).
+If you're going to use all of Dolittle and not just the fundamentals part,
+we recommend you get familiar with Dolittle, its runtime, building blocks and SDK.
 
 You can use bits and pieces and you do not need to take in all of Dolittle to be able to
 make use of our WebAssembly support.
@@ -28,13 +28,11 @@ On top of this you'll need a Web based project based on the framework of your li
 rendering. The mechanics for the Web part is standard and totally agnostic. However, since we at Dolittle internally
 uses Aurelia, we've added extra love for Aurelia to make it even simpler for hooking up things.
 
-{{% notice information %}}
 It is recommended that you have a look at our [Quickstart](https://dolittle.io/getting-started/quickstart/) and
 our [walktrough](https://dolittle.io/getting-started/gettingstarted/), as this guide builds upon its shoulders.
 
 For the time being, we don't have [boilerplates](http://github.com/dolittle-boilerplates) for WebAssembly, and
 that means we need to do a bit more manual work to get started.
-{{% /notice %}}
 
 ## .NET Core
 
@@ -117,8 +115,7 @@ The Dolittle tooling relies on a configuration file called `bounded-context.json
 the types of resources being used for things like Read Models and Event Store. This configuration
 file does not have the dimension of types of runtime environments such as WebAssembly as an
 interaction layer. You therefor need a copy of this file if you want to support both a server/client
-scenario and a WebAssembly scenario side-by-side for the same codebase. We have an issue registered
-to make this easier - found [here](https://github.com/dolittle-runtime/DotNET.SDK/issues/204).
+scenario and a WebAssembly scenario side-by-side for the same codebase. 
 {{% /notice %}}
 
 ### EntryPoint
@@ -368,5 +365,5 @@ storage.preload()
 Right now, our interop uses global variables. This is something we're looking into improving.
 As you can see in code above, it adds `_mongoDB` and `_eventStore` as global variables.
 These are needed for the C# implementations to be able to work with the underlying data storage
-mechanism in the browser; [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API).
+mechanism in the browser; IndexedDB.
 {{% /notice %}}
