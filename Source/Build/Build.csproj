@@ -12,7 +12,6 @@
     <ItemGroup>
         <PackageReference Include="Dolittle.Assemblies" Version="3.*" />
         <PackageReference Include="Dolittle.Build" Version="3.*" />
-        <PackageReference Include="Dolittle.Build.MSBuild" Version="3.*" />
         <PackageReference Include="Dolittle.Configuration" Version="3.*" />
         <PackageReference Include="Dolittle.Concepts" Version="3.*" />
     </ItemGroup>
