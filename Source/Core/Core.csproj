@@ -21,6 +21,7 @@
         <Exec Command="7z e mono-wasm.zip -owasm -y -bb3" Condition="$(OS) == 'Windows_NT'"/>
         <Exec Command="unzip -o mono-wasm.zip -d wasm" Condition="$(OS) != 'Windows_NT'"/>
         <RemoveDir Directories="wasm/Templates"/>
+        <RemoveDir Directories="wasm/framework/src"/>
     </Target>
 </Project>
 
