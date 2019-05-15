@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 using System.IO;
+using System.Linq;
 using Dolittle.Build;
 
 namespace Dolittle.Interaction.WebAssembly.Build
@@ -16,6 +17,7 @@ namespace Dolittle.Interaction.WebAssembly.Build
         readonly Assemblies _assemblies;
         private readonly AssemblyPaths _assemblyPaths;
         private readonly IBuildMessages _buildMessages;
+        private readonly BuildTarget _buildTarget;
 
         /// <summary>
         /// Initializes a new instance of <see cref="CopyFiles"/>
@@ -24,16 +26,19 @@ namespace Dolittle.Interaction.WebAssembly.Build
         /// <param name="assemblyPaths"><see cref="AssemblyPaths"/> to use</param>
         /// <param name="assemblies"><see cref="Assemblies"/> for handling what assemblies is part of the deployment</param>
         /// <param name="buildMessages"><see cref="IBuildMessages"/> for build messages</param>
+        /// <param name="buildTarget">Current <see cref="BuildTarget"/></param>
         public CopyFiles(
             Configuration configuration,
             AssemblyPaths assemblyPaths,
             Assemblies assemblies,
-            IBuildMessages buildMessages)
+            IBuildMessages buildMessages,
+            BuildTarget buildTarget)
         {
             _configuration = configuration;
             _assemblyPaths = assemblyPaths;
             _assemblies = assemblies;
             _buildMessages = buildMessages;
+            _buildTarget = buildTarget;
         }
 
         /// <inheritdoc/>
@@ -45,7 +50,15 @@ namespace Dolittle.Interaction.WebAssembly.Build
             var managedFilesFileCopier = new FileCopier(_buildMessages, _configuration.ManagedOutputPath);
             var staticFilesFileCopier = new FileCopier(_buildMessages, _configuration.OutputPath);
 
-            managedFilesFileCopier.Copy(_assemblies.AllImportedAssemblyPaths);
+            var targetAssembly = Path.GetFileName(_buildTarget.TargetAssemblyPath);
+            var targetAssemblyPath =  Path.Combine(_configuration.ManagedOutputPath,targetAssembly);
+            var assembliesToCopy = _assemblies.AllImportedAssemblyPaths.Where(_ => Path.GetFileName(_) != targetAssembly);
+
+            managedFilesFileCopier.Copy(assembliesToCopy);
+            
+            _buildMessages.Information($"Copied output assembly '{_buildTarget.OutputAssemblyPath}' to '{targetAssemblyPath}'");
+            File.Copy(_buildTarget.OutputAssemblyPath, targetAssemblyPath, true);
+
             if (!_configuration.IsRelease) managedFilesFileCopier.Copy(_assemblies.AllImportedAssemblyDebugSymbolPaths);
 
             var configurationPath = _configuration.IsRelease? "release": "debug";
