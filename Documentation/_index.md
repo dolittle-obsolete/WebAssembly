@@ -17,3 +17,8 @@ we've used, we just need a bit more time with it.
 
 To get started with Dolittle and the WebAssembly support, read our
 [getting started guide](./getting_started).
+
+If you want to get a video walkthrough, have a look below:
+
+{{< youtube XsOxFaXoxxs >}}
+
