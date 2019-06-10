@@ -4,6 +4,7 @@ description: Get an overview over the WebAssembly support
 keywords: WebAssembly
 author: einari
 weight: 2
+repository: https://github.com/dolittle-interaction/WebAssembly
 ---
 {{% notice warning %}}
 WebAssembly support is to be considered experimental.
