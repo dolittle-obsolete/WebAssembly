@@ -13,7 +13,7 @@ Once you have NodeJS installed, run the following from your shell:
 
 ```shell
 $ (cd ../.. && yarn)
-$ yarn run start
+$ yarn start
 ```
 
 Once this is running, you simply navigate to [http://localhost:8080/](http://localhost:8080/).
