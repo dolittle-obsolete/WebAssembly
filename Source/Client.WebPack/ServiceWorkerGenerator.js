@@ -20,8 +20,8 @@ export class ServiceWorkerGenerator {
 
     constructor(config) {
         this.#config = {
-            assembliesFileFolder: path.join(process.cwd(),'publish'),
-            outputFolder: path.join(process.cwd(),'wwwroot')
+            assembliesFileFolder: path.join(process.cwd(), 'publish'),
+            outputFolder: path.join(process.cwd(), 'wwwroot')
         };
 
         if (config) {
@@ -38,29 +38,32 @@ export class ServiceWorkerGenerator {
 
             fs.readFile(templateFile, (err, content) => {
                 let assets = [];
-                let jsFile = content.toString();
-                fs.readdir(output, (err, items) => {
+                if (content) {
 
-                    let appFiles = getSortedFiles(output, items, 'app');
-                    let vendorFiles = getSortedFiles(output, items, 'vendor');
+                    let jsFile = content.toString();
+                    fs.readdir(output, (err, items) => {
 
-                    if (appFiles.length > 0) assets.push(`/${appFiles[0]}`);
-                    if (vendorFiles.length > 0) assets.push(`/${vendorFiles[0]}`);
+                        let appFiles = getSortedFiles(output, items, 'app');
+                        let vendorFiles = getSortedFiles(output, items, 'vendor');
 
-                    items = items.filter(_ => _.indexOf('app') < 0);
-                    items = items.filter(_ => _.indexOf('vendor') < 0);
-                    items.forEach(item => assets.push(`/${item}`));
+                        if (appFiles.length > 0) assets.push(`/${appFiles[0]}`);
+                        if (vendorFiles.length > 0) assets.push(`/${vendorFiles[0]}`);
 
-                    fs.readFile(assembliesFile, (err, assembliesAsJson) => {
-                        assembliesAsJson = assembliesAsJson.toString()
-                        var assemblies = JSON.parse(assembliesAsJson);
-                        assemblies.forEach(assembly => assets.push(`/managed/${assembly}`));
+                        items = items.filter(_ => _.indexOf('app') < 0);
+                        items = items.filter(_ => _.indexOf('vendor') < 0);
+                        items.forEach(item => assets.push(`/${item}`));
 
-                        let assetsCode = `var assets = ['${assets.join("','")}'];`;
-                        let newFile = `${assetsCode}\n${jsFile}`;
-                        fs.writeFileSync(outputFile, newFile);
+                        fs.readFile(assembliesFile, (err, assembliesAsJson) => {
+                            assembliesAsJson = assembliesAsJson.toString()
+                            var assemblies = JSON.parse(assembliesAsJson);
+                            assemblies.forEach(assembly => assets.push(`/managed/${assembly}`));
+
+                            let assetsCode = `var assets = ['${assets.join("','")}'];`;
+                            let newFile = `${assetsCode}\n${jsFile}`;
+                            fs.writeFileSync(outputFile, newFile);
+                        });
                     });
-                });
+                }
             });
         });
     }
