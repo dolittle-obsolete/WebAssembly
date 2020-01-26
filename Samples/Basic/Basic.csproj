@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../../Build/MSBuild/default.props" />
+    <Import Project="../../versions.props" />
 
     <PropertyGroup>
         <OutputType>exe</OutputType>
@@ -36,15 +36,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.SDK" Version="3.*" />
+        <PackageReference Include="Dolittle.SDK" Version="$(SDKVersion)" />
         
-        <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="3.*" />
-        <PackageReference Include="Dolittle.Interaction.WebAssembly" Version="3.*" />
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="3.*" />
+        <PackageReference Include="Dolittle.DependencyInversion.Autofac" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly" Version="$(WebAssemblyVersion)" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="$(WebAssemblyVersion)" />
         
-        <PackageReference Include="Dolittle.Build.MSBuild" Version="3.*"/>
-        <PackageReference Include="Dolittle.SDK.Build" Version="3.*" />
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="3.*" />
+        <PackageReference Include="Dolittle.Build.MSBuild" Version="$(FundamentalsVersion)"/>
+        <PackageReference Include="Dolittle.SDK.Build" Version="$(SDKVersion)" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Build" Version="$(WebAssemblyVersion)" />
     </ItemGroup>
 
     <!--
