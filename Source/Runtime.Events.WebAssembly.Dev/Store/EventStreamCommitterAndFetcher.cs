@@ -158,7 +158,7 @@ namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
             {
                 if (ver == version || ver.Version.Commit >= version.Version.Commit)
                 {
-                    throw new EventSourceConcurrencyConflict();
+                    throw new EventSourceConcurrencyConflict(version.Version, ver.Version);
                 }
             }
         }

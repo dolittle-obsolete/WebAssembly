@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.SDK" Version="3.*" />
-        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="3.*" />
+        <PackageReference Include="Dolittle.SDK" Version="$(SDKVersion)" />
+        <PackageReference Include="Dolittle.Interaction.WebAssembly.Core" Version="$(WebAssemblyVersion)" />
     </ItemGroup>
 </Project>

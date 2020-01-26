@@ -10,10 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.Assemblies" Version="3.*" />
-        <PackageReference Include="Dolittle.Build" Version="3.*" />
-        <PackageReference Include="Dolittle.Configuration" Version="3.*" />
-        <PackageReference Include="Dolittle.Concepts" Version="3.*" />
+        <PackageReference Include="Dolittle.Assemblies" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.Build" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.Configuration" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.Concepts" Version="$(FundamentalsVersion)" />
     </ItemGroup>
 
     <ItemGroup>

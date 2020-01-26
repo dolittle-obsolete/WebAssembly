@@ -3,5 +3,6 @@
         <FundamentalsVersion>4.*</FundamentalsVersion>
         <RuntimeVersion>4.*</RuntimeVersion>
         <SDKVersion>4.*</SDKVersion>
+        <WebAssemblyVersion>3.*</WebAssemblyVersion>
     </PropertyGroup>
 </Project>

@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.Concepts" Version="3.*" />
-        <PackageReference Include="Dolittle.Runtime.ReadModels" Version="3.*" />
-        <PackageReference Include="Dolittle.ResourceTypes.Configuration" Version="3.*" />
+        <PackageReference Include="Dolittle.Concepts" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.ResourceTypes.Configuration" Version="$(FundamentalsVersion)" />
+        <PackageReference Include="Dolittle.Runtime.ReadModels" Version="$(RuntimeVersion)" />
         <PackageReference Include="MongoDB.Driver" Version="2.7.0" />
     </ItemGroup>
 

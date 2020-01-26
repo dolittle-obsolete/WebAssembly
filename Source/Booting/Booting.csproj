@@ -6,6 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dolittle.Booting" Version="3.*" />
+        <PackageReference Include="Dolittle.Booting" Version="$(FundamentalsVersion)" />
     </ItemGroup>
 </Project>
