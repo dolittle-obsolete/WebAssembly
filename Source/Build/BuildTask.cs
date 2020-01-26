@@ -1,7 +1,6 @@
-﻿/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+﻿// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +11,8 @@ using Newtonsoft.Json;
 
 namespace Dolittle.Interaction.WebAssembly.Build
 {
-
     /// <summary>
-    /// Represents an implementation of <see cref="ICanPerformBuildTask"/>
+    /// Represents an implementation of <see cref="ICanPerformBuildTask"/>.
     /// </summary>
     public class BuildTask : ICanPerformBuildTask
     {
@@ -24,12 +22,12 @@ namespace Dolittle.Interaction.WebAssembly.Build
         readonly Assemblies _assemblies;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="BuildTask"/>
+        /// Initializes a new instance of the <see cref="BuildTask"/> class.
         /// </summary>
-        /// <param name="configuration"><see cref="Configuration"/> to use</param>
-        /// <param name="assemblyPaths"><see cref="AssemblyPaths"/> to use</param>
-        /// <param name="assemblies"><see cref="Assemblies"/> for handling what assemblies is part of the deployment</param>
-        /// <param name="artifactsEmbedder"><see cref="ArtifactsEmbedder"/> for embedding artifacts</param>
+        /// <param name="configuration"><see cref="Configuration"/> to use.</param>
+        /// <param name="assemblyPaths"><see cref="AssemblyPaths"/> to use.</param>
+        /// <param name="assemblies"><see cref="Assemblies"/> for handling what assemblies is part of the deployment.</param>
+        /// <param name="artifactsEmbedder"><see cref="ArtifactsEmbedder"/> for embedding artifacts.</param>
         public BuildTask(
             Configuration configuration,
             AssemblyPaths assemblyPaths,
@@ -48,7 +46,7 @@ namespace Dolittle.Interaction.WebAssembly.Build
         /// <inheritdoc/>
         public void Perform()
         {
-            var configurationPath = _configuration.IsRelease? "release": "debug";
+            var configurationPath = _configuration.IsRelease ? "release" : "debug";
 
             var managedFiles = new List<string>();
             managedFiles.AddRange(_assemblies.AllImportedAssemblyPaths);
@@ -62,11 +60,11 @@ namespace Dolittle.Interaction.WebAssembly.Build
             File.WriteAllText(assembliesFilePath, $"[\n\t\t{fileList}\n]");
 
             var monoConfigPath = Path.Combine(_configuration.OutputPath, "mono-config.js");
-            var enableDebugging = _configuration.IsRelease?0 : 1;
+            var enableDebugging = _configuration.IsRelease ? 0 : 1;
 
-            File.WriteAllText(monoConfigPath,
-                $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: {enableDebugging}, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}"
-            );
+            File.WriteAllText(
+                monoConfigPath,
+                $"config = {{\n\tvfs_prefix: 'managed',\n\tdeploy_prefix: 'managed',\n\tenable_debugging: {enableDebugging}, \n\tfile_list: [\n\t\t{fileList}\n\t ],\n\tadd_bindings: function() {{ \n\t\tModule.mono_bindings_init ('[WebAssembly.Bindings]WebAssembly.Runtime');\n\t}}\n}}");
 
             var monoJsSource = Path.Combine(_assemblyPaths.Sdk, configurationPath, "mono.js");
             var monoJsDestination = Path.Combine(_configuration.OutputPath, "mono.js");

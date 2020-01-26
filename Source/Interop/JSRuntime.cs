@@ -1,11 +1,8 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Dolittle.Lifecycle;
 using Dolittle.Logging;
@@ -15,10 +12,10 @@ using WebAssembly;
 namespace Dolittle.Interaction.WebAssembly.Interop
 {
     /// <summary>
-    /// Represents an implementation of <see cref="IJSRuntime"/>
+    /// Represents an implementation of <see cref="IJSRuntime"/>.
     /// </summary>
     /// <remarks>
-    /// Inspired by https://github.com/dotnet/jsinterop
+    /// Inspired by https://github.com/dotnet/jsinterop.
     /// </remarks>
     [Singleton]
     public class JSRuntime : IJSRuntime
@@ -28,10 +25,10 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         readonly ILogger _logger;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="JSRuntime"/> class.
         /// </summary>
-        /// <param name="serializer"></param>
-        /// <param name="logger"></param>
+        /// <param name="serializer">JSON <see cref="ISerializer"/> for serialization.</param>
+        /// <param name="logger"><see cref="ILogger"/> for logging.</param>
         public JSRuntime(ISerializer serializer, ILogger logger)
         {
             _serializer = serializer;
@@ -42,7 +39,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         public void Invoke(string identifier, params object[] arguments)
         {
             var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
-            var jsRuntime = (JSObject) global::WebAssembly.Runtime.GetGlobalObject("_jsRuntime");
+            var jsRuntime = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("_jsRuntime");
             jsRuntime.Invoke("invoke", identifier, serializedArguments);
         }
 
@@ -51,14 +48,13 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         {
             var invocationId = Guid.NewGuid();
             var taskCompletionSource = new TaskCompletionSource<T>();
-            var taskCompletionSourceWrapper = new TaskCompletionSourceWrapper(typeof(T), taskCompletionSource);
-            _pendingTasks[invocationId] = taskCompletionSourceWrapper;
+            _pendingTasks[invocationId] = new TaskCompletionSourceWrapper(typeof(T), taskCompletionSource);
 
             try
             {
                 var serializedArguments = _serializer.ToJson(arguments, SerializationOptions.CamelCase);
                 _logger.Information($"BeginInvoke '{identifier}' with '{serializedArguments}");
-                var jsRuntime = (JSObject) global::WebAssembly.Runtime.GetGlobalObject("_jsRuntime");
+                var jsRuntime = (JSObject)global::WebAssembly.Runtime.GetGlobalObject("_jsRuntime");
                 jsRuntime.Invoke("beginInvoke", invocationId.ToString(), identifier, serializedArguments);
             }
             catch (Exception ex)
@@ -74,11 +70,14 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// <inheritdoc/>
         public void Succeeded(Guid invocationId, string resultAsJson)
         {
-            TaskCompletionSourceWrapper taskCompletionSourceWrapper;
-            if (!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
+            if (!_pendingTasks.TryRemove(invocationId, out TaskCompletionSourceWrapper taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
 
-            if( string.IsNullOrEmpty(resultAsJson)) taskCompletionSourceWrapper.SetResult(null);
-            else {
+            if (string.IsNullOrEmpty(resultAsJson))
+            {
+                taskCompletionSourceWrapper.SetResult(null);
+            }
+            else
+            {
                 object result = _serializer.FromJson(taskCompletionSourceWrapper.Type, resultAsJson);
                 taskCompletionSourceWrapper.SetResult(result);
             }
@@ -87,8 +86,7 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         /// <inheritdoc/>
         public void Failed(Guid invocationId, string exception)
         {
-            TaskCompletionSourceWrapper taskCompletionSourceWrapper;
-            if (!_pendingTasks.TryRemove(invocationId, out taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
+            if (!_pendingTasks.TryRemove(invocationId, out TaskCompletionSourceWrapper taskCompletionSourceWrapper)) throw new InvalidPendingTask(invocationId);
             taskCompletionSourceWrapper.SetException(new JSException(exception));
         }
     }

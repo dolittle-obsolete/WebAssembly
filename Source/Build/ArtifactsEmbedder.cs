@@ -1,23 +1,20 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using Dolittle.Build;
 using Dolittle.Collections;
-using Mono.Cecil;
 using Newtonsoft.Json;
 
 namespace Dolittle.Interaction.WebAssembly.Build
 {
     /// <summary>
-    /// Represents a system that can embed the needed Dolittle artifacts as embedded resources 
-    /// into the target output assembly
+    /// Represents a system that can embed the needed Dolittle artifacts as embedded resources
+    /// into the target output assembly.
     /// </summary>
     public class ArtifactsEmbedder
     {
@@ -28,13 +25,13 @@ namespace Dolittle.Interaction.WebAssembly.Build
         readonly IBuildMessages _buildMessages;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="ArtifactsEmbedder"/>
+        /// Initializes a new instance of the <see cref="ArtifactsEmbedder"/> class.
         /// </summary>
-        /// <param name="configuration">Current <see cref="Configuration"/> used</param>
-        /// <param name="buildTarget">Current <see cref="BuildTarget"/> being built</param>
-        /// <param name="assemblies">All <see cref="Assemblies"/> </param>
-        /// <param name="modifiers"><see cref="ITargetAssemblyModifiers"/> for modifying the target</param>
-        /// <param name="buildMessages"><see cref="IBuildMessages"/> to use for outputting build messages</param>
+        /// <param name="configuration">Current <see cref="Configuration"/> used.</param>
+        /// <param name="buildTarget">Current <see cref="BuildTarget"/> being built.</param>
+        /// <param name="assemblies">All <see cref="Assemblies"/>.</param>
+        /// <param name="modifiers"><see cref="ITargetAssemblyModifiers"/> for modifying the target.</param>
+        /// <param name="buildMessages"><see cref="IBuildMessages"/> to use for outputting build messages.</param>
         public ArtifactsEmbedder(
             Configuration configuration,
             BuildTarget buildTarget,
@@ -50,7 +47,7 @@ namespace Dolittle.Interaction.WebAssembly.Build
         }
 
         /// <summary>
-        /// Perform the embedding
+        /// Perform the embedding.
         /// </summary>
         public void Perform()
         {

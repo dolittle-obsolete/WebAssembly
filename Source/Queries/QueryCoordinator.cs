@@ -1,17 +1,12 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dolittle.Artifacts;
-using Dolittle.Assemblies;
-using Dolittle.Collections;
 using Dolittle.Concepts;
 using Dolittle.DependencyInversion;
 using Dolittle.Dynamic;
@@ -20,18 +15,15 @@ using Dolittle.Lifecycle;
 using Dolittle.Logging;
 using Dolittle.Queries;
 using Dolittle.Queries.Coordination;
-using Dolittle.Runtime.Commands;
-using Dolittle.Runtime.Commands.Coordination;
 using Dolittle.Security;
 using Dolittle.Serialization.Json;
-using Dolittle.Strings;
 using Dolittle.Tenancy;
 using Dolittle.Types;
 
 namespace Dolittle.Interaction.WebAssembly.Queries
 {
     /// <summary>
-    /// Represents a CommandCoordinator geared towards interacting with JavaScript client code in WebAssembly scenarios
+    /// Represents a CommandCoordinator geared towards interacting with JavaScript client code in WebAssembly scenarios.
     /// </summary>
     [Singleton]
     public class QueryCoordinator
@@ -45,15 +37,15 @@ namespace Dolittle.Interaction.WebAssembly.Queries
         readonly ISerializer _serializer;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="QueryCoordinator"/>
+        /// Initializes a new instance of the <see cref="QueryCoordinator"/> class.
         /// </summary>
-        /// <param name="typeFinder"></param>
-        /// <param name="container"></param>
-        /// <param name="queryCoordinator">The underlying <see cref="IQueryCoordinator"/> </param>
-        /// <param name="executionContextManager"><see cref="IExecutionContextManager"/> for working with execution contexts</param>
-        /// <param name="queries"></param>
-        /// <param name="serializer"></param>
-        /// <param name="logger"></param>
+        /// <param name="typeFinder"><see cref="ITypeFinder"/> for finding types.</param>
+        /// <param name="container"><see cref="IContainer"/> for getting instances of queries.</param>
+        /// <param name="queryCoordinator">The underlying <see cref="IQueryCoordinator"/>.</param>
+        /// <param name="executionContextManager"><see cref="IExecutionContextManager"/> for working with execution contexts.</param>
+        /// <param name="queries">All <see cref="IQuery"/> instances.</param>
+        /// <param name="serializer">JSON <see cref="ISerializer"/>.</param>
+        /// <param name="logger"><see cref="ILogger"/> for logging.</param>
         public QueryCoordinator(
             ITypeFinder typeFinder,
             IContainer container,
@@ -73,14 +65,13 @@ namespace Dolittle.Interaction.WebAssembly.Queries
         }
 
         /// <summary>
-        /// 
+        /// Execute a query.
         /// </summary>
-        /// <param name="queryRequest"></param>
-        /// <returns></returns>
+        /// <param name="queryRequest"><see cref="QueryRequest"/> to execute.</param>
+        /// <returns>Task with <see cref="QueryResult"/>.</returns>
         public async Task<QueryResult> Execute(QueryRequest queryRequest)
         {
-            QueryResult result = null;
-          
+            QueryResult result;
             try
             {
                 _executionContextManager.CurrentFor(TenantId.Development, Dolittle.Execution.CorrelationId.New(), ClaimsPrincipal.Current.ToClaims());
@@ -91,10 +82,9 @@ namespace Dolittle.Interaction.WebAssembly.Queries
                 PopulateProperties(queryRequest, queryType, query);
 
                 _logger.Trace($"Executing runtime query coordinator");
-                result = await _queryCoordinator.Execute(query, new PagingInfo());
+                result = await _queryCoordinator.Execute(query, new PagingInfo()).ConfigureAwait(false);
 
                 if (result.Success) AddClientTypeInformation(result);
-
             }
             catch (Exception ex)
             {
@@ -115,9 +105,9 @@ namespace Dolittle.Interaction.WebAssembly.Queries
             foreach (var item in result.Items)
             {
                 var dynamicItem = item.AsExpandoObject();
-                var type = item.GetType();
                 items.Add(dynamicItem);
             }
+
             result.Items = items;
         }
 
@@ -128,8 +118,8 @@ namespace Dolittle.Interaction.WebAssembly.Queries
                 var property = queryType
                     .GetProperties()
                     .SingleOrDefault(_ => _
-                        .Name.Equals(key, StringComparison.InvariantCultureIgnoreCase)
-                    );
+                        .Name.Equals(key, StringComparison.InvariantCultureIgnoreCase));
+
                 if (property != null)
                 {
                     var propertyValue = descriptor.Parameters[key].ToString();
@@ -140,22 +130,34 @@ namespace Dolittle.Interaction.WebAssembly.Queries
                         object underlyingValue = null;
                         try
                         {
-                            if (valueType == typeof(Guid)) underlyingValue = Guid.Parse(propertyValue);
-                            else underlyingValue = Convert.ChangeType(propertyValue, valueType);
+                            if (valueType == typeof(Guid))
+                            {
+                                underlyingValue = Guid.Parse(propertyValue);
+                            }
+                            else
+                            {
+                                underlyingValue = Convert.ChangeType(propertyValue, valueType, CultureInfo.InvariantCulture);
+                            }
+
                             value = ConceptFactory.CreateConceptInstance(property.PropertyType, underlyingValue);
                         }
                         catch { }
                     }
                     else
                     {
-                        if (property.PropertyType == typeof(Guid)) value = Guid.Parse(propertyValue);
-                        else value = Convert.ChangeType(propertyValue, property.PropertyType);
+                        if (property.PropertyType == typeof(Guid))
+                        {
+                            value = Guid.Parse(propertyValue);
+                        }
+                        else
+                        {
+                            value = Convert.ChangeType(propertyValue, property.PropertyType, CultureInfo.InvariantCulture);
+                        }
                     }
 
                     property.SetValue(instance, value, null);
                 }
             }
         }
-
     }
 }

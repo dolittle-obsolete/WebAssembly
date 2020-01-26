@@ -1,12 +1,12 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- * --------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
 {
     /// <summary>
-    /// Represents the configuration for the <see cref="EventStore"/>
+    /// Represents the configuration for the <see cref="EventStore"/>.
     /// </summary>
-    public class EventStoreConfiguration {}
+    public class EventStoreConfiguration
+    {
+    }
 }

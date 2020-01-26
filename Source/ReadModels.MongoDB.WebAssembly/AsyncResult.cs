@@ -1,10 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System;
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
@@ -12,32 +9,32 @@ using MongoDB.Driver;
 namespace Dolittle.ReadModels.MongoDB.WebAssembly
 {
     /// <summary>
-    /// 
+    /// Represents the async result from working with Mongo.
     /// </summary>
+    /// <typeparam name="T">Type of result document.</typeparam>
     public class AsyncResult<T> : IAsyncCursor<T>
     {
-        IEnumerable<T> _results;
         bool _canMove = true;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="AsyncResult{T}"/> class.
         /// </summary>
-        public AsyncResult(IEnumerable<T> result)
+        /// <param name="results">The results.</param>
+        public AsyncResult(IEnumerable<T> results)
         {
-            _results = result;
+            Current = results;
         }
 
         /// <inheritdoc/>
-        public IEnumerable<T> Current => _results;
+        public IEnumerable<T> Current { get; }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            
         }
 
         /// <inheritdoc/>
-        public bool MoveNext(CancellationToken cancellationToken = default(CancellationToken))
+        public bool MoveNext(CancellationToken cancellationToken = default)
         {
             var canMove = _canMove;
             _canMove = false;
@@ -45,7 +42,7 @@ namespace Dolittle.ReadModels.MongoDB.WebAssembly
         }
 
         /// <inheritdoc/>
-        public Task<bool> MoveNextAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<bool> MoveNextAsync(CancellationToken cancellationToken = default)
         {
             return Task.FromResult(MoveNext(cancellationToken));
         }

@@ -1,117 +1,78 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- * --------------------------------------------------------------------------------------------*/
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Dolittle.Events;
-using Dolittle.Runtime.Events;
-using Dolittle.Runtime.Events.Store;
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Dolittle.Artifacts;
-using Dolittle.Lifecycle;
 
 namespace Dolittle.Runtime.Events.Store.WebAssembly.Dev
 {
     /// <summary>
     /// An InMemory implementation of an <see cref="IEventStore" />
-    /// This should never be used as anything other than a testing tool
+    /// This should never be used as anything other than a testing tool.
     /// </summary>
     public class EventStore : IEventStore
     {
-        EventStreamCommitterAndFetcher _event_committer_and_fetcher;
+        readonly EventStreamCommitterAndFetcher _eventCommitterAndFetcher;
 
         /// <summary>
-        /// Instantiates a new instance of the <see cref="EventStore" />
+        /// Initializes a new instance of the <see cref="EventStore"/> class.
         /// </summary>
+        /// <param name="committerAndFetcher">The <see cref="EventStreamCommitterAndFetcher"/>.</param>
         public EventStore(EventStreamCommitterAndFetcher committerAndFetcher)
         {
-            _event_committer_and_fetcher = committerAndFetcher;
+            _eventCommitterAndFetcher = committerAndFetcher;
         }
 
         /// <inheritdoc />
         public CommittedEventStream Commit(UncommittedEventStream uncommittedEvents)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.Commit(uncommittedEvents);
+            return _eventCommitterAndFetcher.Commit(uncommittedEvents);
         }
 
-        void ThrowIfDisposed()
-        {
-            if(!IsDisposed){
-                return;
-            }
-            throw new ObjectDisposedException("InMemoryEventStore is already disposed");
-        }
-
-        /// <summary>
-        /// Disposes of the <see cref="EventStore" />
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Indicates whether the <see cref="EventStore" /> has been disposed.
-        /// </summary>
-        /// <value>true if disposed, false otherwise</value>
-        public bool IsDisposed
-        {
-            get; private set;
-        }
-
-        void Dispose(bool disposing)
-        {
-            IsDisposed = true;
-        }
-        
         /// <inheritdoc />
         public Commits Fetch(EventSourceKey eventSource)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.Fetch(eventSource);
+            return _eventCommitterAndFetcher.Fetch(eventSource);
         }
 
         /// <inheritdoc />
         public Commits FetchFrom(EventSourceKey eventSource, CommitVersion commitVersion)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.FetchFrom(eventSource,commitVersion);
+            return _eventCommitterAndFetcher.FetchFrom(eventSource, commitVersion);
         }
 
-         /// <inheritdoc />
+        /// <inheritdoc />
         public Commits FetchAllCommitsAfter(CommitSequenceNumber commit)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.FetchAllCommitsAfter(commit);
+            return _eventCommitterAndFetcher.FetchAllCommitsAfter(commit);
         }
+
         /// <inheritdoc />
-        public SingleEventTypeEventStream FetchAllEventsOfType(ArtifactId eventType) 
+        public SingleEventTypeEventStream FetchAllEventsOfType(ArtifactId eventType)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.FetchAllEventsOfType(eventType);
+            return _eventCommitterAndFetcher.FetchAllEventsOfType(eventType);
         }
+
         /// <inheritdoc />
         public SingleEventTypeEventStream FetchAllEventsOfTypeAfter(ArtifactId eventType, CommitSequenceNumber commit)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.FetchAllEventsOfTypeAfter(eventType,commit);
+            return _eventCommitterAndFetcher.FetchAllEventsOfTypeAfter(eventType, commit);
         }
+
         /// <inheritdoc />
         public EventSourceVersion GetCurrentVersionFor(EventSourceKey eventSource)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.GetCurrentVersionFor(eventSource);
+            return _eventCommitterAndFetcher.GetCurrentVersionFor(eventSource);
         }
+
         /// <inheritdoc />
         public EventSourceVersion GetNextVersionFor(EventSourceKey eventSource)
         {
-            ThrowIfDisposed();
-            return _event_committer_and_fetcher.GetNextVersionFor(eventSource);
+            return _eventCommitterAndFetcher.GetNextVersionFor(eventSource);
         }
     }
 }

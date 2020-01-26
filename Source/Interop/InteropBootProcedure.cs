@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Dolittle.Booting;
 using Dolittle.DependencyInversion;
 using Dolittle.Logging;
@@ -9,8 +8,8 @@ using Dolittle.Logging;
 namespace Dolittle.Interaction.WebAssembly.Interop
 {
     /// <summary>
-    /// Represents the <see cref="ICanPerformBootProcedure">boot procedure</see> that will 
-    /// initialize the interop system
+    /// Represents the <see cref="ICanPerformBootProcedure">boot procedure</see> that will
+    /// initialize the interop system.
     /// </summary>
     public class InteropBootProcedure : ICanPerformBootProcedure
     {
@@ -18,10 +17,10 @@ namespace Dolittle.Interaction.WebAssembly.Interop
         readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="InteropBootProcedure"/>
+        /// Initializes a new instance of the <see cref="InteropBootProcedure"/> class.
         /// </summary>
-        /// <param name="container"><see cref="IContainer"/> to use to setup instances</param>
-        /// <param name="logger"><see cref="ILogger"/> for logging</param>
+        /// <param name="container"><see cref="IContainer"/> to use to setup instances.</param>
+        /// <param name="logger"><see cref="ILogger"/> for logging.</param>
         public InteropBootProcedure(IContainer container, ILogger logger)
         {
             _container = container;
