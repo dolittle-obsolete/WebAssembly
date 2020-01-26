@@ -1,45 +1,39 @@
 {
-  "name": "@dolittle/webassembly.queries",
-  "version": "1.0.1",
-  "description": "",
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "dist/commonjs/index.js",
-  "module": "dist/esmodule/index.js",
-  "jspm": {
-    "registry": "npm",
-    "jspmPackage": true,
-    "format": "amd",
-    "main": "index",
-    "directories": {
-      "dist": "dist/systemjs"
+    "name": "@dolittle/webassembly.queries",
+    "version": "1.0.2",
+    "description": "",
+    "author": "",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dolittle-interaction/WebAssembly.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dolittle-interaction/WebAssembly/issues"
+    },
+    "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
+    "files": [
+        "Distribution",
+        "package.json",
+        "**/*.ts"
+    ],
+    "main": "Distribution/index.js",
+    "types": "Distribution/index.d.ts",
+    "scripts": {
+        "tasks": "gulp --tasks --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "clean": "gulp clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "build": "gulp build --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test": "gulp test --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:run": "gulp test-run --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:clean": "gulp test-clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "lint-fix": "gulp lint-fix --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "prepublishOnly": "yarn build && yarn test:run && yarn test:clean"
     },
     "dependencies": {
-      "@dolittle/commands": "^1.0.12",
-      "@dolittle/webassembly": "^1.0.0"
+        "@dolittle/queries": "^2.0.0",
+        "@dolittle/webassembly.interop": "^1.0.0"
     }
-  },
-  "scripts": {
-    "build": "gulp build",
-    "prepublish": "yarn build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dolittle-interaction/WebAssembly.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dolittle-interaction/WebAssembly/issues"
-  },
-  "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
-  "dependencies": {
-    "@dolittle/commands": "^1.0.12",
-    "@dolittle/webassembly.interop": "^1.0.0"
-  },
-  "devDependencies": {},
-  "files": [
-    "dist"
-  ]
 }

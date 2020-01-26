@@ -1,43 +1,38 @@
 {
-  "name": "@dolittle/readmodels.mongodb.webassembly",
-  "version": "1.0.5",
-  "description": "",
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "dist/commonjs/index.js",
-  "module": "dist/esmodule/index.js",
-  "jspm": {
-    "registry": "npm",
-    "jspmPackage": true,
-    "format": "amd",
-    "main": "index",
-    "directories": {
-      "dist": "dist/systemjs"
+    "name": "@dolittle/readmodels.mongodb.webassembly",
+    "version": "1.0.2",
+    "description": "",
+    "author": "",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dolittle-interaction/WebAssembly.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dolittle-interaction/WebAssembly/issues"
+    },
+    "homepage": "https://github.com/dolittle-interaction/WebAssembly#readme",
+    "files": [
+        "Distribution",
+        "package.json",
+        "**/*.ts"
+    ],
+    "main": "Distribution/index.js",
+    "types": "Distribution/index.d.ts",
+    "scripts": {
+        "tasks": "gulp --tasks --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "clean": "gulp clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "build": "gulp build --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test": "gulp test --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:run": "gulp test-run --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:clean": "gulp test-clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "lint-fix": "gulp lint-fix --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "prepublishOnly": "yarn build && yarn test:run && yarn test:clean"
     },
     "dependencies": {
-      "minimongo": "^5.0.1"
+        "minimongo": "^5.0.1"
     }
-  },
-  "scripts": {
-    "build": "gulp build",
-    "prepublish": "yarn build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dolittle-extensions/ReadModels.MongoDB.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dolittle-extensions/ReadModels.MongoDB/issues"
-  },
-  "homepage": "https://github.com/dolittle-extensions/ReadModels.MongoDB#readme",
-  "dependencies": {
-    "minimongo": "^5.0.1"
-  },
-  "devDependencies": {},
-  "files": [
-    "dist"
-  ]
 }

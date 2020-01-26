@@ -1,25 +1,35 @@
 {
     "name": "basic",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "start": "dotnet watch build -c Release & npx webpack --watch --progress & http-server -c-1 wwwroot",
-        "start2": "npx webpack --watch --progress & http-server -c-1 wwwroot"
-    },
+    "private": true,
     "author": "",
-    "license": "ISC",
+    "license": "MIT",
+    "version": "1.0.14",
+    "description": "",
+    "scripts": {
+      "webpack": "npx webpack --env.production --extractCss",
+      "webpack:dev": "npx webpack --extractCss",
+      "start": "npx webpack-dev-server --open --watch --progress --hot",
+      "build": "gulp build --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+      "lint": "gulp lint --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+      "lint:fix": "gulp lint-fix --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js"
+    },
     "devDependencies": {
-        "@dolittle/build.aurelia": "^3.2.1",
-        "http-server": "^0.11.1",
-        "webpack-cli": "^3.2.1"
+      "@dolittle/typescript.webpack.aurelia": "^1.1.0",
+      "dotenv": "^6.1.0",
+      "webpack-notifier": "^1.7.0"
     },
     "dependencies": {
-        "@dolittle/booting": "^1.0.9",
-        "@dolittle/webassembly.interop": "^1.0.0",
-        "@dolittle/webassembly.commands": "^1.0.0",
-        "@dolittle/webassembly.queries": "^1.0.0",
-        "@dolittle/webassembly.aurelia": "^1.0.0",
-        "@dolittle/webassembly.webpack": "^1.0.0"
-    }
-}
+      "aurelia-bootstrapper": "^2.3.3",
+      "aurelia-framework": "^1.3.1",
+      "aurelia-pal": "^1.8.2",
+      "aurelia-http-client": "^1.2.1",
+      "@dolittle/booting": "^1.0.9",
+      "@dolittle/webassembly.aurelia": "^1.0.0",
+      "@dolittle/webassembly.commands": "^1.0.0",
+      "@dolittle/webassembly.interop": "^1.0.0",
+      "@dolittle/webassembly.queries": "^1.0.0",
+      "@dolittle/webassembly.webpack": "^1.0.0",
+      "copy-webpack-plugin": "^5.1.1"
+  }
+  }
+  
