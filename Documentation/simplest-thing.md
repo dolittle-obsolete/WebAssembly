@@ -4,10 +4,12 @@ description: What is the simplest thing that could possibly work
 keywords: WebAssembly, Getting Started
 author: einari
 weight: 2
+aliases:
+    - /interaction/webassembly/simplest_thing/
 ---
 This section describes how you can get started with the Dolittle WebAssembly support, cleanest possible way.
 If you're looking for a finished end to end sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
-Also, look the the other [getting started]({{< relref getting_started >}}) guide for a more end to end guide.
+Also, look the the other [getting started]({{< relref getting-started >}}) guide for a more end to end guide.
 
 ## .NET Core
 

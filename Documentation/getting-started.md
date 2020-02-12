@@ -1,12 +1,12 @@
 ---
 title: Getting started
-url: /interaction/webassembly/
 description: Get started with Dolittle WebAssembly support
 keywords: WebAssembly, Getting Started
 author: einari
 weight: 1
 aliases:
     - /interaction/webassembly/getting_started/
+    - /interaction/webassembly/
 ---
 
 {{% notice warning %}}
