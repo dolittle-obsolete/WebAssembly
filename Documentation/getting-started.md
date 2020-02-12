@@ -6,7 +6,6 @@ author: einari
 weight: 1
 aliases:
     - /interaction/webassembly/getting_started/
-    - /interaction/webassembly/
 ---
 
 {{% notice warning %}}
