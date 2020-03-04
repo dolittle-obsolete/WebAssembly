@@ -6,6 +6,7 @@ author: einari
 weight: 2
 aliases:
     - /interaction/webassembly/simplest_thing/
+    - /interaction/webassembly/simplest-thing/
 ---
 This section describes how you can get started with the Dolittle WebAssembly support, cleanest possible way.
 If you're looking for a finished end to end sample with everything set up, you can go [here](https://github.com/dolittle-samples/ToDolittle).
